@@ -1,0 +1,21 @@
+{
+  "name": "@contextlint/cli",
+  "version": "0.0.0",
+  "description": "CLI entry point for contextlint",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "contextlint": "dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextlint/core": "workspace:*",
+    "commander": "^13.0.0"
+  },
+  "license": "MIT"
+}

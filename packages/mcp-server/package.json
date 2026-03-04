@@ -1,0 +1,21 @@
+{
+  "name": "@contextlint/mcp-server",
+  "version": "0.0.0",
+  "description": "MCP server for contextlint",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "contextlint-mcp": "dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextlint/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "license": "MIT"
+}

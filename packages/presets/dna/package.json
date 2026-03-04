@@ -1,0 +1,17 @@
+{
+  "name": "@contextlint/preset-dna",
+  "version": "0.0.0",
+  "description": "Preset rules for software-dna-template",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextlint/core": "workspace:*"
+  },
+  "license": "MIT"
+}

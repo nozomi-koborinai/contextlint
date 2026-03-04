@@ -1,0 +1,14 @@
+{
+  "name": "@contextlint/core",
+  "version": "0.0.0",
+  "description": "Rule engine and Markdown table parser for contextlint",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "MIT"
+}

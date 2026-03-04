@@ -13,5 +13,8 @@
   "dependencies": {
     "@contextlint/core": "workspace:*"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT"
 }

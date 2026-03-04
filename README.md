@@ -2,9 +2,26 @@
 
 Rule-based linter for structured Markdown documents.
 
-## What is contextlint?
+## Why contextlint?
 
-contextlint is a deterministic, rule-based static analysis tool for structured Markdown. It validates table structures, required sections, ID formats, and cross-file traceability — things that existing Markdown linters (markdownlint, Vale, textlint) don't cover.
+Software projects often maintain structured Markdown documents — requirements, design decisions, API specs — with tables containing IDs, status fields, and cross-references. As these documents grow, problems creep in silently:
+
+- A requirement ID referenced in a design doc no longer exists
+- A table is missing a required column
+- IDs don't follow the agreed format
+- Required sections are absent
+
+Existing Markdown linters (markdownlint, Vale, textlint) handle formatting and prose style, but none of them validate the **structural integrity** of document sets: table content, cross-file references, or section requirements.
+
+contextlint fills this gap. It's a deterministic, rule-based static analysis tool that catches structural issues in seconds — no AI, no cost, CI-friendly.
+
+## How it fits in
+
+```
+Code change → contextlint (CI, fast) → AI-based review (flexible, deep)
+```
+
+contextlint handles the mechanical checks so that AI-based tools can focus on semantic analysis.
 
 ## Packages
 

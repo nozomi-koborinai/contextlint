@@ -6,10 +6,10 @@ Rule-based linter for structured Markdown documents.
 
 Software projects often maintain structured Markdown documents — requirements, design decisions, API specs — with tables containing IDs, status fields, and cross-references. As these documents grow, problems creep in silently:
 
-- A requirement ID referenced in a design doc no longer exists
 - A table is missing a required column
-- IDs don't follow the agreed format
-- Required sections are absent
+- Key cells (ID, Stability) are left empty
+- Stability values don't match the allowed set
+- Required files are missing from a zone
 
 Existing Markdown linters (markdownlint, Vale, textlint) handle formatting and prose style, but none of them validate the **structural integrity** of document sets: table content, cross-file references, or section requirements.
 
@@ -32,15 +32,36 @@ contextlint handles the mechanical checks so that AI-based tools can focus on se
 | `@contextlint/mcp-server` | MCP server for AI tool integration |
 | `@contextlint/preset-dna` | Preset rules for [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) |
 
-## Rule Categories
+## Usage
 
-| Category | ID Prefix | Description |
-|----------|-----------|-------------|
-| Structure | STR-* | File existence, naming conventions, directory structure |
-| Table Format | TBL-* | Column presence, value validation, ID format |
-| Sections | SEC-* | Required sections per file type |
-| Content Quality | QUA-* | Anti-pattern detection, vague expressions, TODO/FIXME |
-| Traceability | TRC-* | Cross-file reference validation |
+### With a config file
+
+```bash
+contextlint --config contextlint.config.json "docs/**/*.md"
+```
+
+### With a preset
+
+Presets bundle rules so you don't need a config file in the target repository.
+
+```bash
+contextlint --preset dna --cwd /path/to/project "docs/**/*.md"
+```
+
+Available presets:
+
+| Preset | Description |
+|--------|-------------|
+| `dna` | Health check for [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) projects |
+
+## Rules
+
+| ID | Description |
+|----|-------------|
+| TBL-001 | Required columns must exist in tables |
+| TBL-002 | Key columns must not have empty cells |
+| TBL-003 | Column values must be from an allowed set |
+| STR-001 | Required files must exist in the project |
 
 ## License
 

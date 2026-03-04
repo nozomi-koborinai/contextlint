@@ -15,7 +15,10 @@
   },
   "dependencies": {
     "@contextlint/core": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.27.0"
+    "@contextlint/preset-dna": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.27.0",
+    "glob": "^13.0.6",
+    "zod": "^4.0.0"
   },
   "license": "MIT"
 }

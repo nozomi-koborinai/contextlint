@@ -5,10 +5,22 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/unist": "^3.0.3"
+  }
 }

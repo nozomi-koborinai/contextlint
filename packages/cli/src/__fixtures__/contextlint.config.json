@@ -1,0 +1,10 @@
+{
+  "rules": [
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["ID", "Status"]
+      }
+    }
+  ]
+}

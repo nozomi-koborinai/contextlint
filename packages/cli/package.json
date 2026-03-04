@@ -8,14 +8,18 @@
   "bin": {
     "contextlint": "dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@contextlint/core": "workspace:*",
-    "commander": "^14.0.0"
+    "@contextlint/preset-dna": "workspace:*",
+    "commander": "^14.0.0",
+    "glob": "^13.0.6"
   },
   "license": "MIT"
 }

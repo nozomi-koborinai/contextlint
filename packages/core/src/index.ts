@@ -21,3 +21,11 @@ export type { Tbl003Options } from "./rules/tbl-003.js";
 
 export { str001 } from "./rules/str-001.js";
 export type { Str001Options } from "./rules/str-001.js";
+
+export { sec001 } from "./rules/sec-001.js";
+export type { Sec001Options } from "./rules/sec-001.js";
+
+export { tbl004 } from "./rules/tbl-004.js";
+export type { Tbl004Options } from "./rules/tbl-004.js";
+
+export { resolveRule } from "./registry.js";

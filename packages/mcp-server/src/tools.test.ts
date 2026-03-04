@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseDocument, runRules } from "@contextlint/core";
-import { resolveRule } from "./rules-registry.js";
+import { parseDocument, runRules, resolveRule } from "@contextlint/core";
 import { formatContentResults } from "./format.js";
 
 function lintContent(

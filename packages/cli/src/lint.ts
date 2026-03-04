@@ -1,10 +1,9 @@
 import { readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import { glob } from "glob";
-import { parseDocument, runRules } from "@contextlint/core";
+import { parseDocument, runRules, resolveRule } from "@contextlint/core";
 import type { LintMessage } from "@contextlint/core";
 import type { ContextlintConfig } from "./config.js";
-import { resolveRule } from "./rules-registry.js";
 
 export interface FileLintResult {
   filePath: string;

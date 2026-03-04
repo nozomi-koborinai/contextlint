@@ -16,9 +16,9 @@ describe("createConfig", () => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it("returns tbl003 (EN + JA) and tbl002 rules even without zones", () => {
+  it("returns tbl003 (EN + JA), tbl002, and tbl004 rules even without zones", () => {
     const config = createConfig(tmp);
-    expect(config.rules).toHaveLength(3);
+    expect(config.rules).toHaveLength(4);
     expect(config.rules[0]).toEqual({
       rule: "tbl003",
       options: { column: "Stability", values: ["draft", "review", "stable"] },
@@ -31,6 +31,10 @@ describe("createConfig", () => {
       rule: "tbl002",
       options: { columns: ["ID", "Stability", "安定度"] },
     });
+    expect(config.rules[3]).toEqual({
+      rule: "tbl004",
+      options: { column: "ID", pattern: "^[A-Z]+-[A-Z]+-\\d{2}$" },
+    });
   });
 
   it("detects zones and adds str001 rule", () => {
@@ -38,9 +42,9 @@ describe("createConfig", () => {
     mkdirSync(join(tmp, "docs", "zones", "infra"), { recursive: true });
 
     const config = createConfig(tmp);
-    expect(config.rules).toHaveLength(4);
+    expect(config.rules).toHaveLength(5);
 
-    const str001 = config.rules[3];
+    const str001 = config.rules[4];
     expect(str001.rule).toBe("str001");
     expect(str001.options).toEqual({
       files: [
@@ -57,7 +61,7 @@ describe("createConfig", () => {
     writeFileSync(join(tmp, "docs", "zones", "README.md"), "# Zones");
 
     const config = createConfig(tmp);
-    const str001 = config.rules[3];
+    const str001 = config.rules[4];
     expect(str001.options).toEqual({
       files: [
         "docs/zones/valid-zone/overview.md",
@@ -71,7 +75,7 @@ describe("createConfig", () => {
     mkdirSync(join(tmp, "docs", "zones", "alpha"), { recursive: true });
 
     const config = createConfig(tmp);
-    const str001 = config.rules[3];
+    const str001 = config.rules[4];
     const files = (str001.options as { files: string[] }).files;
     expect(files[0]).toContain("alpha");
     expect(files[2]).toContain("zebra");

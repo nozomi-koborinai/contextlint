@@ -29,6 +29,11 @@ export function createConfig(cwd: string): PresetConfig {
       rule: "tbl002",
       options: { columns: ["ID", "Stability", "安定度"] },
     },
+    // ID format validation
+    {
+      rule: "tbl004",
+      options: { column: "ID", pattern: "^[A-Z]+-[A-Z]+-\\d{2}$" },
+    },
   ];
 
   if (zones.length > 0) {

@@ -4,10 +4,9 @@ import { readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { parseDocument, runRules } from "@contextlint/core";
+import { parseDocument, runRules, resolveRule } from "@contextlint/core";
 import { glob } from "glob";
 import * as z from "zod/v4";
-import { resolveRule } from "./rules-registry.js";
 import { loadPreset } from "./preset.js";
 import {
   formatContentResults,

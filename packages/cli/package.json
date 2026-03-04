@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@contextlint/core": "workspace:*",
-    "commander": "^13.0.0"
+    "commander": "^14.0.0"
   },
   "license": "MIT"
 }

@@ -31,4 +31,7 @@ export type { Tbl004Options } from "./rules/tbl-004.js";
 export { tbl006 } from "./rules/tbl-006.js";
 export type { Tbl006Options } from "./rules/tbl-006.js";
 
+export { ref002 } from "./rules/ref-002.js";
+export type { Ref002Options } from "./rules/ref-002.js";
+
 export { resolveRule } from "./registry.js";

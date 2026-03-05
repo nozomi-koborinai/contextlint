@@ -1,5 +1,5 @@
 export { parseDocument } from "./parser.js";
-export type { ParsedTable, ParsedDocument } from "./parser.js";
+export type { ParsedLink, ParsedTable, ParsedDocument } from "./parser.js";
 
 export { runRules } from "./rule.js";
 export type {
@@ -30,6 +30,8 @@ export type { Tbl004Options } from "./rules/tbl-004.js";
 
 export { tbl006 } from "./rules/tbl-006.js";
 export type { Tbl006Options } from "./rules/tbl-006.js";
+
+export { ref001 } from "./rules/ref-001.js";
 
 export { ref002 } from "./rules/ref-002.js";
 export type { Ref002Options } from "./rules/ref-002.js";

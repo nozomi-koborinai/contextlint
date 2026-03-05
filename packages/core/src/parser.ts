@@ -2,7 +2,7 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import { visit } from "unist-util-visit";
-import type { Heading, Table, TableRow, Text } from "mdast";
+import type { Definition, Heading, Link, Table, TableRow, Text } from "mdast";
 import type { Node } from "unist";
 
 export interface ParsedTable {
@@ -12,9 +12,15 @@ export interface ParsedTable {
   rows: Record<string, string>[];
 }
 
+export interface ParsedLink {
+  url: string;
+  line: number;
+}
+
 export interface ParsedDocument {
   tables: ParsedTable[];
   sections: string[];
+  links: ParsedLink[];
   content: string;
 }
 
@@ -37,6 +43,7 @@ export function parseDocument(content: string): ParsedDocument {
 
   const headings: { text: string; line: number }[] = [];
   const tables: ParsedTable[] = [];
+  const links: ParsedLink[] = [];
 
   visit(tree, "heading", (node: Heading) => {
     headings.push({
@@ -74,9 +81,23 @@ export function parseDocument(content: string): ParsedDocument {
     tables.push({ line: tableLine, section, headers, rows });
   });
 
+  // Collect relative links (inline and reference-style)
+  visit(tree, "link", (node: Link) => {
+    if (!node.url.startsWith("http") && !node.url.startsWith("#")) {
+      links.push({ url: node.url, line: node.position?.start.line ?? 0 });
+    }
+  });
+
+  visit(tree, "definition", (node: Definition) => {
+    if (!node.url.startsWith("http") && !node.url.startsWith("#")) {
+      links.push({ url: node.url, line: node.position?.start.line ?? 0 });
+    }
+  });
+
   return {
     tables,
     sections: headings.map((h) => h.text),
+    links,
     content,
   };
 }

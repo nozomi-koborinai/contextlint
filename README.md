@@ -39,6 +39,63 @@ contextlint focuses on **content semantics and cross-file integrity**. For Markd
 contextlint --config contextlint.config.json "docs/**/*.md"
 ```
 
+Example `contextlint.config.json`:
+
+```jsonc
+{
+  "rules": [
+    // TBL-001: Required columns must exist in tables
+    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"] } },
+
+    // TBL-002: Key columns must not have empty cells
+    { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
+
+    // TBL-003: Column values must be from an allowed set
+    { "rule": "tbl003", "options": { "column": "Status", "values": ["draft", "review", "stable"] } },
+
+    // TBL-004: Cell values must match a regex pattern
+    { "rule": "tbl004", "options": { "column": "ID", "pattern": "^[A-Z]+-[A-Z]+-\\d{2}$" } },
+
+    // TBL-006: IDs must be unique across all matched files
+    { "rule": "tbl006", "options": { "files": "**/requirements.md", "column": "ID" } },
+
+    // SEC-001: Required sections must exist in the document
+    { "rule": "sec001", "options": { "sections": ["Overview", "Requirements"], "files": "**/overview.md" } },
+
+    // STR-001: Required files must exist in the project
+    { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
+
+    // REF-001: Relative Markdown links must point to existing files
+    { "rule": "ref001" },
+
+    // REF-002: Defined IDs must be referenced; referenced IDs must exist
+    {
+      "rule": "ref002",
+      "options": {
+        "definitions": "**/requirements.md",
+        "references": ["**/design.md", "**/overview.md"],
+        "idColumn": "ID",
+        "idPattern": "^REQ-"
+      }
+    },
+
+    // REF-003: An item's stability must not exceed the stability of items it depends on
+    {
+      "rule": "ref003",
+      "options": {
+        "stabilityColumn": "Status",
+        "stabilityOrder": ["draft", "review", "stable"],
+        "definitions": "**/requirements.md",
+        "references": ["**/design.md"]
+      }
+    },
+
+    // REF-004: Cross-zone links must be declared in the zone's overview
+    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } }
+  ]
+}
+```
+
 ### With a preset
 
 Presets bundle rules so you don't need a config file in the target repository.

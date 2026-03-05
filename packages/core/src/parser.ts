@@ -15,6 +15,7 @@ export interface ParsedTable {
 export interface ParsedDocument {
   tables: ParsedTable[];
   sections: string[];
+  content: string;
 }
 
 function extractText(node: Node): string {
@@ -76,5 +77,6 @@ export function parseDocument(content: string): ParsedDocument {
   return {
     tables,
     sections: headings.map((h) => h.text),
+    content,
   };
 }

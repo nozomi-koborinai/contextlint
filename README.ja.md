@@ -1,24 +1,24 @@
 # contextlint
 
-構造化されたMarkdownドキュメントのためのルールベースのリンター。
+構造化された Markdown ドキュメントのためのルールベースのリンター。
 
 ## なぜ contextlint なのか？
 
-AI主導の開発が主流になりつつある現代、仕様書をまずMarkdownで書き、それを元にAIが実装を生成する「SDD（Spec Driven Development：仕様駆動開発）」のような手法が注目を集めています。プロジェクトがドキュメント駆動のワークフローを採用するにつれ、要件定義、設計の意思決定、API仕様、ADR（Architecture Decision Records：アーキテクチャ決定記録）、RFC（Request for Comments：コメント要請）など、互いに関連し合うMarkdownファイルの数は増大していきます。
+AI 主導の開発が主流になりつつある現代、仕様書をまず Markdown で書き、それを元に AI が実装を生成する「SDD（Spec Driven Development：仕様駆動開発）」のような手法が注目を集めています。プロジェクトがドキュメント駆動のワークフローを採用するにつれ、要件定義、設計の意思決定、API 仕様、ADR（Architecture Decision Records：アーキテクチャ決定記録）、RFC（Request for Comments：コメント要請）など、互いに関連し合う Markdown ファイルの数は増大していきます。
 
-これらのドキュメントは、互いに依存関係を持つグラフを形成します。あるIDが別のIDを参照し、ファイル間がリンクされ、ステータスの安定性が下流へと伝播していきます。このグラフが崩れたとき（要件の削除、IDのタイポ、セクションの欠落など）、その影響は表面化しにくいものです。また、LLM（大規模言語モデル）によるレビューは本質的に非決定的であるため、構造的な不整合を検出する手段をLLMだけに頼るには限界があります。
+これらのドキュメントは、互いに依存関係を持つグラフを形成します。ある ID が別の ID を参照し、ファイル間がリンクされ、ステータスの安定性が下流へと伝播していきます。このグラフが崩れたとき（要件の削除、IDのタイポ、セクションの欠落など）、その影響は表面化しにくいものです。また、LLM（大規模言語モデル）によるレビューは本質的に非決定的であるため、構造的な不整合を検出する手段を LLM だけに頼るには限界があります。
 
-contextlintは、構造化されたMarkdownに対して**決定論的な静的検証**を提供します。リンク切れ、重複ID、セクションの不足、構造上の問題を数秒でキャッチします。AIを使わないためコストはかからず、CI（継続的インテグレーション）との相性も抜群です。
+contextlint は、構造化された Markdown に対して **決定論的な静的検証** を提供します。リンク切れ、重複 ID、セクションの不足、構造上の問題を数秒でキャッチします。AI を使わないためコストはかからず、CI（継続的インテグレーション）との相性も抜群です。
 
-### contextlintがチェックすること（と、しないこと）
+### contextlint がチェックすること（と、しないこと）
 
-contextlintは**コンテンツの意味的な整合性**や**ファイル間の整合性**に特化しています。Markdownの構文、フォーマット、スタイルについては、contextlintと併せて[markdownlint](https://github.com/DavidAnson/markdownlint)を使用してください。これらは互いに補完し合う関係にあります。
+contextlintは **コンテンツの意味的な整合性** や **ファイル間の整合性** に特化しています。Markdown の構文、フォーマット、スタイルについては、contextlint と併せて [markdownlint](https://github.com/DavidAnson/markdownlint) を使用してください。これらは互いに補完し合う関係にあります。
 
 | 検証ドメイン | ツール |
 |--------|------|
 | テーブルのフォーマット、見出しのスタイル、行の長さ | markdownlint |
 | テーブルの内容（ID、必須カラム、値の検証） | contextlint |
-| Markdownの構文とスタイル | markdownlint |
+| Markdown の構文とスタイル | markdownlint |
 | ファイルをまたぐ参照、トレーサビリティ、リンクの整合性 | contextlint |
 | セクションの網羅性、ファイル構造 | contextlint |
 
@@ -38,10 +38,10 @@ npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
 
 | パッケージ | 説明 |
 |---------|-------------|
-| `@contextlint/core` | ルールエンジンとMarkdownパーサー |
-| `@contextlint/cli` | CLIエントリーポイント（`contextlint`コマンド） |
-| `@contextlint/mcp-server` | AIツール連携用のMCPサーバー |
-| `@contextlint/preset-dna` | [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template)用のプリセットルール |
+| `@contextlint/core` | ルールエンジンと Markdown パーサー |
+| `@contextlint/cli` | CLI エントリーポイント（`contextlint`コマンド） |
+| `@contextlint/mcp-server` | AI ツール連携用の MCP サーバー |
+| `@contextlint/preset-dna` | [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) 用のプリセットルール |
 
 ## 使い方
 
@@ -77,10 +77,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // STR-001: プロジェクト内に必須ファイルが存在すること
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
-    // REF-001: 相対パスのMarkdownリンクが実在するファイルを指していること
+    // REF-001: 相対パスの Markdown リンクが実在するファイルを指していること
     { "rule": "ref001" },
 
-    // REF-002: 定義されたIDが参照されていること、また参照されているIDが実在すること
+    // REF-002: 定義された ID が参照されていること、また参照されている ID が実在すること
     {
       "rule": "ref002",
       "options": {
@@ -120,7 +120,7 @@ contextlint --preset dna --cwd /path/to/project "docs/**/*.md"
 
 | プリセット | 説明 |
 |--------|-------------|
-| `dna` | [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template)プロジェクトのヘルスチェック用 |
+| `dna` | [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) プロジェクトのヘルスチェック用 |
 
 ### CI（GitHub Actions）での利用
 
@@ -130,7 +130,7 @@ contextlint --preset dna --cwd /path/to/project "docs/**/*.md"
 
 ### MCPサーバーとして利用
 
-contextlintは[MCP](https://modelcontextprotocol.io/)（Model Context Protocol）サーバーとして動作し、ClaudeやCursorなどのAIツールが対話中にMarkdownドキュメントをチェックできるようになります。
+contextlint は [MCP](https://modelcontextprotocol.io/)（Model Context Protocol）サーバーとして動作し、Claude や Cursor などの AI ツールが対話中に Markdown ドキュメントをチェックできるようになります。
 
 ```bash
 npm install -D @contextlint/mcp-server
@@ -153,7 +153,7 @@ npm install -D @contextlint/mcp-server
 
 | ツール | 説明 |
 |------|-------------|
-| `lint` | 指定されたルールでMarkdownコンテンツを直接チェックする |
+| `lint` | 指定されたルールで Markdown コンテンツを直接チェックする |
 | `lint-files` | 設定ファイルやプリセットを使用して、パターンに一致するファイルをチェックする |
 
 ## ルール詳細
@@ -166,7 +166,7 @@ npm install -D @contextlint/mcp-server
 | TBL-002 | 主要なカラムに空のセルがないこと | `columns` |
 | TBL-003 | カラムの値が指定のセットに含まれること | `column`, `values` |
 | TBL-004 | セルの値が正規表現にマッチすること | `column`, `pattern` |
-| TBL-006 | 指定ファイル間でIDがユニークであること | `files`, `column`, `idPattern` |
+| TBL-006 | 指定ファイル間で ID がユニークであること | `files`, `column`, `idPattern` |
 
 ### セクション / 構造に関するルール
 
@@ -179,8 +179,8 @@ npm install -D @contextlint/mcp-server
 
 | ID | 説明 | 設定項目 |
 |----|-------------|--------|
-| REF-001 | Markdownのリンク先が実在すること | — |
-| REF-002 | IDの定義と参照の整合性が取れていること | `definitions`, `references`, `idColumn`, `idPattern` |
+| REF-001 | Markdown のリンク先が実在すること | — |
+| REF-002 | ID の定義と参照の整合性が取れていること | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | ゾーン間リンクが概要ファイルで宣言されていること | `zonesDir`, `dependencySection` |
 
@@ -188,10 +188,10 @@ npm install -D @contextlint/mcp-server
 
 これらのルールは汎用的に設計されています。
 
-- **SDD（仕様駆動開発）** — 仕様書が既存の要件を参照しているか、ファイル間でIDに矛盾がないかを検証する
-- **ADR（アーキテクチャ決定記録）** — すべてのADRに必須セクション（Status、Context、Decision）が含まれているか、ステータスの遷移が正しいかをチェックする
-- **RFC（コメント要請）** — RFCドキュメントに必要な見出しが含まれているか、提案間の相互参照が壊れていないかを確認する
-- **あらゆる構造化Markdownプロジェクト** — CIでリンク切れ、重複ID、ファイルの不足などを自動的に検出する
+- **SDD（仕様駆動開発）** — 仕様書が既存の要件を参照しているか、ファイル間で ID に矛盾がないかを検証する
+- **ADR（アーキテクチャ決定記録）** — すべての ADR に必須セクション（Status、Context、Decision）が含まれているか、ステータスの遷移が正しいかをチェックする
+- **RFC（コメント要請）** — RFC ドキュメントに必要な見出しが含まれているか、提案間の相互参照が壊れていないかを確認する
+- **あらゆる構造化 Markdown プロジェクト** — CI でリンク切れ、重複 ID、ファイルの不足などを自動的に検出する
 
 ## ライセンス
 

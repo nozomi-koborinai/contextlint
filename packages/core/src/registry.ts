@@ -20,7 +20,7 @@ const registry: Record<string, RuleFactory> = {
   str001: (options) =>
     str001(options as { files: string[] }),
   sec001: (options) =>
-    sec001(options as { sections: string[] }),
+    sec001(options as { sections: string[]; files?: string }),
 };
 
 export function resolveRule(

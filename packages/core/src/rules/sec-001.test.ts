@@ -39,4 +39,45 @@ describe("SEC-001", () => {
     const messages = runRules([rule], doc, "test.md");
     expect(messages).toHaveLength(1);
   });
+
+  it("skips files not matching the files pattern", () => {
+    const doc = parseDocument("# Unrelated");
+    const rule = sec001({
+      sections: ["Overview", "Requirements"],
+      files: "docs/**/table_*.md",
+    });
+    const messages = runRules([rule], doc, "docs/zones/auth/requirements.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("checks files matching the files pattern", () => {
+    const doc = parseDocument("# Unrelated");
+    const rule = sec001({
+      sections: ["Overview", "Requirements"],
+      files: "docs/**/table_*.md",
+    });
+    const messages = runRules([rule], doc, "docs/zones/auth/table_users.md");
+    expect(messages).toHaveLength(2);
+  });
+
+  it("checks files matching the files pattern with absolute path", () => {
+    const doc = parseDocument("# Unrelated");
+    const rule = sec001({
+      sections: ["Overview"],
+      files: "docs/**/table_*.md",
+    });
+    const messages = runRules(
+      [rule],
+      doc,
+      "/Users/someone/project/docs/zones/auth/table_users.md",
+    );
+    expect(messages).toHaveLength(1);
+  });
+
+  it("checks all files when files option is not set", () => {
+    const doc = parseDocument("# Unrelated");
+    const rule = sec001({ sections: ["Overview"] });
+    const messages = runRules([rule], doc, "anything.md");
+    expect(messages).toHaveLength(1);
+  });
 });

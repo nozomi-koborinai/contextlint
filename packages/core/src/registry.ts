@@ -5,6 +5,7 @@ import { tbl003 } from "./rules/tbl-003.js";
 import { tbl004 } from "./rules/tbl-004.js";
 import { str001 } from "./rules/str-001.js";
 import { sec001 } from "./rules/sec-001.js";
+import { tbl006 } from "./rules/tbl-006.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -21,6 +22,8 @@ const registry: Record<string, RuleFactory> = {
     str001(options as { files: string[] }),
   sec001: (options) =>
     sec001(options as { sections: string[]; files?: string }),
+  tbl006: (options) =>
+    tbl006(options as { files: string; column: string; idPattern?: string }),
 };
 
 export function resolveRule(

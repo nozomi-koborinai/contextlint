@@ -13,6 +13,7 @@ export interface RuleContext {
   document: ParsedDocument;
   filePath: string;
   projectFiles?: string[];
+  documents?: Map<string, ParsedDocument>;
   report: (msg: Omit<LintMessage, "ruleId">) => void;
 }
 
@@ -26,6 +27,7 @@ export interface Rule {
 
 export interface RunOptions {
   projectFiles?: string[];
+  documents?: Map<string, ParsedDocument>;
 }
 
 export function runRules(
@@ -41,6 +43,7 @@ export function runRules(
       document,
       filePath,
       projectFiles: options?.projectFiles,
+      documents: options?.documents,
       report: (msg) => {
         messages.push({ ruleId: rule.id, ...msg });
       },

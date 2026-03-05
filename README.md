@@ -22,6 +22,18 @@ contextlint focuses on **content semantics and cross-file integrity**. For Markd
 | Cross-file references, traceability, link integrity | contextlint |
 | Section coverage, file structure | contextlint |
 
+## Installation
+
+```bash
+npm install -D @contextlint/cli
+```
+
+Or run without installing:
+
+```bash
+npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+```
+
 ## Packages
 
 | Package | Description |
@@ -109,6 +121,40 @@ Available presets:
 | Preset | Description |
 |--------|-------------|
 | `dna` | Health check for [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) projects |
+
+### In CI (GitHub Actions)
+
+```yaml
+- run: npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+```
+
+### As an MCP server
+
+contextlint can run as an [MCP](https://modelcontextprotocol.io/) server, allowing AI tools like Claude and Cursor to lint Markdown documents during a conversation.
+
+```bash
+npm install -D @contextlint/mcp-server
+```
+
+Add to your `mcp.json` (e.g. `.cursor/mcp.json` or `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "contextlint": {
+      "command": "npx",
+      "args": ["@contextlint/mcp-server"]
+    }
+  }
+}
+```
+
+Available tools:
+
+| Tool | Description |
+|------|-------------|
+| `lint` | Lint Markdown content directly with specified rules |
+| `lint-files` | Lint files matching glob patterns using a config file or preset |
 
 ## Rules
 

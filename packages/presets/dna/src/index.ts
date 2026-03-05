@@ -45,6 +45,12 @@ export function createConfig(cwd: string): PresetConfig {
       rule: "str001",
       options: { files },
     });
+
+    // Cross-zone dependency declaration check
+    rules.push({
+      rule: "ref004",
+      options: { zonesDir: "docs/zones" },
+    });
   }
 
   return { rules };

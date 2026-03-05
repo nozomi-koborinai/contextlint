@@ -42,7 +42,7 @@ describe("createConfig", () => {
     mkdirSync(join(tmp, "docs", "zones", "infra"), { recursive: true });
 
     const config = createConfig(tmp);
-    expect(config.rules).toHaveLength(5);
+    expect(config.rules).toHaveLength(6);
 
     const str001 = config.rules[4];
     expect(str001.rule).toBe("str001");
@@ -54,6 +54,10 @@ describe("createConfig", () => {
         "docs/zones/infra/requirements.md",
       ],
     });
+
+    const ref004 = config.rules[5];
+    expect(ref004.rule).toBe("ref004");
+    expect(ref004.options).toEqual({ zonesDir: "docs/zones" });
   });
 
   it("ignores files in zones directory (only directories)", () => {

@@ -51,7 +51,7 @@ export async function lintFiles(
   // Run document-scoped rules per file
   for (const filePath of files) {
     const document = documents.get(filePath)!;
-    const messages = runRules(docRules, document, filePath);
+    const messages = runRules(docRules, document, filePath, { documents });
     results.push({ filePath, messages });
   }
 

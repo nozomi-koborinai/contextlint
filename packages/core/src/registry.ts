@@ -8,6 +8,7 @@ import { sec001 } from "./rules/sec-001.js";
 import { tbl006 } from "./rules/tbl-006.js";
 import { ref002 } from "./rules/ref-002.js";
 import { ref003 } from "./rules/ref-003.js";
+import { ref001 } from "./rules/ref-001.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -35,6 +36,7 @@ const registry: Record<string, RuleFactory> = {
         idPattern: string;
       },
     ),
+  ref001: () => ref001(),
   ref003: (options) =>
     ref003(
       options as {

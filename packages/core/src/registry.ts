@@ -7,6 +7,7 @@ import { str001 } from "./rules/str-001.js";
 import { sec001 } from "./rules/sec-001.js";
 import { tbl006 } from "./rules/tbl-006.js";
 import { ref002 } from "./rules/ref-002.js";
+import { ref003 } from "./rules/ref-003.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -32,6 +33,17 @@ const registry: Record<string, RuleFactory> = {
         references: string[];
         idColumn: string;
         idPattern: string;
+      },
+    ),
+  ref003: (options) =>
+    ref003(
+      options as {
+        stabilityColumn: string;
+        stabilityOrder: string[];
+        definitions: string;
+        references: string[];
+        idColumn?: string;
+        idPattern?: string;
       },
     ),
 };

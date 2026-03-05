@@ -28,4 +28,7 @@ export type { Sec001Options } from "./rules/sec-001.js";
 export { tbl004 } from "./rules/tbl-004.js";
 export type { Tbl004Options } from "./rules/tbl-004.js";
 
+export { tbl006 } from "./rules/tbl-006.js";
+export type { Tbl006Options } from "./rules/tbl-006.js";
+
 export { resolveRule } from "./registry.js";

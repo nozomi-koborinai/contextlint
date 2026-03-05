@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { relative } from "node:path";
 import { glob } from "glob";
 import { parseDocument, runRules, resolveRule } from "@contextlint/core";
-import type { LintMessage } from "@contextlint/core";
+import type { LintMessage, ParsedDocument } from "@contextlint/core";
 import type { ContextlintConfig } from "./config.js";
 
 export interface FileLintResult {
@@ -27,6 +27,13 @@ export async function lintFiles(
 
   const projectFiles = files.map((f) => relative(cwd, f));
 
+  // Parse all files upfront (shared by document and project rules)
+  const documents = new Map<string, ParsedDocument>();
+  for (const filePath of files) {
+    const content = readFileSync(filePath, "utf-8");
+    documents.set(filePath, parseDocument(content));
+  }
+
   const results: FileLintResult[] = [];
 
   // Run project-scoped rules once
@@ -34,6 +41,7 @@ export async function lintFiles(
     const emptyDoc = parseDocument("");
     const messages = runRules(projectRules, emptyDoc, "<project>", {
       projectFiles,
+      documents,
     });
     if (messages.length > 0) {
       results.push({ filePath: "<project>", messages });
@@ -42,8 +50,7 @@ export async function lintFiles(
 
   // Run document-scoped rules per file
   for (const filePath of files) {
-    const content = readFileSync(filePath, "utf-8");
-    const document = parseDocument(content);
+    const document = documents.get(filePath)!;
     const messages = runRules(docRules, document, filePath);
     results.push({ filePath, messages });
   }

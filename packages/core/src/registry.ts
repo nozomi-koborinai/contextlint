@@ -9,6 +9,7 @@ import { tbl006 } from "./rules/tbl-006.js";
 import { ref002 } from "./rules/ref-002.js";
 import { ref003 } from "./rules/ref-003.js";
 import { ref001 } from "./rules/ref-001.js";
+import { ref004 } from "./rules/ref-004.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -37,6 +38,13 @@ const registry: Record<string, RuleFactory> = {
       },
     ),
   ref001: () => ref001(),
+  ref004: (options) =>
+    ref004(
+      options as {
+        zonesDir: string;
+        dependencySection?: string;
+      },
+    ),
   ref003: (options) =>
     ref003(
       options as {

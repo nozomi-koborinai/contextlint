@@ -1,5 +1,7 @@
 # contextlint
 
+[日本語](README.ja.md)
+
 A rule-based linter for structured Markdown documents.
 
 ## Why contextlint?

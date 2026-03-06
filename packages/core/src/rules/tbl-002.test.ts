@@ -92,4 +92,43 @@ describe("TBL-002: empty cell check", () => {
     const messages = runRules([rule], doc, "docs/requirements.md");
     expect(messages).toHaveLength(1);
   });
+
+  it("reports empty cells in Japanese column names", () => {
+    const md = `
+| ID | 状態 | 担当者 |
+|----|------|--------|
+| 1  | 完了 |        |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl002({ columns: ["担当者"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("担当者");
+  });
+
+  it("reports empty cells in Korean column names", () => {
+    const md = `
+| ID | 상태 | 담당자 |
+|----|------|--------|
+| 1  | 완료 |        |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl002({ columns: ["담당자"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("담당자");
+  });
+
+  it("reports empty cells in Chinese column names", () => {
+    const md = `
+| ID | 状态 | 负责人 |
+|----|------|--------|
+| 1  | 完成 |        |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl002({ columns: ["负责人"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("负责人");
+  });
 });

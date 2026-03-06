@@ -74,4 +74,49 @@ describe("TBL-004", () => {
     const messages = runRules([rule], doc, "docs/requirements.md");
     expect(messages).toHaveLength(2);
   });
+
+  it("validates pattern in a Japanese column name", () => {
+    const md = `
+| 識別子 | 名前 |
+|--------|------|
+| REQ-01 | ログイン |
+| bad | 無効 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl004({ column: "識別子", pattern: "^REQ-\\d{2}$" });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("bad");
+    expect(messages[0].message).toContain("識別子");
+  });
+
+  it("validates pattern in a Korean column name", () => {
+    const md = `
+| 식별자 | 이름 |
+|--------|------|
+| REQ-01 | 로그인 |
+| bad | 잘못됨 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl004({ column: "식별자", pattern: "^REQ-\\d{2}$" });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("bad");
+    expect(messages[0].message).toContain("식별자");
+  });
+
+  it("validates pattern in a Chinese column name", () => {
+    const md = `
+| 标识符 | 名称 |
+|--------|------|
+| REQ-01 | 登录 |
+| bad | 无效 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl004({ column: "标识符", pattern: "^REQ-\\d{2}$" });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("bad");
+    expect(messages[0].message).toContain("标识符");
+  });
 });

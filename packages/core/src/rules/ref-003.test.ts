@@ -113,4 +113,30 @@ describe("REF-003", () => {
     const messages = runRules([rule], parseDocument(""), "<project>");
     expect(messages).toEqual([]);
   });
+
+  it("works with Korean stability column name", () => {
+    const messages = lint(
+      {
+        "docs/zones/auth/requirements.md":
+          "| ID | 안정성 |\n|---|---|\n| REQ-AUTH-01 | draft |",
+        "docs/zones/auth/table_users.md":
+          "| ID | Ref | 안정성 |\n|---|---|---|\n| TBL-01 | REQ-AUTH-01 | stable |",
+      },
+      { ...defaultOptions, stabilityColumn: "안정성" },
+    );
+    expect(messages).toHaveLength(1);
+  });
+
+  it("works with Chinese stability column name", () => {
+    const messages = lint(
+      {
+        "docs/zones/auth/requirements.md":
+          "| ID | 稳定性 |\n|---|---|\n| REQ-AUTH-01 | draft |",
+        "docs/zones/auth/table_users.md":
+          "| ID | Ref | 稳定性 |\n|---|---|---|\n| TBL-01 | REQ-AUTH-01 | stable |",
+      },
+      { ...defaultOptions, stabilityColumn: "稳定性" },
+    );
+    expect(messages).toHaveLength(1);
+  });
 });

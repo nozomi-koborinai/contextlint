@@ -96,4 +96,58 @@ describe("TBL-003: allowed values check", () => {
     expect(messages[0].message).toContain("不明");
     expect(messages[0].message).toContain("安定度");
   });
+
+  it("validates values in a Korean column name", () => {
+    const md = `
+| ID | 안정성 |
+|----|--------|
+| REQ-01 | 초안 |
+| REQ-02 | 확정 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "안정성", values: ["초안", "검토", "확정"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("reports invalid values in a Korean column name", () => {
+    const md = `
+| ID | 안정성 |
+|----|--------|
+| REQ-01 | 불명 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "안정성", values: ["초안", "검토", "확정"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("불명");
+    expect(messages[0].message).toContain("안정성");
+  });
+
+  it("validates values in a Chinese column name", () => {
+    const md = `
+| ID | 稳定性 |
+|----|--------|
+| REQ-01 | 草稿 |
+| REQ-02 | 稳定 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "稳定性", values: ["草稿", "审核", "稳定"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("reports invalid values in a Chinese column name", () => {
+    const md = `
+| ID | 稳定性 |
+|----|--------|
+| REQ-01 | 未知 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "稳定性", values: ["草稿", "审核", "稳定"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("未知");
+    expect(messages[0].message).toContain("稳定性");
+  });
 });

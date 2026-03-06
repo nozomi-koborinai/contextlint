@@ -79,4 +79,20 @@ Some paragraph text.
     const doc = parseDocument(md);
     expect(doc.tables[0].line).toBe(3);
   });
+
+  it("collects relative file links but skips URI schemes", () => {
+    const md = `
+[local](./other.md)
+[absolute](https://example.com)
+[email](mailto:user@example.com)
+[phone](tel:+1234567890)
+[data](data:text/plain;base64,abc)
+[anchor](#section)
+[relative](../docs/spec.md)
+`;
+    const doc = parseDocument(md);
+    expect(doc.links).toHaveLength(2);
+    expect(doc.links[0].url).toBe("./other.md");
+    expect(doc.links[1].url).toBe("../docs/spec.md");
+  });
 });

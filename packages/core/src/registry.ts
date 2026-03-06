@@ -37,7 +37,8 @@ const registry: Record<string, RuleFactory> = {
         idPattern: string;
       },
     ),
-  ref001: () => ref001(),
+  ref001: (options) =>
+    ref001(options as { exclude?: string[] } | undefined),
   ref004: (options) =>
     ref004(
       options as {

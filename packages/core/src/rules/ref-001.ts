@@ -1,7 +1,14 @@
 import { resolve, dirname } from "node:path";
+import picomatch from "picomatch";
 import type { Rule } from "../rule.js";
 
-export function ref001(): Rule {
+export interface Ref001Options {
+  exclude?: string[];
+}
+
+export function ref001(options?: Ref001Options): Rule {
+  const excludeMatchers = options?.exclude?.map((p) => picomatch(`**/${p}`)) ?? [];
+
   return {
     id: "REF-001",
     description: "All relative Markdown links must point to files that exist",
@@ -17,6 +24,12 @@ export function ref001(): Rule {
         // Strip anchor fragment (e.g. ./file.md#section -> ./file.md)
         const urlWithoutAnchor = link.url.split("#")[0];
         if (!urlWithoutAnchor) {
+          continue;
+        }
+
+        // Strip leading ../ or ./ to match against exclude patterns
+        const stripped = urlWithoutAnchor.replace(/^(\.\.?\/)+/, "");
+        if (excludeMatchers.some((m) => m(stripped))) {
           continue;
         }
 

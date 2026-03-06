@@ -80,6 +80,53 @@ Some paragraph text.
     expect(doc.tables[0].line).toBe(3);
   });
 
+  it("parses table with Japanese headers and cell values", () => {
+    const md = `
+## 要件定義
+
+| ID | 要件 | 安定度 | 備考 |
+|----|------|--------|------|
+| REQ-AUTH-01 | ユーザー認証 | draft | |
+| REQ-AUTH-02 | パスワードリセット | review | 要確認 |
+`;
+    const doc = parseDocument(md);
+    expect(doc.tables).toHaveLength(1);
+    expect(doc.tables[0].headers).toEqual(["ID", "要件", "安定度", "備考"]);
+    expect(doc.tables[0].rows[0]["要件"]).toBe("ユーザー認証");
+    expect(doc.tables[0].rows[1]["安定度"]).toBe("review");
+    expect(doc.tables[0].section).toBe("要件定義");
+  });
+
+  it("parses table with Korean headers and cell values", () => {
+    const md = `
+## 요구사항
+
+| ID | 요구사항 | 안정도 |
+|----|----------|--------|
+| REQ-01 | 사용자 인증 | draft |
+`;
+    const doc = parseDocument(md);
+    expect(doc.tables).toHaveLength(1);
+    expect(doc.tables[0].headers).toEqual(["ID", "요구사항", "안정도"]);
+    expect(doc.tables[0].rows[0]["요구사항"]).toBe("사용자 인증");
+    expect(doc.tables[0].section).toBe("요구사항");
+  });
+
+  it("parses table with Chinese headers and cell values", () => {
+    const md = `
+## 需求定义
+
+| ID | 需求 | 稳定性 |
+|----|------|--------|
+| REQ-01 | 用户认证 | draft |
+`;
+    const doc = parseDocument(md);
+    expect(doc.tables).toHaveLength(1);
+    expect(doc.tables[0].headers).toEqual(["ID", "需求", "稳定性"]);
+    expect(doc.tables[0].rows[0]["需求"]).toBe("用户认证");
+    expect(doc.tables[0].section).toBe("需求定义");
+  });
+
   it("collects relative file links but skips URI schemes", () => {
     const md = `
 [local](./other.md)

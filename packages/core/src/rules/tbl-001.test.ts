@@ -194,4 +194,29 @@ Here is some additional explanation.
     // File doesn't match -> skips entirely
     expect(runRules([rule], doc, "docs/overview.md")).toHaveLength(0);
   });
+
+  it("validates required columns with Japanese column names", () => {
+    const md = `
+| ID | 要件 | 安定度 |
+|----|------|--------|
+| REQ-01 | ユーザー認証 | draft |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID", "安定度"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("reports missing Japanese column names", () => {
+    const md = `
+| ID | 要件 |
+|----|------|
+| REQ-01 | ユーザー認証 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID", "安定度"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("安定度");
+  });
 });

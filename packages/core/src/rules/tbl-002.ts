@@ -1,15 +1,23 @@
+import picomatch from "picomatch";
 import type { Rule } from "../rule.js";
 
 export interface Tbl002Options {
   columns?: string[];
+  files?: string;
 }
 
 export function tbl002(options?: Tbl002Options): Rule {
+  const isMatch = options?.files ? picomatch(`**/${options.files}`) : null;
+
   return {
     id: "TBL-002",
     description: "Table cells must not be empty",
     severity: "warning",
     check: (context) => {
+      if (isMatch && !isMatch(context.filePath)) {
+        return;
+      }
+
       for (const table of context.document.tables) {
         const targetColumns =
           options?.columns?.filter((c) => table.headers.includes(c)) ??

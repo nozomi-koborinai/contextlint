@@ -68,4 +68,28 @@ describe("TBL-002: empty cell check", () => {
     const messages = runRules([rule], doc, "test.md");
     expect(messages).toHaveLength(0);
   });
+
+  it("skips files not matching the files pattern", () => {
+    const md = `
+| ID | Status |
+|----|--------|
+| 1  |        |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl002({ columns: ["Status"], files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/overview.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("checks files matching the files pattern", () => {
+    const md = `
+| ID | Status |
+|----|--------|
+| 1  |        |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl002({ columns: ["Status"], files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/requirements.md");
+    expect(messages).toHaveLength(1);
+  });
 });

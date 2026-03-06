@@ -3,7 +3,6 @@
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { loadConfig } from "./config.js";
-import { loadPreset } from "./preset.js";
 import { lintFiles } from "./lint.js";
 import { formatResults } from "./format.js";
 
@@ -17,27 +16,17 @@ program
     "--config <path>",
     "Path to config file",
   )
-  .option("--preset <name>", "Use a built-in preset (e.g. dna)")
   .option("--cwd <path>", "Working directory", process.cwd())
   .action(
     async (
       files: string[],
-      opts: { config?: string; preset?: string; cwd: string },
+      opts: { config?: string; cwd: string },
     ) => {
       const cwd = resolve(opts.cwd);
 
-      if (opts.config && opts.preset) {
-        console.error("Error: --config and --preset cannot be used together");
-        process.exit(2);
-      }
-
       let config;
       try {
-        if (opts.preset) {
-          config = loadPreset(opts.preset, cwd);
-        } else {
-          config = loadConfig(opts.config ?? "contextlint.config.json", cwd);
-        }
+        config = loadConfig(opts.config ?? "contextlint.config.json", cwd);
       } catch (err) {
         console.error(
           `Error: ${err instanceof Error ? err.message : String(err)}`,

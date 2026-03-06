@@ -43,8 +43,6 @@ npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
 | `@contextlint/core` | Rule engine and Markdown parser |
 | `@contextlint/cli` | CLI entry point (`contextlint` command) |
 | `@contextlint/mcp-server` | MCP server for AI tool integration |
-| `@contextlint/preset-dna` | Preset rules for [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) |
-
 ## Usage
 
 ### With a config file
@@ -110,20 +108,6 @@ Example `contextlint.config.json`:
 }
 ```
 
-### With a preset
-
-Presets bundle rules so you don't need a config file in the target repository.
-
-```bash
-contextlint --preset dna --cwd /path/to/project "docs/**/*.md"
-```
-
-Available presets:
-
-| Preset | Description |
-|--------|-------------|
-| `dna` | Health check for [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) projects |
-
 ### In CI (GitHub Actions)
 
 ```yaml
@@ -156,7 +140,7 @@ Available tools:
 | Tool | Description |
 |------|-------------|
 | `lint` | Lint Markdown content directly with specified rules |
-| `lint-files` | Lint files matching glob patterns using a config file or preset |
+| `lint-files` | Lint files matching glob patterns using a config file |
 
 ## Rules
 

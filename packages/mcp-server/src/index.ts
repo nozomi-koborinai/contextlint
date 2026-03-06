@@ -7,7 +7,6 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { parseDocument, runRules, resolveRule } from "@contextlint/core";
 import { glob } from "glob";
 import * as z from "zod/v4";
-import { loadPreset } from "./preset.js";
 import {
   formatContentResults,
   formatFileResults,
@@ -70,80 +69,58 @@ server.tool(
       .string()
       .optional()
       .describe('Config file path (default: "contextlint.config.json")'),
-    preset: z
-      .string()
-      .optional()
-      .describe('Use a built-in preset (e.g. "dna")'),
     cwd: z
       .string()
       .optional()
       .describe('Working directory (default: ".")'),
   },
-  async ({ patterns, configPath, preset, cwd }) => {
+  async ({ patterns, configPath, cwd }) => {
     const resolvedCwd = resolve(cwd ?? ".");
     const resolvedPatterns = patterns ?? ["**/*.md"];
 
-    if (configPath && preset) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: "Error: configPath and preset cannot be used together",
-          },
-        ],
-        isError: true,
-      };
-    }
-
     try {
+      const resolvedConfigPath = configPath ?? "contextlint.config.json";
+      const fullConfigPath = resolve(resolvedCwd, resolvedConfigPath);
+      let raw: string;
+      try {
+        raw = readFileSync(fullConfigPath, "utf-8");
+      } catch {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: Cannot read config file: ${fullConfigPath}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
       let config: { rules: { rule: string; options?: Record<string, unknown> }[] };
+      try {
+        config = JSON.parse(raw);
+      } catch {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: Invalid JSON in config file: ${fullConfigPath}`,
+            },
+          ],
+          isError: true,
+        };
+      }
 
-      if (preset) {
-        config = loadPreset(preset, resolvedCwd);
-      } else {
-        // Load config from file
-        const resolvedConfigPath = configPath ?? "contextlint.config.json";
-        const fullConfigPath = resolve(resolvedCwd, resolvedConfigPath);
-        let raw: string;
-        try {
-          raw = readFileSync(fullConfigPath, "utf-8");
-        } catch {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Error: Cannot read config file: ${fullConfigPath}`,
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        try {
-          config = JSON.parse(raw);
-        } catch {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Error: Invalid JSON in config file: ${fullConfigPath}`,
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        if (!config.rules || !Array.isArray(config.rules)) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Error: Config must have a "rules" array: ${fullConfigPath}`,
-              },
-            ],
-            isError: true,
-          };
-        }
+      if (!config.rules || !Array.isArray(config.rules)) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: Config must have a "rules" array: ${fullConfigPath}`,
+            },
+          ],
+          isError: true,
+        };
       }
 
       const rules = config.rules.map((entry) =>

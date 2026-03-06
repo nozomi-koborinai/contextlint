@@ -82,14 +82,18 @@ export function parseDocument(content: string): ParsedDocument {
   });
 
   // Collect relative links (inline and reference-style)
+  // Skip absolute URLs, anchors, and non-file URI schemes (mailto:, tel:, data:, etc.)
+  const isRelativeFileLink = (url: string) =>
+    !url.startsWith("#") && !/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url);
+
   visit(tree, "link", (node: Link) => {
-    if (!node.url.startsWith("http") && !node.url.startsWith("#")) {
+    if (isRelativeFileLink(node.url)) {
       links.push({ url: node.url, line: node.position?.start.line ?? 0 });
     }
   });
 
   visit(tree, "definition", (node: Definition) => {
-    if (!node.url.startsWith("http") && !node.url.startsWith("#")) {
+    if (isRelativeFileLink(node.url)) {
       links.push({ url: node.url, line: node.position?.start.line ?? 0 });
     }
   });

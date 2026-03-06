@@ -3,13 +3,15 @@ import { parseDocument, runRules } from "../index.js";
 import type { ParsedDocument } from "../index.js";
 import { ref001 } from "./ref-001.js";
 
-function lint(currentFile: string, filesMap: Record<string, string>) {
+import type { Ref001Options } from "./ref-001.js";
+
+function lint(currentFile: string, filesMap: Record<string, string>, options?: Ref001Options) {
   const documents = new Map<string, ParsedDocument>();
   for (const [path, content] of Object.entries(filesMap)) {
     documents.set(path, parseDocument(content));
   }
 
-  const rule = ref001();
+  const rule = ref001(options);
   const doc = documents.get(currentFile)!;
   return runRules([rule], doc, currentFile, { documents });
 }
@@ -95,5 +97,30 @@ describe("REF-001", () => {
     const doc = parseDocument("[link](./file.md)");
     const messages = runRules([rule], doc, "/project/test.md");
     expect(messages).toEqual([]);
+  });
+
+  it("skips links matching exclude patterns", () => {
+    const messages = lint("/project/docs/overview.md", {
+      "/project/docs/overview.md":
+        "[ref repo](../../_references/other-repo/docs/spec.md) and [local](./missing.md)",
+    }, { exclude: ["_references/**"] });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("./missing.md");
+  });
+
+  it("supports multiple exclude patterns", () => {
+    const messages = lint("/project/docs/overview.md", {
+      "/project/docs/overview.md":
+        "[ref](../../_references/spec.md) and [prisma](../../../prisma/seed/setup.ts)",
+    }, { exclude: ["_references/**", "prisma/**"] });
+    expect(messages).toHaveLength(0);
+  });
+
+  it("checks all links when exclude is not set", () => {
+    const messages = lint("/project/docs/overview.md", {
+      "/project/docs/overview.md":
+        "[ref](../../_references/spec.md)",
+    });
+    expect(messages).toHaveLength(1);
   });
 });

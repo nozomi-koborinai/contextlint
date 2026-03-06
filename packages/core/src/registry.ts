@@ -15,7 +15,7 @@ type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
 const registry: Record<string, RuleFactory> = {
   tbl001: (options) =>
-    tbl001(options as { requiredColumns: string[]; files?: string }),
+    tbl001(options as { requiredColumns: string[]; section?: string; files?: string }),
   tbl002: (options) =>
     tbl002(options as { columns?: string[]; files?: string } | undefined),
   tbl003: (options) =>

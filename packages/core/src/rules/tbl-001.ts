@@ -3,6 +3,7 @@ import type { Rule } from "../rule.js";
 
 export interface Tbl001Options {
   requiredColumns: string[];
+  section?: string;
   files?: string;
 }
 
@@ -19,6 +20,10 @@ export function tbl001(options: Tbl001Options): Rule {
       }
 
       for (const table of context.document.tables) {
+        if (options.section && !table.section?.includes(options.section)) {
+          continue;
+        }
+
         for (const col of options.requiredColumns) {
           if (!table.headers.includes(col)) {
             context.report({

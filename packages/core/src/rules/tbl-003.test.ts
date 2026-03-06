@@ -69,4 +69,31 @@ describe("TBL-003: allowed values check", () => {
     const messages = runRules([rule], doc, "docs/requirements.md");
     expect(messages).toHaveLength(1);
   });
+
+  it("validates values in a Japanese column name", () => {
+    const md = `
+| ID | 安定度 |
+|----|--------|
+| REQ-01 | draft |
+| REQ-02 | stable |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "安定度", values: ["draft", "review", "stable"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("reports invalid values in a Japanese column name", () => {
+    const md = `
+| ID | 安定度 |
+|----|--------|
+| REQ-01 | 不明 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "安定度", values: ["draft", "review", "stable"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("不明");
+    expect(messages[0].message).toContain("安定度");
+  });
 });

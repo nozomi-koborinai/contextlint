@@ -57,16 +57,16 @@ contextlint --config contextlint.config.json "docs/**/*.md"
 {
   "rules": [
     // TBL-001: テーブルに必須カラムが存在すること
-    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"] } },
+    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },
 
     // TBL-002: キーとなるカラムに空のセルがないこと
-    { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
+    { "rule": "tbl002", "options": { "columns": ["ID", "Status"], "files": "**/requirements.md" } },
 
     // TBL-003: カラムの値が許可されたセット内にあること
-    { "rule": "tbl003", "options": { "column": "Status", "values": ["draft", "review", "stable"] } },
+    { "rule": "tbl003", "options": { "column": "Status", "values": ["draft", "review", "stable"], "files": "**/requirements.md" } },
 
     // TBL-004: セルの値が正規表現パターンにマッチすること
-    { "rule": "tbl004", "options": { "column": "ID", "pattern": "^[A-Z]+-[A-Z]+-\\d{2}$" } },
+    { "rule": "tbl004", "options": { "column": "ID", "pattern": "^[A-Z]+-[A-Z]+-\\d{2}$", "files": "**/requirements.md" } },
 
     // TBL-006: 指定された全ファイル間でIDがユニーク（一意）であること
     { "rule": "tbl006", "options": { "files": "**/requirements.md", "column": "ID" } },
@@ -78,7 +78,7 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
     // REF-001: 相対パスの Markdown リンクが実在するファイルを指していること
-    { "rule": "ref001" },
+    { "rule": "ref001", "options": { "exclude": ["_references/**"] } },
 
     // REF-002: 定義された ID が参照されていること、また参照されている ID が実在すること
     {
@@ -162,10 +162,10 @@ npm install -D @contextlint/mcp-server
 
 | ID | 説明 | 設定項目 |
 |----|-------------|--------|
-| TBL-001 | テーブルに必須カラムが存在すること | `requiredColumns` |
-| TBL-002 | 主要なカラムに空のセルがないこと | `columns` |
-| TBL-003 | カラムの値が指定のセットに含まれること | `column`, `values` |
-| TBL-004 | セルの値が正規表現にマッチすること | `column`, `pattern` |
+| TBL-001 | テーブルに必須カラムが存在すること | `requiredColumns`, `files`（任意） |
+| TBL-002 | 主要なカラムに空のセルがないこと | `columns`, `files`（任意） |
+| TBL-003 | カラムの値が指定のセットに含まれること | `column`, `values`, `files`（任意） |
+| TBL-004 | セルの値が正規表現にマッチすること | `column`, `pattern`, `files`（任意） |
 | TBL-006 | 指定ファイル間で ID がユニークであること | `files`, `column`, `idPattern` |
 
 ### セクション / 構造に関するルール
@@ -179,7 +179,7 @@ npm install -D @contextlint/mcp-server
 
 | ID | 説明 | 設定項目 |
 |----|-------------|--------|
-| REF-001 | Markdown のリンク先が実在すること | — |
+| REF-001 | Markdown のリンク先が実在すること | `exclude`（任意） |
 | REF-002 | ID の定義と参照の整合性が取れていること | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | ゾーン間リンクが概要ファイルで宣言されていること | `zonesDir`, `dependencySection` |

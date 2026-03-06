@@ -1,6 +1,6 @@
 # contextlint
 
-[日本語](README.ja.md)
+🌐 [日本語](README.ja.md)
 
 A rule-based linter for structured Markdown documents.
 
@@ -59,16 +59,16 @@ Example `contextlint.config.json`:
 {
   "rules": [
     // TBL-001: Required columns must exist in tables
-    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"] } },
+    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },
 
     // TBL-002: Key columns must not have empty cells
-    { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
+    { "rule": "tbl002", "options": { "columns": ["ID", "Status"], "files": "**/requirements.md" } },
 
     // TBL-003: Column values must be from an allowed set
-    { "rule": "tbl003", "options": { "column": "Status", "values": ["draft", "review", "stable"] } },
+    { "rule": "tbl003", "options": { "column": "Status", "values": ["draft", "review", "stable"], "files": "**/requirements.md" } },
 
     // TBL-004: Cell values must match a regex pattern
-    { "rule": "tbl004", "options": { "column": "ID", "pattern": "^[A-Z]+-[A-Z]+-\\d{2}$" } },
+    { "rule": "tbl004", "options": { "column": "ID", "pattern": "^[A-Z]+-[A-Z]+-\\d{2}$", "files": "**/requirements.md" } },
 
     // TBL-006: IDs must be unique across all matched files
     { "rule": "tbl006", "options": { "files": "**/requirements.md", "column": "ID" } },
@@ -80,7 +80,7 @@ Example `contextlint.config.json`:
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
     // REF-001: Relative Markdown links must point to existing files
-    { "rule": "ref001" },
+    { "rule": "ref001", "options": { "exclude": ["_references/**"] } },
 
     // REF-002: Defined IDs must be referenced; referenced IDs must exist
     {
@@ -164,10 +164,10 @@ Available tools:
 
 | ID | Description | Config |
 |----|-------------|--------|
-| TBL-001 | Required columns must exist in tables | `requiredColumns` |
-| TBL-002 | Key columns must not have empty cells | `columns` |
-| TBL-003 | Column values must be from an allowed set | `column`, `values` |
-| TBL-004 | Cell values must match a regex pattern | `column`, `pattern` |
+| TBL-001 | Required columns must exist in tables | `requiredColumns`, `files` (optional) |
+| TBL-002 | Key columns must not have empty cells | `columns`, `files` (optional) |
+| TBL-003 | Column values must be from an allowed set | `column`, `values`, `files` (optional) |
+| TBL-004 | Cell values must match a regex pattern | `column`, `pattern`, `files` (optional) |
 | TBL-006 | IDs must be unique across all matched files | `files`, `column`, `idPattern` |
 
 ### Section / Structure rules
@@ -181,7 +181,7 @@ Available tools:
 
 | ID | Description | Config |
 |----|-------------|--------|
-| REF-001 | Relative Markdown links must point to existing files | — |
+| REF-001 | Relative Markdown links must point to existing files | `exclude` (optional) |
 | REF-002 | Defined IDs must be referenced; referenced IDs must exist | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | An item's stability must not exceed the stability of items it depends on | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | Cross-zone links must be declared in the zone's overview | `zonesDir`, `dependencySection` |

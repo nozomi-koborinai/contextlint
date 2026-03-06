@@ -48,4 +48,40 @@ describe("TBL-001: required columns", () => {
     expect(messages).toHaveLength(1);
     expect(messages[0].message).toContain("ID");
   });
+
+  it("skips files not matching the files pattern", () => {
+    const md = `
+| Name | Age |
+|------|-----|
+| Alice | 30 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID"], files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/overview.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("checks files matching the files pattern", () => {
+    const md = `
+| Name | Age |
+|------|-----|
+| Alice | 30 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID"], files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/requirements.md");
+    expect(messages).toHaveLength(1);
+  });
+
+  it("checks all files when files option is not set", () => {
+    const md = `
+| Name | Age |
+|------|-----|
+| Alice | 30 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID"] });
+    const messages = runRules([rule], doc, "docs/anything.md");
+    expect(messages).toHaveLength(1);
+  });
 });

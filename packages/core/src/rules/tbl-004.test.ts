@@ -60,4 +60,18 @@ describe("TBL-004", () => {
     const messages = runRules([rule], doc, "test.md");
     expect(messages).toHaveLength(0);
   });
+
+  it("skips files not matching the files pattern", () => {
+    const doc = parseDocument(invalidTable);
+    const rule = tbl004({ column: "ID", pattern: "^[A-Z]+-[A-Z]+-\\d{2}$", files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/overview.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("checks files matching the files pattern", () => {
+    const doc = parseDocument(invalidTable);
+    const rule = tbl004({ column: "ID", pattern: "^[A-Z]+-[A-Z]+-\\d{2}$", files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/requirements.md");
+    expect(messages).toHaveLength(2);
+  });
 });

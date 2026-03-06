@@ -45,4 +45,28 @@ describe("TBL-003: allowed values check", () => {
     const messages = runRules([rule], doc, "test.md");
     expect(messages).toHaveLength(0);
   });
+
+  it("skips files not matching the files pattern", () => {
+    const md = `
+| ID | Status |
+|----|--------|
+| 1  | invalid |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "Status", values: ["done"], files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/overview.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("checks files matching the files pattern", () => {
+    const md = `
+| ID | Status |
+|----|--------|
+| 1  | invalid |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl003({ column: "Status", values: ["done"], files: "**/requirements.md" });
+    const messages = runRules([rule], doc, "docs/requirements.md");
+    expect(messages).toHaveLength(1);
+  });
 });

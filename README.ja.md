@@ -41,8 +41,6 @@ npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
 | `@contextlint/core` | ルールエンジンと Markdown パーサー |
 | `@contextlint/cli` | CLI エントリーポイント（`contextlint`コマンド） |
 | `@contextlint/mcp-server` | AI ツール連携用の MCP サーバー |
-| `@contextlint/preset-dna` | [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) 用のプリセットルール |
-
 ## 使い方
 
 ### 設定ファイルを使用する場合
@@ -108,20 +106,6 @@ contextlint --config contextlint.config.json "docs/**/*.md"
 }
 ```
 
-### プリセットを使用する場合
-
-プリセットを使用すると、対象のリポジトリに設定ファイルを置かずに済みます。
-
-```bash
-contextlint --preset dna --cwd /path/to/project "docs/**/*.md"
-```
-
-利用可能なプリセット：
-
-| プリセット | 説明 |
-|--------|-------------|
-| `dna` | [software-dna-template](https://github.com/nozomi-koborinai/software-dna-template) プロジェクトのヘルスチェック用 |
-
 ### CI（GitHub Actions）での利用
 
 ```yaml
@@ -154,7 +138,7 @@ npm install -D @contextlint/mcp-server
 | ツール | 説明 |
 |------|-------------|
 | `lint` | 指定されたルールで Markdown コンテンツを直接チェックする |
-| `lint-files` | 設定ファイルやプリセットを使用して、パターンに一致するファイルをチェックする |
+| `lint-files` | 設定ファイルを使用して、パターンに一致するファイルをチェックする |
 
 ## ルール詳細
 

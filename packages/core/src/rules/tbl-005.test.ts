@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { parseDocument } from "../parser.js";
 import { runRules } from "../rule.js";
 import { tbl005 } from "./tbl-005.js";

@@ -111,9 +111,6 @@ docs/design.md
 
 ## 配置参考
 
-<details>
-<summary>所有规则的完整配置示例</summary>
-
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
@@ -189,8 +186,6 @@ docs/design.md
   ]
 }
 ```
-
-</details>
 
 ## 使用场景
 

@@ -115,9 +115,6 @@ docs/design.md
 
 ## Configuration
 
-<details>
-<summary>Full configuration example with all rules</summary>
-
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
@@ -193,8 +190,6 @@ docs/design.md
   ]
 }
 ```
-
-</details>
 
 ## Use cases
 

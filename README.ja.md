@@ -118,9 +118,6 @@ docs/design.md
 
 ## 設定リファレンス
 
-<details>
-<summary>全ルールの設定例</summary>
-
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
@@ -196,8 +193,6 @@ docs/design.md
   ]
 }
 ```
-
-</details>
 
 ## ユースケース
 

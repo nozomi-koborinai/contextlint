@@ -120,9 +120,6 @@ docs/design.md
 
 ## 설정 레퍼런스
 
-<details>
-<summary>모든 규칙의 전체 설정 예시</summary>
-
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
@@ -198,8 +195,6 @@ docs/design.md
   ]
 }
 ```
-
-</details>
 
 ## 활용 사례
 

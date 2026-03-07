@@ -139,7 +139,10 @@ Example `contextlint.config.json`:
     { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
 
     // REF-005: Anchor fragments must point to headings that exist in the target file
-    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
+
+    // REF-006: Image references must point to files that exist
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
   ]
 }
 ```
@@ -214,6 +217,7 @@ Available tools:
 | REF-003 | An item's stability must not exceed the stability of items it depends on | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | Cross-zone links must be declared in the zone's overview | `zonesDir`, `dependencySection` |
 | REF-005 | Anchor fragments must point to existing headings | `files` (optional) |
+| REF-006 | Image references must point to existing files | `exclude` (optional) |
 
 ### Checklist rules
 

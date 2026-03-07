@@ -135,7 +135,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
 
     // REF-005: 锚点片段必须指向目标文件中存在的标题
-    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
+
+    // REF-006: 图片引用必须指向存在的文件
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
   ]
 }
 ```
@@ -208,6 +211,7 @@ npm install -D @contextlint/mcp-server
 | REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | 跨区域链接必须在概要文件中声明 | `zonesDir`, `dependencySection` |
 | REF-005 | 锚点片段必须指向目标文件中存在的标题 | `files`（可选） |
+| REF-006 | 图片引用必须指向存在的文件 | `exclude`（可选） |
 
 ### 清单规则
 

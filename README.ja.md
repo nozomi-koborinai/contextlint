@@ -148,7 +148,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
 
     // REF-005: アンカーフラグメントがリンク先ファイルの見出しと一致すること
-    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
+
+    // REF-006: 画像参照が実在するファイルを指していること
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
   ]
 }
 ```
@@ -222,6 +225,7 @@ npm install -D @contextlint/mcp-server
 | REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | ゾーン間リンクが概要ファイルで宣言されていること | `zonesDir`, `dependencySection` |
 | REF-005 | アンカーフラグメントがリンク先の見出しと一致すること | `files`（任意） |
+| REF-006 | 画像参照が実在するファイルを指していること | `exclude`（任意） |
 
 ### チェックリストに関するルール
 

@@ -2,6 +2,7 @@ export { parseDocument } from "./parser.js";
 export type {
   ParsedCheckItem,
   ParsedHeading,
+  ParsedImage,
   ParsedLink,
   ParsedTable,
   ParsedDocument,
@@ -60,6 +61,9 @@ export type { Ref004Options } from "./rules/ref-004.js";
 
 export { ref005 } from "./rules/ref-005.js";
 export type { Ref005Options } from "./rules/ref-005.js";
+
+export { ref006 } from "./rules/ref-006.js";
+export type { Ref006Options } from "./rules/ref-006.js";
 
 export { chk001 } from "./rules/chk-001.js";
 export type { Chk001Options } from "./rules/chk-001.js";

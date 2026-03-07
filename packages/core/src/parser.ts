@@ -5,6 +5,7 @@ import { visit } from "unist-util-visit";
 import type {
   Definition,
   Heading,
+  Image,
   Link,
   ListItem,
   Table,
@@ -38,11 +39,17 @@ export interface ParsedCheckItem {
   section: string | null;
 }
 
+export interface ParsedImage {
+  url: string;
+  line: number;
+}
+
 export interface ParsedDocument {
   tables: ParsedTable[];
   headings: ParsedHeading[];
   sections: string[];
   links: ParsedLink[];
+  images: ParsedImage[];
   checkItems: ParsedCheckItem[];
   content: string;
 }
@@ -67,6 +74,7 @@ export function parseDocument(content: string): ParsedDocument {
   const headings: ParsedHeading[] = [];
   const tables: ParsedTable[] = [];
   const links: ParsedLink[] = [];
+  const images: ParsedImage[] = [];
   const checkItems: ParsedCheckItem[] = [];
 
   visit(tree, "heading", (node: Heading) => {
@@ -144,11 +152,19 @@ export function parseDocument(content: string): ParsedDocument {
     }
   });
 
+  // Collect relative image references
+  visit(tree, "image", (node: Image) => {
+    if (isRelativeLink(node.url)) {
+      images.push({ url: node.url, line: node.position?.start.line ?? 0 });
+    }
+  });
+
   return {
     tables,
     headings,
     sections: headings.map((h) => h.text),
     links,
+    images,
     checkItems,
     content,
   };

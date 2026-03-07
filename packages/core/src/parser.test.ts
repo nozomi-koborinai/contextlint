@@ -182,4 +182,17 @@ Some paragraph text.
       section: "Notes",
     });
   });
+
+  it("collects relative image references but skips absolute URLs", () => {
+    const md = `
+![local](./img/diagram.png)
+![external](https://example.com/logo.png)
+![data](data:image/png;base64,abc)
+![relative](../assets/photo.jpg)
+`;
+    const doc = parseDocument(md);
+    expect(doc.images).toHaveLength(2);
+    expect(doc.images[0].url).toBe("./img/diagram.png");
+    expect(doc.images[1].url).toBe("../assets/photo.jpg");
+  });
 });

@@ -107,6 +107,14 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // SEC-001: 문서에 필수 섹션이 존재해야 함
     { "rule": "sec001", "options": { "sections": ["Overview", "Requirements"], "files": "**/overview.md" } },
 
+    // SEC-002: 섹션이 지정된 순서로 나열되어야 함
+    //   기본 — 파일 전체에서 순서를 검사:
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"] } },
+    //   level 지정 — 상위 제목별로 그룹화하여 각 그룹을 독립 검사:
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"], "level": 3, "files": "**/spec.md" } },
+    //   section 지정 — 특정 상위 그룹만 검사:
+    { "rule": "sec002", "options": { "order": ["Endpoints", "Error Handling"], "level": 3, "section": "API" } },
+
     // STR-001: 프로젝트에 필수 파일이 존재해야 함
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
@@ -199,6 +207,7 @@ npm install -D @contextlint/mcp-server
 | ID | 설명 | 설정 항목 |
 | ---- | ------------- | -------- |
 | SEC-001 | 문서에 필수 섹션이 존재해야 함 | `sections`, `files`(선택) |
+| SEC-002 | 섹션이 지정된 순서로 나열되어야 함 | `order`, `level`(선택), `section`(선택), `files`(선택) |
 | STR-001 | 프로젝트에 필수 파일이 존재해야 함 | `files` |
 
 ### 참조 규칙

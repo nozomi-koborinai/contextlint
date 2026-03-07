@@ -17,8 +17,15 @@ export interface ParsedLink {
   line: number;
 }
 
+export interface ParsedHeading {
+  text: string;
+  level: number;
+  line: number;
+}
+
 export interface ParsedDocument {
   tables: ParsedTable[];
+  headings: ParsedHeading[];
   sections: string[];
   links: ParsedLink[];
   content: string;
@@ -41,13 +48,14 @@ function extractCellText(row: TableRow): string[] {
 export function parseDocument(content: string): ParsedDocument {
   const tree = unified().use(remarkParse).use(remarkGfm).parse(content);
 
-  const headings: { text: string; line: number }[] = [];
+  const headings: ParsedHeading[] = [];
   const tables: ParsedTable[] = [];
   const links: ParsedLink[] = [];
 
   visit(tree, "heading", (node: Heading) => {
     headings.push({
       text: extractText(node),
+      level: node.depth,
       line: node.position?.start.line ?? 0,
     });
   });
@@ -100,6 +108,7 @@ export function parseDocument(content: string): ParsedDocument {
 
   return {
     tables,
+    headings,
     sections: headings.map((h) => h.text),
     links,
     content,

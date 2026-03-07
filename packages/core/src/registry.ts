@@ -100,7 +100,8 @@ export function resolveRule(
   name: string,
   options?: Record<string, unknown>,
 ): Rule {
-  const factory = registry[name];
+  const factory: RuleFactory | undefined =
+    (registry as Partial<Record<string, RuleFactory>>)[name];
   if (!factory) {
     throw new Error(`Unknown rule: "${name}"`);
   }

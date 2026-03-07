@@ -55,7 +55,7 @@ export interface ParsedDocument {
 }
 
 function extractText(node: Node): string {
-  if ((node as Text).type === "text") {
+  if (node.type === "text") {
     return (node as Text).value;
   }
   if ("children" in node) {
@@ -88,9 +88,6 @@ export function parseDocument(content: string): ParsedDocument {
   visit(tree, "table", (node: Table) => {
     const tableLine = node.position?.start.line ?? 0;
     const [headerRow, ...dataRows] = node.children;
-
-    if (!headerRow) return;
-
     const headers = extractCellText(headerRow);
 
     const rows = dataRows.map((row) => {

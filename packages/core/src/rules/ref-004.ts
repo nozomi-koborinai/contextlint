@@ -1,4 +1,4 @@
-import { resolve, dirname, relative } from "node:path";
+import { resolve, dirname } from "node:path";
 import type { Rule } from "../rule.js";
 
 export interface Ref004Options {

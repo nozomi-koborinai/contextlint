@@ -12,7 +12,8 @@ function lint(currentFile: string, filesMap: Record<string, string>, options?: R
   }
 
   const rule = ref001(options);
-  const doc = documents.get(currentFile)!;
+  const doc = documents.get(currentFile);
+  if (!doc) throw new Error("unreachable");
   return runRules([rule], doc, currentFile, { documents });
 }
 

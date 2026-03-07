@@ -15,7 +15,8 @@ function lint(
   }
 
   const rule = ref005(options);
-  const doc = documents.get(currentFile)!;
+  const doc = documents.get(currentFile);
+  if (!doc) throw new Error("unreachable");
   return runRules([rule], doc, currentFile, { documents });
 }
 

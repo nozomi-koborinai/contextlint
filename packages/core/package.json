@@ -17,6 +17,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "glob": "^13.0.6",
     "picomatch": "^4.0.3",
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",

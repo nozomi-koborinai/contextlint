@@ -23,7 +23,7 @@ export function formatResults(
 
     for (const msg of result.messages) {
       lines.push(
-        `  line ${msg.line}   ${msg.severity}  ${msg.message}  ${msg.ruleId}`,
+        `  line ${String(msg.line)}   ${msg.severity}  ${msg.message}  ${msg.ruleId}`,
       );
       totalErrors++;
     }
@@ -34,7 +34,7 @@ export function formatResults(
   const fileWord = filesWithErrors.length === 1 ? "file" : "files";
   const errorWord = totalErrors === 1 ? "error" : "errors";
   lines.push(
-    `${totalErrors} ${errorWord} in ${filesWithErrors.length} ${fileWord}`,
+    `${String(totalErrors)} ${errorWord} in ${String(filesWithErrors.length)} ${fileWord}`,
   );
 
   return lines.join("\n");

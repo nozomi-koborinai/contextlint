@@ -2,8 +2,9 @@ import { describe, it, expect } from "bun:test";
 import { parseDocument, runRules } from "../index.js";
 import type { ParsedDocument } from "../index.js";
 import { ref004 } from "./ref-004.js";
+import type { Ref004Options } from "./ref-004.js";
 
-const defaultOptions = {
+const defaultOptions: Ref004Options = {
   zonesDir: "docs/zones",
 };
 
@@ -18,7 +19,8 @@ function lint(
   }
 
   const rule = ref004(options);
-  const doc = documents.get(currentFile)!;
+  const doc = documents.get(currentFile);
+  if (!doc) throw new Error("unreachable");
   return runRules([rule], doc, currentFile, { documents });
 }
 

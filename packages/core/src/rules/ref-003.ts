@@ -81,7 +81,8 @@ export function ref003(options: Ref003Options): Rule {
             if (!refStability || !stabilityRank.has(refStability)) {
               continue;
             }
-            const refRank = stabilityRank.get(refStability)!;
+            const refRank = stabilityRank.get(refStability);
+            if (refRank === undefined) continue;
 
             // Find referenced IDs in other cells of this row
             for (const [col, value] of Object.entries(row)) {
@@ -89,10 +90,11 @@ export function ref003(options: Ref003Options): Rule {
                 continue;
               }
               const def = definitions.get(value);
-              if (!def || !stabilityRank.has(def.stability)) {
+              if (!def) {
                 continue;
               }
-              const defRank = stabilityRank.get(def.stability)!;
+              const defRank = stabilityRank.get(def.stability);
+              if (defRank === undefined) continue;
 
               if (refRank > defRank) {
                 context.report({

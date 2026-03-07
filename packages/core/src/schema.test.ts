@@ -24,7 +24,7 @@ interface Schema {
 
 describe("schema.json", () => {
   const schemaPath = resolve(__dirname, "../../../schema.json");
-  const schema: Schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+  const schema = JSON.parse(readFileSync(schemaPath, "utf-8")) as Schema;
   const schemaRules = schema.properties.rules.items.oneOf.map(
     (entry) => entry.properties.rule.const,
   );

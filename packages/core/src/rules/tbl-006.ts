@@ -47,7 +47,7 @@ export function tbl006(options: Tbl006Options): Rule {
             if (existing) {
               context.report({
                 severity: "error",
-                message: `ID "${value}" is already defined in ${existing.filePath}:${existing.line}`,
+                message: `ID "${value}" is already defined in ${existing.filePath}:${String(existing.line)}`,
                 line: table.line,
               });
             } else {

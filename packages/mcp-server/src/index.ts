@@ -1,18 +1,12 @@
 #!/usr/bin/env node
 
 import { readFileSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { parseDocument, runRules, resolveRule } from "@contextlint/core";
-import type { ParsedDocument } from "@contextlint/core";
-import { glob } from "glob";
+import { parseDocument, runRules, resolveRule, lintFiles } from "@contextlint/core";
 import * as z from "zod/v4";
-import {
-  formatContentResults,
-  formatFileResults,
-  type FileLintResult,
-} from "./format.js";
+import { formatContentResults, formatFileResults } from "./format.js";
 
 const server = new McpServer({
   name: "contextlint",
@@ -20,24 +14,26 @@ const server = new McpServer({
 });
 
 // Tool 1: lint — lint markdown content directly
-server.tool(
+server.registerTool(
   "lint",
-  "Lint markdown content with specified rules",
   {
-    content: z.string().describe("Markdown text to lint"),
-    rules: z
-      .array(
-        z.object({
-          rule: z.string().describe("Rule name (e.g. tbl001)"),
-          options: z
-            .record(z.string(), z.unknown())
-            .optional()
-            .describe("Rule options"),
-        }),
-      )
-      .describe("Rules to apply"),
+    description: "Lint markdown content with specified rules",
+    inputSchema: {
+      content: z.string().describe("Markdown text to lint"),
+      rules: z
+        .array(
+          z.object({
+            rule: z.string().describe("Rule name (e.g. tbl001)"),
+            options: z
+              .record(z.string(), z.unknown())
+              .optional()
+              .describe("Rule options"),
+          }),
+        )
+        .describe("Rules to apply"),
+    },
   },
-  async ({ content, rules: ruleEntries }) => {
+  ({ content, rules: ruleEntries }) => {
     try {
       const rules = ruleEntries.map((entry) =>
         resolveRule(entry.rule, entry.options),
@@ -58,22 +54,25 @@ server.tool(
 );
 
 // Tool 2: lint-files — lint files matching glob patterns
-server.tool(
+server.registerTool(
   "lint-files",
-  "Lint markdown files matching glob patterns using a config file or preset",
   {
-    patterns: z
-      .array(z.string())
-      .optional()
-      .describe('Glob patterns (default: ["**/*.md"])'),
-    configPath: z
-      .string()
-      .optional()
-      .describe('Config file path (default: "contextlint.config.json")'),
-    cwd: z
-      .string()
-      .optional()
-      .describe('Working directory (default: ".")'),
+    description:
+      "Lint markdown files matching glob patterns using a config file or preset",
+    inputSchema: {
+      patterns: z
+        .array(z.string())
+        .optional()
+        .describe('Glob patterns (default: ["**/*.md"])'),
+      configPath: z
+        .string()
+        .optional()
+        .describe('Config file path (default: "contextlint.config.json")'),
+      cwd: z
+        .string()
+        .optional()
+        .describe('Working directory (default: ".")'),
+    },
   },
   async ({ patterns, configPath, cwd }) => {
     const resolvedCwd = resolve(cwd ?? ".");
@@ -97,9 +96,11 @@ server.tool(
         };
       }
 
-      let config: { rules: { rule: string; options?: Record<string, unknown> }[] };
+      let config: {
+        rules?: { rule: string; options?: Record<string, unknown> }[];
+      };
       try {
-        config = JSON.parse(raw);
+        config = JSON.parse(raw) as typeof config;
       } catch {
         return {
           content: [
@@ -124,52 +125,7 @@ server.tool(
         };
       }
 
-      const rules = config.rules.map((entry) =>
-        resolveRule(entry.rule, entry.options),
-      );
-
-      const docRules = rules.filter(
-        (r) => (r.scope ?? "document") === "document",
-      );
-      const projectRules = rules.filter((r) => r.scope === "project");
-
-      // Find and lint files
-      const files = await glob(resolvedPatterns, {
-        cwd: resolvedCwd,
-        absolute: true,
-      });
-      files.sort();
-
-      const projectFiles = files.map((f) => relative(resolvedCwd, f));
-
-      // Parse all files upfront (shared by document and project rules)
-      const documents = new Map<string, ParsedDocument>();
-      for (const filePath of files) {
-        const fileContent = readFileSync(filePath, "utf-8");
-        documents.set(filePath, parseDocument(fileContent));
-      }
-
-      const results: FileLintResult[] = [];
-
-      // Run project-scoped rules once
-      if (projectRules.length > 0) {
-        const emptyDoc = parseDocument("");
-        const messages = runRules(projectRules, emptyDoc, "<project>", {
-          projectFiles,
-          documents,
-        });
-        if (messages.length > 0) {
-          results.push({ filePath: "<project>", messages });
-        }
-      }
-
-      // Run document-scoped rules per file
-      for (const filePath of files) {
-        const document = documents.get(filePath)!;
-        const messages = runRules(docRules, document, filePath, { documents });
-        results.push({ filePath, messages });
-      }
-
+      const results = await lintFiles(resolvedPatterns, { rules: config.rules }, resolvedCwd);
       const text = formatFileResults(results, resolvedCwd);
       return { content: [{ type: "text", text }] };
     } catch (error) {
@@ -189,7 +145,7 @@ async function main() {
   console.error("contextlint MCP server running on stdio");
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error("Fatal error:", error);
   process.exit(1);
 });

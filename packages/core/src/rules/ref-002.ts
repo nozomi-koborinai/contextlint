@@ -91,7 +91,7 @@ export function ref002(options: Ref002Options): Rule {
         if (!referenced.has(id)) {
           context.report({
             severity: "warning",
-            message: `ID "${id}" is defined in ${location.filePath}:${location.line} but never referenced`,
+            message: `ID "${id}" is defined in ${location.filePath}:${String(location.line)} but never referenced`,
             line: 0,
           });
         }

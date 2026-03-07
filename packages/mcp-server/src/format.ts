@@ -1,10 +1,7 @@
 import { relative } from "node:path";
-import type { LintMessage } from "@contextlint/core";
+import type { LintMessage, FileLintResult } from "@contextlint/core";
 
-export interface FileLintResult {
-  filePath: string;
-  messages: LintMessage[];
-}
+export type { FileLintResult };
 
 export function formatContentResults(messages: LintMessage[]): string {
   if (messages.length === 0) {
@@ -15,13 +12,13 @@ export function formatContentResults(messages: LintMessage[]): string {
 
   for (const msg of messages) {
     lines.push(
-      `  line ${msg.line}   ${msg.severity}  ${msg.message}  ${msg.ruleId}`,
+      `  line ${String(msg.line)}   ${msg.severity}  ${msg.message}  ${msg.ruleId}`,
     );
   }
 
   lines.push("");
   const errorWord = messages.length === 1 ? "error" : "errors";
-  lines.push(`${messages.length} ${errorWord}`);
+  lines.push(`${String(messages.length)} ${errorWord}`);
 
   return lines.join("\n");
 }
@@ -48,7 +45,7 @@ export function formatFileResults(
 
     for (const msg of result.messages) {
       lines.push(
-        `  line ${msg.line}   ${msg.severity}  ${msg.message}  ${msg.ruleId}`,
+        `  line ${String(msg.line)}   ${msg.severity}  ${msg.message}  ${msg.ruleId}`,
       );
       totalErrors++;
     }
@@ -59,7 +56,7 @@ export function formatFileResults(
   const fileWord = filesWithErrors.length === 1 ? "file" : "files";
   const errorWord = totalErrors === 1 ? "error" : "errors";
   lines.push(
-    `${totalErrors} ${errorWord} in ${filesWithErrors.length} ${fileWord}`,
+    `${String(totalErrors)} ${errorWord} in ${String(filesWithErrors.length)} ${fileWord}`,
   );
 
   return lines.join("\n");

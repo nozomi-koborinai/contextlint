@@ -118,6 +118,9 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // STR-001: 프로젝트에 필수 파일이 존재해야 함
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
+    // CHK-001: 체크리스트의 모든 항목이 체크되어야 함
+    { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
     // REF-001: 상대 경로 Markdown 링크가 실재하는 파일을 가리켜야 함
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },
 
@@ -219,6 +222,12 @@ npm install -D @contextlint/mcp-server
 | REF-003 | 의존 관계에서 안정성 순서가 지켜져야 함 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | 영역 간 링크가 개요 파일에서 선언되어야 함 | `zonesDir`, `dependencySection` |
 | REF-005 | 앵커 프래그먼트가 대상 파일의 제목과 일치해야 함 | `files`(선택) |
+
+### 체크리스트 규칙
+
+| ID | 설명 | 설정 항목 |
+| ---- | ------------- | -------- |
+| CHK-001 | 체크리스트의 모든 항목이 체크되어야 함 | `section`(선택), `files`(선택) |
 
 ### 활용 사례
 

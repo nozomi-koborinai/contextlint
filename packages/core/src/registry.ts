@@ -13,6 +13,7 @@ import { tbl005 } from "./rules/tbl-005.js";
 import { ref004 } from "./rules/ref-004.js";
 import { ref005 } from "./rules/ref-005.js";
 import { sec002 } from "./rules/sec-002.js";
+import { chk001 } from "./rules/chk-001.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -86,6 +87,8 @@ const registry: Record<string, RuleFactory> = {
         files?: string;
       },
     ),
+  chk001: (options) =>
+    chk001(options as { section?: string; files?: string } | undefined),
 };
 
 export function resolveRule(

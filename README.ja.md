@@ -116,6 +116,9 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // STR-001: プロジェクト内に必須ファイルが存在すること
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
+    // CHK-001: チェックリストの全項目がチェック済みであること
+    { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
     // REF-001: 相対パスの Markdown リンクが実在するファイルを指していること
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },
 
@@ -219,6 +222,12 @@ npm install -D @contextlint/mcp-server
 | REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | ゾーン間リンクが概要ファイルで宣言されていること | `zonesDir`, `dependencySection` |
 | REF-005 | アンカーフラグメントがリンク先の見出しと一致すること | `files`（任意） |
+
+### チェックリストに関するルール
+
+| ID | 説明 | 設定項目 |
+| ---- | ------------- | -------- |
+| CHK-001 | チェックリストの全項目がチェック済みであること | `section`（任意）, `files`（任意） |
 
 ### ユースケース
 

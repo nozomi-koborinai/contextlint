@@ -107,6 +107,9 @@ Example `contextlint.config.json`:
     // STR-001: Required files must exist in the project
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
+    // CHK-001: All checklist items must be checked
+    { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
     // REF-001: Relative Markdown links must point to existing files
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },
 
@@ -211,6 +214,12 @@ Available tools:
 | REF-003 | An item's stability must not exceed the stability of items it depends on | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | Cross-zone links must be declared in the zone's overview | `zonesDir`, `dependencySection` |
 | REF-005 | Anchor fragments must point to existing headings | `files` (optional) |
+
+### Checklist rules
+
+| ID | Description | Config |
+| --- | ----------- | ------ |
+| CHK-001 | All checklist items must be checked | `section` (optional), `files` (optional) |
 
 ### Use cases
 

@@ -29,6 +29,8 @@ jobs:
             (cd "$pkg" && npm pkg set "version=${VERSION}")
           done
 
+      - run: bun install
+
       - name: Publish to npm
         run: |
           for pkg in packages/*/; do

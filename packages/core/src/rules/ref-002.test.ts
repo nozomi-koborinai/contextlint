@@ -115,4 +115,73 @@ describe("REF-002", () => {
     const messages = runRules([rule], parseDocument(""), "<project>");
     expect(messages).toEqual([]);
   });
+
+  it("traces IDs with Japanese column names", () => {
+    const messages = lint(
+      {
+        "docs/zones/auth/requirements.md":
+          "| 識別子 | 名前 |\n|---|---|\n| REQ-AUTH-01 | ログイン |",
+        "docs/zones/auth/table_users.md":
+          "| 識別子 | 参照 |\n|---|---|\n| TBL-01 | REQ-AUTH-01 |",
+      },
+      { ...defaultOptions, idColumn: "識別子" },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("traces IDs with Korean column names", () => {
+    const messages = lint(
+      {
+        "docs/zones/auth/requirements.md":
+          "| 식별자 | 이름 |\n|---|---|\n| REQ-AUTH-01 | 로그인 |",
+        "docs/zones/auth/table_users.md":
+          "| 식별자 | 참조 |\n|---|---|\n| TBL-01 | REQ-AUTH-01 |",
+      },
+      { ...defaultOptions, idColumn: "식별자" },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("traces IDs with Chinese column names", () => {
+    const messages = lint(
+      {
+        "docs/zones/auth/requirements.md":
+          "| 标识符 | 名称 |\n|---|---|\n| REQ-AUTH-01 | 登录 |",
+        "docs/zones/auth/table_users.md":
+          "| 标识符 | 引用 |\n|---|---|\n| TBL-01 | REQ-AUTH-01 |",
+      },
+      { ...defaultOptions, idColumn: "标识符" },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("detects references in Japanese prose text", () => {
+    const messages = lint({
+      "docs/zones/auth/requirements.md":
+        "| ID | Name |\n|---|---|\n| REQ-AUTH-01 | ログイン |",
+      "docs/zones/auth/spec_login.md":
+        "# ログイン仕様\n\nこの機能は REQ-AUTH-01 の要件を実装します。",
+    });
+    expect(messages).toEqual([]);
+  });
+
+  it("detects references in Korean prose text", () => {
+    const messages = lint({
+      "docs/zones/auth/requirements.md":
+        "| ID | Name |\n|---|---|\n| REQ-AUTH-01 | 로그인 |",
+      "docs/zones/auth/spec_login.md":
+        "# 로그인 사양\n\n이 기능은 REQ-AUTH-01 요구사항을 구현합니다.",
+    });
+    expect(messages).toEqual([]);
+  });
+
+  it("detects references in Chinese prose text", () => {
+    const messages = lint({
+      "docs/zones/auth/requirements.md":
+        "| ID | Name |\n|---|---|\n| REQ-AUTH-01 | 登录 |",
+      "docs/zones/auth/spec_login.md":
+        "# 登录规范\n\n本功能实现了 REQ-AUTH-01 的需求。",
+    });
+    expect(messages).toEqual([]);
+  });
 });

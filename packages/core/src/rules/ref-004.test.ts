@@ -114,4 +114,34 @@ describe("REF-004", () => {
     const messages = runRules([rule], doc, "docs/zones/bb/spec.md");
     expect(messages).toEqual([]);
   });
+
+  it("works with Korean dependency section name", () => {
+    const messages = lint(
+      "docs/zones/bulletin-board/spec_content.md",
+      {
+        "docs/zones/bulletin-board/spec_content.md":
+          "See [users](../auth/table_users.md)",
+        "docs/zones/bulletin-board/overview.md":
+          "# 개요\n\n## 의존성\n\n| Zone | Reason |\n|---|---|\n| auth | 사용자 인증 |",
+        "docs/zones/auth/table_users.md": "# Users",
+      },
+      { zonesDir: "docs/zones", dependencySection: "의존성" },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("works with Chinese dependency section name", () => {
+    const messages = lint(
+      "docs/zones/bulletin-board/spec_content.md",
+      {
+        "docs/zones/bulletin-board/spec_content.md":
+          "See [users](../auth/table_users.md)",
+        "docs/zones/bulletin-board/overview.md":
+          "# 概述\n\n## 依赖关系\n\n| Zone | Reason |\n|---|---|\n| auth | 用户认证 |",
+        "docs/zones/auth/table_users.md": "# Users",
+      },
+      { zonesDir: "docs/zones", dependencySection: "依赖关系" },
+    );
+    expect(messages).toEqual([]);
+  });
 });

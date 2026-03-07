@@ -104,4 +104,40 @@ describe("TBL-006", () => {
     const messages = runRules([rule], parseDocument(""), "<project>");
     expect(messages).toEqual([]);
   });
+
+  it("reports duplicate IDs with Japanese column names", () => {
+    const messages = lint(
+      {
+        "docs/file1.md": "| 識別子 |\n|---|\n| REQ-01 |",
+        "docs/file2.md": "| 識別子 |\n|---|\n| REQ-01 |",
+      },
+      { files: "docs/**/*.md", column: "識別子" },
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("REQ-01");
+  });
+
+  it("reports duplicate IDs with Korean column names", () => {
+    const messages = lint(
+      {
+        "docs/file1.md": "| 식별자 |\n|---|\n| REQ-01 |",
+        "docs/file2.md": "| 식별자 |\n|---|\n| REQ-01 |",
+      },
+      { files: "docs/**/*.md", column: "식별자" },
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("REQ-01");
+  });
+
+  it("reports duplicate IDs with Chinese column names", () => {
+    const messages = lint(
+      {
+        "docs/file1.md": "| 标识符 |\n|---|\n| REQ-01 |",
+        "docs/file2.md": "| 标识符 |\n|---|\n| REQ-01 |",
+      },
+      { files: "docs/**/*.md", column: "标识符" },
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("REQ-01");
+  });
 });

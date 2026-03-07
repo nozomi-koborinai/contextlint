@@ -219,4 +219,54 @@ Here is some additional explanation.
     expect(messages).toHaveLength(1);
     expect(messages[0].message).toContain("安定度");
   });
+
+  it("validates required columns with Korean column names", () => {
+    const md = `
+| ID | 요구사항 | 안정성 |
+|----|----------|--------|
+| REQ-01 | 사용자 인증 | draft |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID", "안정성"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("reports missing Korean column names", () => {
+    const md = `
+| ID | 요구사항 |
+|----|----------|
+| REQ-01 | 사용자 인증 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID", "안정성"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("안정성");
+  });
+
+  it("validates required columns with Chinese column names", () => {
+    const md = `
+| ID | 需求 | 稳定性 |
+|----|------|--------|
+| REQ-01 | 用户认证 | draft |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID", "稳定性"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(0);
+  });
+
+  it("reports missing Chinese column names", () => {
+    const md = `
+| ID | 需求 |
+|----|------|
+| REQ-01 | 用户认证 |
+`;
+    const doc = parseDocument(md);
+    const rule = tbl001({ requiredColumns: ["ID", "稳定性"] });
+    const messages = runRules([rule], doc, "test.md");
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("稳定性");
+  });
 });

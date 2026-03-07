@@ -9,6 +9,7 @@ import { tbl006 } from "./rules/tbl-006.js";
 import { ref002 } from "./rules/ref-002.js";
 import { ref003 } from "./rules/ref-003.js";
 import { ref001 } from "./rules/ref-001.js";
+import { tbl005 } from "./rules/tbl-005.js";
 import { ref004 } from "./rules/ref-004.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
@@ -26,6 +27,21 @@ const registry: Record<string, RuleFactory> = {
     str001(options as { files: string[] }),
   sec001: (options) =>
     sec001(options as { sections: string[]; files?: string }),
+  tbl005: (options) =>
+    tbl005(
+      options as {
+        when: { column: string; equals?: string; oneOf?: string[]; matches?: string };
+        then: {
+          column: string;
+          notEmpty?: boolean;
+          equals?: string;
+          oneOf?: string[];
+          matches?: string;
+        };
+        section?: string;
+        files?: string;
+      },
+    ),
   tbl006: (options) =>
     tbl006(options as { files: string; column: string; idPattern?: string }),
   ref002: (options) =>

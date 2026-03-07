@@ -123,4 +123,52 @@ describe("REF-001", () => {
     });
     expect(messages).toHaveLength(1);
   });
+
+  it("resolves links with Japanese file names", () => {
+    const messages = lint("/project/docs/概要.md", {
+      "/project/docs/概要.md": "[要件](./要件定義.md)",
+      "/project/docs/要件定義.md": "# 要件定義",
+    });
+    expect(messages).toEqual([]);
+  });
+
+  it("reports broken links with Japanese file names", () => {
+    const messages = lint("/project/docs/概要.md", {
+      "/project/docs/概要.md": "[要件](./要件定義.md)",
+    });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("要件定義.md");
+  });
+
+  it("resolves links with Korean file names", () => {
+    const messages = lint("/project/docs/개요.md", {
+      "/project/docs/개요.md": "[요구사항](./요구사항.md)",
+      "/project/docs/요구사항.md": "# 요구사항",
+    });
+    expect(messages).toEqual([]);
+  });
+
+  it("reports broken links with Korean file names", () => {
+    const messages = lint("/project/docs/개요.md", {
+      "/project/docs/개요.md": "[요구사항](./요구사항.md)",
+    });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("요구사항.md");
+  });
+
+  it("resolves links with Chinese file names", () => {
+    const messages = lint("/project/docs/概述.md", {
+      "/project/docs/概述.md": "[需求](./需求文档.md)",
+      "/project/docs/需求文档.md": "# 需求文档",
+    });
+    expect(messages).toEqual([]);
+  });
+
+  it("reports broken links with Chinese file names", () => {
+    const messages = lint("/project/docs/概述.md", {
+      "/project/docs/概述.md": "[需求](./需求文档.md)",
+    });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("需求文档.md");
+  });
 });

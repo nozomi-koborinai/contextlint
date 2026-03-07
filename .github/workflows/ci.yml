@@ -24,3 +24,5 @@ jobs:
       - run: pnpm -r typecheck
 
       - run: pnpm test
+
+      - run: npx markdownlint-cli2 "README*.md"

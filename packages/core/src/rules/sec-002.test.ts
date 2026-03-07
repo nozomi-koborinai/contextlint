@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { parseDocument, runRules } from "../index.js";
 import { sec002 } from "./sec-002.js";
 import type { Sec002Options } from "./sec-002.js";

@@ -14,26 +14,30 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
+      - uses: oven-sh/setup-bun@v2
 
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: pnpm
           registry-url: https://registry.npmjs.org
 
-      - run: pnpm install --frozen-lockfile
+      - run: bun install --frozen-lockfile
 
-      - run: pnpm -r build
+      - run: bun run --filter '*' build
 
-      - run: pnpm test
+      - run: bun test
 
       - name: Set version from tag
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          pnpm -r exec -- npm pkg set "version=${VERSION}"
+          for pkg in packages/*/; do
+            (cd "$pkg" && npm pkg set "version=${VERSION}")
+          done
 
       - name: Publish to npm
-        run: pnpm -r publish --no-git-checks
+        run: |
+          for pkg in packages/*/; do
+            (cd "$pkg" && npm publish --no-git-checks --access public)
+          done
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

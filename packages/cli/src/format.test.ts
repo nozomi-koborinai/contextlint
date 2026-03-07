@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { formatResults } from "./format.js";
 import type { FileLintResult } from "./lint.js";
 

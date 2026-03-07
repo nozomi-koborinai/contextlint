@@ -2,20 +2,20 @@
   "name": "contextlint",
   "private": true,
   "description": "Rule-based linter for structured Markdown documents",
+  "workspaces": ["packages/*"],
   "scripts": {
-    "build": "pnpm -r build",
-    "test": "vitest run",
+    "build": "bun run --filter '*' build",
+    "test": "bun test",
     "lint": "eslint .",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "bun run --filter '*' typecheck"
   },
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "pnpm@10.7.1",
   "devDependencies": {
+    "@types/bun": "^1.3.10",
     "@types/node": "^25.3.5",
     "markdownlint-cli2": "^0.21.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "typescript": "^5.9.3"
   }
 }

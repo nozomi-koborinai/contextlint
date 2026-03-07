@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { join } from "node:path";
 import { lintFiles } from "./lint.js";
 import type { ContextlintConfig } from "./config.js";

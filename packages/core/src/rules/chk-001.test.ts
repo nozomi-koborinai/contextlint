@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { parseDocument, runRules } from "../index.js";
 import { chk001 } from "./chk-001.js";
 import type { Chk001Options } from "./chk-001.js";

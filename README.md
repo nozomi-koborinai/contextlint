@@ -74,6 +74,8 @@ Example `contextlint.config.json`:
 
 ```jsonc
 {
+  // Adding $schema enables autocomplete in VS Code, Cursor, JetBrains, and other editors
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     // TBL-001: Required columns must exist in tables
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },

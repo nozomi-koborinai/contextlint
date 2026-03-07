@@ -94,6 +94,8 @@ const registry: Record<string, RuleFactory> = {
     ref006(options as { exclude?: string[] } | undefined),
 };
 
+export const ruleNames = Object.keys(registry);
+
 export function resolveRule(
   name: string,
   options?: Record<string, unknown>,

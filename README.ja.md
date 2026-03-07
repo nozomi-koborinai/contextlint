@@ -83,6 +83,8 @@ contextlint --config contextlint.config.json "docs/**/*.md"
 
 ```jsonc
 {
+  // $schema を追加すると、VS Code・Cursor・JetBrains 等のエディタで自動補完が有効になります
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     // TBL-001: テーブルに必須カラムが存在すること
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },

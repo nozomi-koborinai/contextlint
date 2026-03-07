@@ -1,6 +1,12 @@
 # contextlint
 
+[![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
+[![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 基于规则的结构化 Markdown 文档检查工具。
+确定性地、在数秒内检测断裂引用、重复 ID、缺失章节和结构性问题，
+CI 友好。
 
 ## 为什么选择 contextlint？
 
@@ -9,68 +15,107 @@
 然后让 AI 基于这些文档生成实现。
 随着项目采用文档驱动的工作流程，
 相互关联的 Markdown 文件数量不断增长：
-需求定义、设计决策、API 规格、
-ADR（Architecture Decision Records：架构决策记录）、
-RFC（Request for Comments：评审请求）等等。
+需求定义、设计决策、API 规格、ADR、RFC 等等。
 
 这些文档形成了一个依赖关系图。某个 ID 引用另一个 ID，
 文件之间通过链接关联，状态的稳定性向下游传播。
 当这个图谱出现问题时（删除的需求、拼写错误的 ID、缺失的章节），
-其影响是无声的。而且，基于 LLM（大语言模型）的审查本质上是非确定性的，
-仅依赖它来发现结构性的不一致是不可靠的。
+其影响是无声的。
 
 contextlint 为结构化 Markdown 提供**确定性的静态验证**。
-它能在数秒内捕获断裂的引用、重复的 ID、缺失的章节和结构性问题——
 无需 AI，零成本，CI 友好。
 
-### contextlint 检查什么（以及不检查什么）
+> contextlint 专注于**内容语义和跨文件完整性**。
+> 对于 Markdown 语法、格式和样式，
+> 请配合使用 [markdownlint](https://github.com/DavidAnson/markdownlint)——
+> 两者互为补充。
 
-contextlint 专注于**内容语义和跨文件完整性**。
-对于 Markdown 语法、格式和样式，
-请配合使用 [markdownlint](https://github.com/DavidAnson/markdownlint)——
-两者互为补充。
+## 快速开始
 
-| 验证领域 | 工具 |
-| -------- | ------ |
-| 表格格式、标题样式、行长度 | markdownlint |
-| 表格内容（ID、必需列、值验证） | contextlint |
-| Markdown 语法和样式 | markdownlint |
-| 跨文件引用、可追溯性、链接完整性 | contextlint |
-| 章节覆盖率、文件结构 | contextlint |
-
-## 安装
+安装：
 
 ```bash
 npm install -D @contextlint/cli
 ```
 
-或者无需安装直接运行：
+创建 `contextlint.config.json`：
 
-```bash
-npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+  "rules": [
+    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status"] } },
+    { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
+    { "rule": "ref001" }
+  ]
+}
 ```
 
-## 包结构
-
-| 包名 | 说明 |
-| --------- | ------------- |
-| `@contextlint/core` | 规则引擎和 Markdown 解析器 |
-| `@contextlint/cli` | CLI 入口（`contextlint` 命令） |
-| `@contextlint/mcp-server` | AI 工具集成的 MCP 服务器 |
-
-## 使用方法
-
-### 使用配置文件
+运行：
 
 ```bash
-contextlint --config contextlint.config.json "docs/**/*.md"
+npx contextlint --config contextlint.config.json "docs/**/*.md"
 ```
 
-`contextlint.config.json` 配置示例：
+输出示例：
+
+```text
+docs/requirements.md
+  line 3   warning  Empty cell in column "Status"  TBL-002
+
+docs/design.md
+  line 12  error    Link target "./api.md" does not exist  REF-001
+
+2 errors in 2 files
+```
+
+> 添加 `$schema` 可在 VS Code、Cursor、JetBrains 等编辑器中启用自动补全。
+
+## 规则列表
+
+### 表格规则
+
+| ID | 说明 | 配置项 |
+| --- | --- | --- |
+| TBL-001 | 表格中必须存在必需列 | `requiredColumns`, `section`?, `files`? |
+| TBL-002 | 关键列不能有空单元格 | `columns`?, `files`? |
+| TBL-003 | 列值必须在允许的集合内 | `column`, `values`, `files`? |
+| TBL-004 | 单元格值必须匹配正则表达式 | `column`, `pattern`, `files`? |
+| TBL-005 | 跨列条件约束验证 | `when`, `then`, `section`?, `files`? |
+| TBL-006 | 指定文件间 ID 必须唯一 | `files`, `column`, `idPattern`? |
+
+### 章节 / 结构规则
+
+| ID | 说明 | 配置项 |
+| --- | --- | --- |
+| SEC-001 | 文档中必须存在必需章节 | `sections`, `files`? |
+| SEC-002 | 章节必须按指定顺序排列 | `order`, `level`?, `section`?, `files`? |
+| STR-001 | 项目中必须存在必需文件 | `files` |
+
+### 引用规则
+
+| ID | 说明 | 配置项 |
+| --- | --- | --- |
+| REF-001 | Markdown 链接目标必须存在 | `exclude`? |
+| REF-002 | ID 的定义与引用必须保持一致 | `definitions`, `references`, `idColumn`, `idPattern` |
+| REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
+| REF-004 | 跨区域链接必须在概要文件中声明 | `zonesDir`, `dependencySection`? |
+| REF-005 | 锚点片段必须指向目标文件中存在的标题 | `files`? |
+| REF-006 | 图片引用必须指向存在的文件 | `exclude`? |
+
+### 清单规则
+
+| ID | 说明 | 配置项 |
+| --- | --- | --- |
+| CHK-001 | 清单中的所有项目必须已勾选 | `section`?, `files`? |
+
+## 配置参考
+
+<details>
+<summary>所有规则的完整配置示例</summary>
 
 ```jsonc
 {
-  // 添加 $schema 可在 VS Code、Cursor、JetBrains 等编辑器中启用自动补全
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     // TBL-001: 表格中必须存在必需列
@@ -145,13 +190,30 @@ contextlint --config contextlint.config.json "docs/**/*.md"
 }
 ```
 
-### 在 CI（GitHub Actions）中使用
+</details>
+
+## 使用场景
+
+这些规则设计为通用用途。以下是一些示例：
+
+- **SDD（规格驱动开发）** — 验证规格文档是否引用了现有需求，
+  以及文件间的 ID 是否一致
+- **ADR（架构决策记录）** — 确保所有 ADR 包含必需章节
+  （Status、Context、Decision），并且状态转换是有效的
+- **RFC（评审请求）** — 检查 RFC 文档是否包含必需标题，
+  以及提案间的交叉引用是否完整
+- **任何结构化 Markdown 项目** — 在 CI 中自动检测断裂链接、
+  重复 ID 和缺失文件
+
+## CI 集成
+
+### GitHub Actions
 
 ```yaml
 - run: npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
 ```
 
-### 作为 MCP 服务器使用
+## MCP 服务器
 
 contextlint 可以作为
 [MCP](https://modelcontextprotocol.io/)（Model Context Protocol）
@@ -179,61 +241,18 @@ npm install -D @contextlint/mcp-server
 可用工具：
 
 | 工具 | 说明 |
-| ------ | ------------- |
+| --- | --- |
 | `lint` | 使用指定规则直接检查 Markdown 内容 |
 | `lint-files` | 使用配置文件检查匹配模式的文件 |
 
-## 规则详情
+## 包结构
 
-### 表格规则
-
-| ID | 说明 | 配置项 |
-| ---- | ------------- | -------- |
-| TBL-001 | 表格中必须存在必需列 | `requiredColumns`, `section`（可选）, `files`（可选） |
-| TBL-002 | 关键列不能有空单元格 | `columns`, `files`（可选） |
-| TBL-003 | 列值必须在允许的集合内 | `column`, `values`, `files`（可选） |
-| TBL-004 | 单元格值必须匹配正则表达式 | `column`, `pattern`, `files`（可选） |
-| TBL-005 | 跨列条件约束验证 | `when`, `then`, `section`（可选）, `files`（可选） |
-| TBL-006 | 指定文件间 ID 必须唯一 | `files`, `column`, `idPattern` |
-
-### 章节 / 结构规则
-
-| ID | 说明 | 配置项 |
-| ---- | ------------- | -------- |
-| SEC-001 | 文档中必须存在必需章节 | `sections`, `files`（可选） |
-| SEC-002 | 章节必须按指定顺序排列 | `order`, `level`（可选）, `section`（可选）, `files`（可选） |
-| STR-001 | 项目中必须存在必需文件 | `files` |
-
-### 引用规则
-
-| ID | 说明 | 配置项 |
-| ---- | ------------- | -------- |
-| REF-001 | Markdown 链接目标必须存在 | `exclude`（可选） |
-| REF-002 | ID 的定义与引用必须保持一致 | `definitions`, `references`, `idColumn`, `idPattern` |
-| REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
-| REF-004 | 跨区域链接必须在概要文件中声明 | `zonesDir`, `dependencySection` |
-| REF-005 | 锚点片段必须指向目标文件中存在的标题 | `files`（可选） |
-| REF-006 | 图片引用必须指向存在的文件 | `exclude`（可选） |
-
-### 清单规则
-
-| ID | 说明 | 配置项 |
-| ---- | ------------- | -------- |
-| CHK-001 | 清单中的所有项目必须已勾选 | `section`（可选）, `files`（可选） |
-
-### 使用场景
-
-这些规则设计为通用用途。以下是一些示例：
-
-- **SDD（规格驱动开发）** — 验证规格文档是否引用了现有需求，
-  以及文件间的 ID 是否一致
-- **ADR（架构决策记录）** — 确保所有 ADR 包含必需章节
-  （Status、Context、Decision），并且状态转换是有效的
-- **RFC（评审请求）** — 检查 RFC 文档是否包含必需标题，
-  以及提案间的交叉引用是否完整
-- **任何结构化 Markdown 项目** — 在 CI 中自动检测断裂链接、
-  重复 ID 和缺失文件
+| 包名 | 说明 |
+| --- | --- |
+| `@contextlint/core` | 规则引擎和 Markdown 解析器 |
+| `@contextlint/cli` | CLI 入口（`contextlint` 命令） |
+| `@contextlint/mcp-server` | AI 工具集成的 MCP 服务器 |
 
 ## 许可证
 
-MIT
+[MIT](LICENSE)

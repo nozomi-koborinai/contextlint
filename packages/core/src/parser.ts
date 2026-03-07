@@ -2,7 +2,15 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import { visit } from "unist-util-visit";
-import type { Definition, Heading, Link, Table, TableRow, Text } from "mdast";
+import type {
+  Definition,
+  Heading,
+  Link,
+  ListItem,
+  Table,
+  TableRow,
+  Text,
+} from "mdast";
 import type { Node } from "unist";
 
 export interface ParsedTable {
@@ -23,11 +31,19 @@ export interface ParsedHeading {
   line: number;
 }
 
+export interface ParsedCheckItem {
+  text: string;
+  checked: boolean;
+  line: number;
+  section: string | null;
+}
+
 export interface ParsedDocument {
   tables: ParsedTable[];
   headings: ParsedHeading[];
   sections: string[];
   links: ParsedLink[];
+  checkItems: ParsedCheckItem[];
   content: string;
 }
 
@@ -51,6 +67,7 @@ export function parseDocument(content: string): ParsedDocument {
   const headings: ParsedHeading[] = [];
   const tables: ParsedTable[] = [];
   const links: ParsedLink[] = [];
+  const checkItems: ParsedCheckItem[] = [];
 
   visit(tree, "heading", (node: Heading) => {
     headings.push({
@@ -89,6 +106,27 @@ export function parseDocument(content: string): ParsedDocument {
     tables.push({ line: tableLine, section, headers, rows });
   });
 
+  // Collect checklist items (listItem nodes with checked property from remark-gfm)
+  visit(tree, "listItem", (node: ListItem) => {
+    if (node.checked === null || node.checked === undefined) {
+      return;
+    }
+    const itemLine = node.position?.start.line ?? 0;
+    let section: string | null = null;
+    for (let i = headings.length - 1; i >= 0; i--) {
+      if (headings[i].line < itemLine) {
+        section = headings[i].text;
+        break;
+      }
+    }
+    checkItems.push({
+      text: extractText(node).trim(),
+      checked: node.checked,
+      line: itemLine,
+      section,
+    });
+  });
+
   // Collect relative links (inline and reference-style), including anchor-only links
   // Skip absolute URLs and non-file URI schemes (mailto:, tel:, data:, etc.)
   const isRelativeLink = (url: string) =>
@@ -111,6 +149,7 @@ export function parseDocument(content: string): ParsedDocument {
     headings,
     sections: headings.map((h) => h.text),
     links,
+    checkItems,
     content,
   };
 }

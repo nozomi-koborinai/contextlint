@@ -150,4 +150,36 @@ Some paragraph text.
     expect(doc.links[1].url).toBe("#section");
     expect(doc.links[2].url).toBe("../docs/spec.md");
   });
+
+  it("collects checklist items with checked state and section", () => {
+    const md = `
+## Review
+- [x] Done item
+- [ ] Pending item
+- Regular item
+
+## Notes
+- [x] Another done item
+`;
+    const doc = parseDocument(md);
+    expect(doc.checkItems).toHaveLength(3);
+    expect(doc.checkItems[0]).toEqual({
+      text: "Done item",
+      checked: true,
+      line: 3,
+      section: "Review",
+    });
+    expect(doc.checkItems[1]).toEqual({
+      text: "Pending item",
+      checked: false,
+      line: 4,
+      section: "Review",
+    });
+    expect(doc.checkItems[2]).toEqual({
+      text: "Another done item",
+      checked: true,
+      line: 8,
+      section: "Notes",
+    });
+  });
 });

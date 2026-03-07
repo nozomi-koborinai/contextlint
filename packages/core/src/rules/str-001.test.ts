@@ -30,4 +30,31 @@ describe("STR-001: required files check", () => {
     const messages = runRules([rule], emptyDoc, "<project>");
     expect(messages).toHaveLength(0);
   });
+
+  it("works with Japanese file names", () => {
+    const rule = str001({ files: ["ドキュメント/概要.md", "ドキュメント/要件.md"] });
+    const messages = runRules([rule], emptyDoc, "<project>", {
+      projectFiles: ["ドキュメント/概要.md"],
+    });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].ruleId).toBe("STR-001");
+    expect(messages[0].message).toContain("ドキュメント/要件.md");
+  });
+
+  it("works with Korean file names", () => {
+    const rule = str001({ files: ["문서/개요.md", "문서/요구사항.md"] });
+    const messages = runRules([rule], emptyDoc, "<project>", {
+      projectFiles: ["문서/개요.md", "문서/요구사항.md"],
+    });
+    expect(messages).toHaveLength(0);
+  });
+
+  it("works with Chinese file names", () => {
+    const rule = str001({ files: ["文档/概述.md", "文档/需求.md"] });
+    const messages = runRules([rule], emptyDoc, "<project>", {
+      projectFiles: ["文档/概述.md"],
+    });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("文档/需求.md");
+  });
 });

@@ -19,6 +19,7 @@ export default defineConfig(
     rules: {
       "@typescript-eslint/no-deprecated": "error",
       "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/consistent-type-exports": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

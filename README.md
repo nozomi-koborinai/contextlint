@@ -46,6 +46,7 @@ Create `contextlint.config.json`:
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+  "include": ["docs/**/*.md"],
   "rules": [
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status"] } },
     { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
@@ -57,8 +58,13 @@ Create `contextlint.config.json`:
 Run:
 
 ```bash
-npx contextlint --config contextlint.config.json "docs/**/*.md"
+npx contextlint
 ```
+
+contextlint auto-detects `contextlint.config.json` from the current
+or any parent directory. The `include` field defines default file
+patterns; CLI arguments override it. When neither is set, `**/*.md`
+is used.
 
 Output:
 
@@ -69,7 +75,7 @@ docs/requirements.md
 docs/design.md
   line 12  error    Link target "./api.md" does not exist  REF-001
 
-2 errors in 2 files
+1 error, 1 warning in 2 files
 ```
 
 > Adding `$schema` enables autocomplete in VS Code, Cursor,
@@ -118,6 +124,10 @@ docs/design.md
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+
+  // Default file patterns (used when no files are specified on CLI)
+  "include": ["docs/**/*.md"],
+
   "rules": [
     // TBL-001: Required columns must exist in tables
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },
@@ -212,7 +222,7 @@ These rules are designed to be general-purpose. Some examples:
 ### GitHub Actions
 
 ```yaml
-- run: npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+- run: npx @contextlint/cli
 ```
 
 ## MCP Server

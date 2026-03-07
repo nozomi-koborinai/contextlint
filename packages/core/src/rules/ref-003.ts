@@ -1,14 +1,18 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
+import { regexString } from "../utils/regex-string.js";
 
-export interface Ref003Options {
-  stabilityColumn: string;
-  stabilityOrder: string[];
-  definitions: string;
-  references: string[];
-  idColumn?: string;
-  idPattern?: string;
-}
+export const ref003Schema = z.object({
+  stabilityColumn: z.string(),
+  stabilityOrder: z.array(z.string()),
+  definitions: z.string(),
+  references: z.array(z.string()),
+  idColumn: z.string().optional(),
+  idPattern: regexString.optional(),
+}).strict();
+
+export type Ref003Options = z.infer<typeof ref003Schema>;
 
 export function ref003(options: Ref003Options): Rule {
   const isDefinition = picomatch(`**/${options.definitions}`);
@@ -18,7 +22,10 @@ export function ref003(options: Ref003Options): Rule {
 
   const stabilityRank = new Map<string, number>();
   for (let i = 0; i < options.stabilityOrder.length; i++) {
-    stabilityRank.set(options.stabilityOrder[i], i);
+    const value = options.stabilityOrder[i];
+    if (value !== undefined) {
+      stabilityRank.set(value, i);
+    }
   }
 
   function matchesReference(filePath: string): boolean {

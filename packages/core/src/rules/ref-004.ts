@@ -1,18 +1,23 @@
 import { resolve, dirname } from "node:path";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Ref004Options {
-  zonesDir: string;
-  dependencySection?: string;
-}
+export const ref004Schema = z.object({
+  zonesDir: z.string(),
+  dependencySection: z.string().optional(),
+}).strict();
+
+export type Ref004Options = z.infer<typeof ref004Schema>;
 
 export function ref004(options: Ref004Options): Rule {
   const depSection = options.dependencySection ?? "Dependencies";
+  const zonesDirNormalized = options.zonesDir
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "")
+    .replace(/\/$/, "");
 
   function getZone(filePath: string): string | null {
-    // Find zonesDir in the path and extract the first directory after it
     const normalized = filePath.replace(/\\/g, "/");
-    const zonesDirNormalized = options.zonesDir.replace(/\\/g, "/");
     const idx = normalized.indexOf(`/${zonesDirNormalized}/`);
     if (idx === -1) {
       // Try without leading slash (relative paths)
@@ -43,16 +48,16 @@ export function ref004(options: Ref004Options): Rule {
         return;
       }
 
-      // Find cross-zone links
-      const crossZoneTargets = new Set<string>();
+      // Find cross-zone links, keeping the line of the first reference per zone
+      const crossZoneTargets = new Map<string, number>();
       for (const link of context.document.links) {
         const resolved = resolve(
           dirname(context.filePath),
-          link.url.split("#")[0],
+          link.url.split("#")[0] ?? "",
         );
         const targetZone = getZone(resolved);
-        if (targetZone && targetZone !== sourceZone) {
-          crossZoneTargets.add(targetZone);
+        if (targetZone && targetZone !== sourceZone && !crossZoneTargets.has(targetZone)) {
+          crossZoneTargets.set(targetZone, link.line);
         }
       }
 
@@ -89,12 +94,12 @@ export function ref004(options: Ref004Options): Rule {
       }
 
       // Report undeclared cross-zone dependencies
-      for (const targetZone of crossZoneTargets) {
+      for (const [targetZone, line] of crossZoneTargets) {
         if (!declaredDeps.has(targetZone)) {
           context.report({
             severity: "error",
             message: `Cross-zone reference to "${targetZone}" zone, but "${targetZone}" is not listed in the "${depSection}" section of ${sourceZone}/overview.md`,
-            line: 0,
+            line,
           });
         }
       }

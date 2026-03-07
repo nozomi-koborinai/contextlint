@@ -20,4 +20,6 @@ jobs:
 
       - run: bun test
 
+      - run: bunx eslint .
+
       - run: bunx markdownlint-cli2 "README*.md"

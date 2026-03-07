@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "description": "MCP server for contextlint",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "bin": {
     "contextlint-mcp": "dist/index.js"
   },
@@ -16,7 +20,7 @@
   "dependencies": {
     "@contextlint/core": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.27.0",
-    "zod": "^4.0.0"
+    "zod": "^4.3.6"
   },
   "publishConfig": {
     "access": "public"

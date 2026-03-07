@@ -1,13 +1,13 @@
 import { describe, it, expect } from "bun:test";
-import { formatResults } from "./format.js";
-import type { FileLintResult } from "./lint.js";
+import { formatFileResults } from "@contextlint/core";
+import type { FileLintResult } from "@contextlint/core";
 
-describe("formatResults", () => {
+describe("formatFileResults", () => {
   it("returns 'No issues found.' when there are no errors", () => {
     const results: FileLintResult[] = [
       { filePath: "/project/doc.md", messages: [] },
     ];
-    expect(formatResults(results, "/project")).toBe("No issues found.");
+    expect(formatFileResults(results, "/project")).toBe("No issues found.");
   });
 
   it("formats errors with line number, severity, and ruleId", () => {
@@ -24,7 +24,7 @@ describe("formatResults", () => {
         ],
       },
     ];
-    const output = formatResults(results, "/project");
+    const output = formatFileResults(results, "/project");
     expect(output).toContain("docs/CONTEXT.md");
     expect(output).toContain("line 5");
     expect(output).toContain("error");
@@ -57,7 +57,50 @@ describe("formatResults", () => {
         ],
       },
     ];
-    const output = formatResults(results, "/project");
+    const output = formatFileResults(results, "/project");
     expect(output).toContain("2 errors in 2 files");
+  });
+
+  it("separates error and warning counts in summary", () => {
+    const results: FileLintResult[] = [
+      {
+        filePath: "/project/doc.md",
+        messages: [
+          {
+            ruleId: "TBL-001",
+            severity: "error",
+            message: "error msg",
+            line: 1,
+          },
+          {
+            ruleId: "TBL-002",
+            severity: "warning",
+            message: "warning msg",
+            line: 2,
+          },
+        ],
+      },
+    ];
+    const output = formatFileResults(results, "/project");
+    expect(output).toContain("1 error, 1 warning in 1 file");
+  });
+
+  it("shows only warnings in summary when no errors", () => {
+    const results: FileLintResult[] = [
+      {
+        filePath: "/project/doc.md",
+        messages: [
+          {
+            ruleId: "TBL-002",
+            severity: "warning",
+            message: "warning msg",
+            line: 1,
+          },
+        ],
+      },
+    ];
+    const output = formatFileResults(results, "/project");
+    expect(output).toContain("1 warning in 1 file");
+    expect(output).not.toContain("error");
   });
 });

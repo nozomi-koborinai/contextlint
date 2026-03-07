@@ -8,6 +8,11 @@
       "type": "string",
       "description": "Path or URL to the contextlint JSON Schema for IDE autocomplete."
     },
+    "include": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Default glob patterns for files to lint (e.g. [\"docs/**/*.md\"]). Used when no file arguments are provided on the CLI."
+    },
     "rules": {
       "type": "array",
       "description": "List of lint rules to apply.",

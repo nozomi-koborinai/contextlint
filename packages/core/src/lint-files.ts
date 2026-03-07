@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { relative } from "node:path";
-import { glob } from "glob";
+import { globSync } from "glob";
 import { parseDocument } from "./parser.js";
 import type { ParsedDocument } from "./parser.js";
 import type { LintMessage } from "./rule.js";
@@ -21,11 +21,11 @@ export interface FileLintResult {
   messages: LintMessage[];
 }
 
-export async function lintFiles(
+export function lintFiles(
   patterns: string[],
   config: LintFilesConfig,
   cwd: string,
-): Promise<FileLintResult[]> {
+): FileLintResult[] {
   const rules = config.rules.map((entry) =>
     resolveRule(entry.rule, entry.options),
   );
@@ -33,12 +33,12 @@ export async function lintFiles(
   const docRules = rules.filter((r) => (r.scope ?? "document") === "document");
   const projectRules = rules.filter((r) => r.scope === "project");
 
-  const files = await glob(patterns, { cwd, absolute: true });
+  const rawFiles = globSync(patterns, { cwd, absolute: true, nodir: true });
+  const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
   files.sort();
 
-  const projectFiles = files.map((f) => relative(cwd, f));
+  const projectFiles = files.map((f) => relative(cwd, f).replace(/\\/g, "/"));
 
-  // Parse all files upfront (shared by document and project rules)
   const documents = new Map<string, ParsedDocument>();
   for (const filePath of files) {
     const content = readFileSync(filePath, "utf-8");
@@ -47,7 +47,6 @@ export async function lintFiles(
 
   const results: FileLintResult[] = [];
 
-  // Run project-scoped rules once
   if (projectRules.length > 0) {
     const emptyDoc = parseDocument("");
     const messages = runRules(projectRules, emptyDoc, "<project>", {
@@ -59,7 +58,6 @@ export async function lintFiles(
     }
   }
 
-  // Run document-scoped rules per file
   for (const filePath of files) {
     const document = documents.get(filePath);
     if (!document) continue;

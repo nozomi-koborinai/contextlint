@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "description": "Rule engine and Markdown table parser for contextlint",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -22,7 +26,8 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "unified": "^11.0.5",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/mdast": "^4.0.4",

@@ -1,11 +1,15 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
+import { regexString } from "../utils/regex-string.js";
 
-export interface Tbl006Options {
-  files: string;
-  column: string;
-  idPattern?: string;
-}
+export const tbl006Schema = z.object({
+  files: z.string(),
+  column: z.string(),
+  idPattern: regexString.optional(),
+}).strict();
+
+export type Tbl006Options = z.infer<typeof tbl006Schema>;
 
 export function tbl006(options: Tbl006Options): Rule {
   const isMatch = picomatch(`**/${options.files}`);

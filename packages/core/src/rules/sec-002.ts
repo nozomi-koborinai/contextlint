@@ -1,13 +1,16 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import type { ParsedHeading } from "../parser.js";
 
-export interface Sec002Options {
-  order: string[];
-  level?: number;
-  section?: string;
-  files?: string;
-}
+export const sec002Schema = z.object({
+  order: z.array(z.string()),
+  level: z.number().optional(),
+  section: z.string().optional(),
+  files: z.string().optional(),
+}).strict();
+
+export type Sec002Options = z.infer<typeof sec002Schema>;
 
 interface HeadingGroup {
   parent: string | null;
@@ -60,14 +63,14 @@ function checkOrder(
 }
 
 export function sec002(options: Sec002Options): Rule {
-  const fileMatcher = options.files ? picomatch(options.files) : undefined;
+  const isMatch = options.files ? picomatch(`**/${options.files}`) : null;
 
   return {
     id: "SEC-002",
     description: "Sections must appear in the specified order",
     severity: "error",
     check: (context) => {
-      if (fileMatcher && !fileMatcher(context.filePath)) {
+      if (isMatch && !isMatch(context.filePath)) {
         return;
       }
 

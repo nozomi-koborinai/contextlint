@@ -1,8 +1,11 @@
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Str001Options {
-  files: string[];
-}
+export const str001Schema = z.object({
+  files: z.array(z.string()),
+}).strict();
+
+export type Str001Options = z.infer<typeof str001Schema>;
 
 export function str001(options: Str001Options): Rule {
   return {

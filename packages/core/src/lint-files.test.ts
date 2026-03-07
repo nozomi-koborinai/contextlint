@@ -14,7 +14,7 @@ function cleanup() {
 }
 
 describe("lintFiles", () => {
-  it("returns no messages for valid files", async () => {
+  it("returns no messages for valid files", () => {
     setup();
     try {
       writeFileSync(
@@ -22,7 +22,7 @@ describe("lintFiles", () => {
         "# Tasks\n\n| ID | Status |\n|----|--------|\n| 1  | Done   |\n",
       );
 
-      const results = await lintFiles(["valid.md"], {
+      const results = lintFiles(["valid.md"], {
         rules: [
           { rule: "tbl001", options: { requiredColumns: ["ID", "Status"] } },
         ],
@@ -35,7 +35,7 @@ describe("lintFiles", () => {
     }
   });
 
-  it("returns messages for document-scoped rule violations", async () => {
+  it("returns messages for document-scoped rule violations", () => {
     setup();
     try {
       writeFileSync(
@@ -43,7 +43,7 @@ describe("lintFiles", () => {
         "# Tasks\n\n| Title |\n|-------|\n| Setup |\n",
       );
 
-      const results = await lintFiles(["missing.md"], {
+      const results = lintFiles(["missing.md"], {
         rules: [
           { rule: "tbl001", options: { requiredColumns: ["ID", "Status"] } },
         ],
@@ -57,12 +57,12 @@ describe("lintFiles", () => {
     }
   });
 
-  it("runs project-scoped rules", async () => {
+  it("runs project-scoped rules", () => {
     setup();
     try {
       writeFileSync(join(tmpDir, "a.md"), "# A\n");
 
-      const results = await lintFiles(["a.md"], {
+      const results = lintFiles(["a.md"], {
         rules: [
           { rule: "str001", options: { files: ["a.md", "nonexistent.md"] } },
         ],
@@ -78,17 +78,16 @@ describe("lintFiles", () => {
     }
   });
 
-  it("passes documents map to cross-file document-scoped rules (REF-001)", async () => {
+  it("passes documents map to cross-file document-scoped rules (REF-001)", () => {
     setup();
     try {
-      // a.md links to b.md (exists) and c.md (does not exist)
       writeFileSync(
         join(tmpDir, "a.md"),
         "# A\n\n[link to b](./b.md)\n\n[link to c](./c.md)\n",
       );
       writeFileSync(join(tmpDir, "b.md"), "# B\n");
 
-      const results = await lintFiles(["a.md", "b.md"], {
+      const results = lintFiles(["a.md", "b.md"], {
         rules: [{ rule: "ref001" }],
       }, tmpDir);
 
@@ -103,10 +102,9 @@ describe("lintFiles", () => {
     }
   });
 
-  it("passes documents map to cross-file project-scoped rules (REF-002)", async () => {
+  it("passes documents map to cross-file project-scoped rules (REF-002)", () => {
     setup();
     try {
-      // requirements.md defines IDs; spec.md references some of them
       writeFileSync(
         join(tmpDir, "requirements.md"),
         "# Requirements\n\n| ID | Description |\n|----|-------------|\n| REQ-01 | First |\n| REQ-02 | Second |\n",
@@ -116,7 +114,7 @@ describe("lintFiles", () => {
         "# Spec\n\nThis implements REQ-01.\n",
       );
 
-      const results = await lintFiles(["requirements.md", "spec.md"], {
+      const results = lintFiles(["requirements.md", "spec.md"], {
         rules: [
           {
             rule: "ref002",

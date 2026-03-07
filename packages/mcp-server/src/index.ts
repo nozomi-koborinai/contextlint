@@ -1,19 +1,25 @@
 #!/usr/bin/env node
 
-import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { parseDocument, runRules, resolveRule, lintFiles } from "@contextlint/core";
+import {
+  parseDocument,
+  runRules,
+  resolveRule,
+  lintFiles,
+  findConfig,
+  loadConfig,
+  formatContentResults,
+  formatFileResults,
+} from "@contextlint/core";
 import * as z from "zod/v4";
-import { formatContentResults, formatFileResults } from "./format.js";
 
 const server = new McpServer({
   name: "contextlint",
   version: "0.0.0",
 });
 
-// Tool 1: lint — lint markdown content directly
 server.registerTool(
   "lint",
   {
@@ -53,7 +59,6 @@ server.registerTool(
   },
 );
 
-// Tool 2: lint-files — lint files matching glob patterns
 server.registerTool(
   "lint-files",
   {
@@ -74,58 +79,36 @@ server.registerTool(
         .describe('Working directory (default: ".")'),
     },
   },
-  async ({ patterns, configPath, cwd }) => {
+  ({ patterns, configPath, cwd }) => {
     const resolvedCwd = resolve(cwd ?? ".");
-    const resolvedPatterns = patterns ?? ["**/*.md"];
 
     try {
-      const resolvedConfigPath = configPath ?? "contextlint.config.json";
-      const fullConfigPath = resolve(resolvedCwd, resolvedConfigPath);
-      let raw: string;
-      try {
-        raw = readFileSync(fullConfigPath, "utf-8");
-      } catch {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: Cannot read config file: ${fullConfigPath}`,
-            },
-          ],
-          isError: true,
-        };
+      let resolvedConfigPath: string;
+      if (configPath) {
+        resolvedConfigPath = resolve(resolvedCwd, configPath);
+      } else {
+        const found = findConfig(resolvedCwd);
+        if (!found) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: No contextlint.config.json found. Provide a configPath or create a config file.",
+              },
+            ],
+            isError: true,
+          };
+        }
+        resolvedConfigPath = found;
       }
 
-      let config: {
-        rules?: { rule: string; options?: Record<string, unknown> }[];
-      };
-      try {
-        config = JSON.parse(raw) as typeof config;
-      } catch {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: Invalid JSON in config file: ${fullConfigPath}`,
-            },
-          ],
-          isError: true,
-        };
-      }
+      const config = loadConfig(resolvedConfigPath);
+      const resolvedPatterns =
+        patterns && patterns.length > 0
+          ? patterns
+          : config.include ?? ["**/*.md"];
 
-      if (!config.rules || !Array.isArray(config.rules)) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: Config must have a "rules" array: ${fullConfigPath}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      const results = await lintFiles(resolvedPatterns, { rules: config.rules }, resolvedCwd);
+      const results = lintFiles(resolvedPatterns, config, resolvedCwd);
       const text = formatFileResults(results, resolvedCwd);
       return { content: [{ type: "text", text }] };
     } catch (error) {

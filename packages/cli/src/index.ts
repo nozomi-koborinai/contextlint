@@ -2,31 +2,43 @@
 
 import { resolve } from "node:path";
 import { Command } from "commander";
-import { loadConfig } from "./config.js";
-import { lintFiles } from "./lint.js";
-import { formatResults } from "./format.js";
+import { findConfig, loadConfig, lintFiles, formatFileResults } from "@contextlint/core";
 
 const program = new Command();
 
 program
   .name("contextlint")
   .description("Rule-based linter for structured Markdown documents")
-  .argument("[files...]", "Files or glob patterns to lint", ["**/*.md"])
+  .argument("[files...]", "Files or glob patterns to lint")
   .option(
     "--config <path>",
     "Path to config file",
   )
   .option("--cwd <path>", "Working directory", process.cwd())
   .action(
-    async (
+    (
       files: string[],
       opts: { config?: string; cwd: string },
     ) => {
       const cwd = resolve(opts.cwd);
 
+      let configPath: string;
+      if (opts.config) {
+        configPath = resolve(cwd, opts.config);
+      } else {
+        const found = findConfig(cwd);
+        if (!found) {
+          console.error(
+            "Error: No contextlint.config.json found. Create a config file or use --config.",
+          );
+          process.exit(2);
+        }
+        configPath = found;
+      }
+
       let config;
       try {
-        config = loadConfig(opts.config ?? "contextlint.config.json", cwd);
+        config = loadConfig(configPath);
       } catch (err) {
         console.error(
           `Error: ${err instanceof Error ? err.message : String(err)}`,
@@ -34,12 +46,19 @@ program
         process.exit(2);
       }
 
+      const patterns =
+        files.length > 0
+          ? files
+          : config.include ?? ["**/*.md"];
+
       try {
-        const results = await lintFiles(files, config, cwd);
-        const output = formatResults(results, cwd);
+        const results = lintFiles(patterns, config, cwd);
+        const output = formatFileResults(results, cwd);
         console.log(output);
 
-        const hasErrors = results.some((r) => r.messages.length > 0);
+        const hasErrors = results.some((r) =>
+          r.messages.some((m) => m.severity === "error"),
+        );
         process.exit(hasErrors ? 1 : 0);
       } catch (err) {
         console.error(

@@ -88,6 +88,7 @@ export function parseDocument(content: string): ParsedDocument {
   visit(tree, "table", (node: Table) => {
     const tableLine = node.position?.start.line ?? 0;
     const [headerRow, ...dataRows] = node.children;
+    if (!headerRow) return;
     const headers = extractCellText(headerRow);
 
     const rows = dataRows.map((row) => {
@@ -102,8 +103,9 @@ export function parseDocument(content: string): ParsedDocument {
     // Find the nearest heading above this table
     let section: string | null = null;
     for (let i = headings.length - 1; i >= 0; i--) {
-      if (headings[i].line < tableLine) {
-        section = headings[i].text;
+      const heading = headings[i];
+      if (heading && heading.line < tableLine) {
+        section = heading.text;
         break;
       }
     }
@@ -119,8 +121,9 @@ export function parseDocument(content: string): ParsedDocument {
     const itemLine = node.position?.start.line ?? 0;
     let section: string | null = null;
     for (let i = headings.length - 1; i >= 0; i--) {
-      if (headings[i].line < itemLine) {
-        section = headings[i].text;
+      const heading = headings[i];
+      if (heading && heading.line < itemLine) {
+        section = heading.text;
         break;
       }
     }
@@ -135,7 +138,7 @@ export function parseDocument(content: string): ParsedDocument {
   // Collect relative links (inline and reference-style), including anchor-only links
   // Skip absolute URLs and non-file URI schemes (mailto:, tel:, data:, etc.)
   const isRelativeLink = (url: string) =>
-    !/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url);
+    !url.startsWith("//") && !/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url);
 
   visit(tree, "link", (node: Link) => {
     if (isRelativeLink(node.url)) {

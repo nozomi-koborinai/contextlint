@@ -39,7 +39,7 @@ describe("REF-004", () => {
     expect(messages).toEqual([]);
   });
 
-  it("reports undeclared cross-zone reference", () => {
+  it("reports undeclared cross-zone reference with line number", () => {
     const messages = lint(
       "docs/zones/bulletin-board/spec_content.md",
       {
@@ -54,6 +54,7 @@ describe("REF-004", () => {
     expect(messages[0].ruleId).toBe("REF-004");
     expect(messages[0].message).toContain('"auth"');
     expect(messages[0].message).toContain("Dependencies");
+    expect(messages[0].line).toBeGreaterThan(0);
   });
 
   it("passes for same-zone references", () => {
@@ -106,6 +107,38 @@ describe("REF-004", () => {
         "docs/zones/auth/table_users.md": "# Users",
       },
       { zonesDir: "docs/zones", dependencySection: "依存関係" },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("normalizes zonesDir with leading ./", () => {
+    const messages = lint(
+      "docs/zones/bulletin-board/spec_content.md",
+      {
+        "docs/zones/bulletin-board/spec_content.md":
+          "See [users](../auth/table_users.md)",
+        "docs/zones/bulletin-board/overview.md":
+          "# Overview\n\nNo dependencies section here.",
+        "docs/zones/auth/table_users.md": "# Users",
+      },
+      { zonesDir: "./docs/zones" },
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].ruleId).toBe("REF-004");
+    expect(messages[0].message).toContain('"auth"');
+  });
+
+  it("normalizes zonesDir with trailing /", () => {
+    const messages = lint(
+      "docs/zones/bulletin-board/spec_content.md",
+      {
+        "docs/zones/bulletin-board/spec_content.md":
+          "See [users](../auth/table_users.md)",
+        "docs/zones/bulletin-board/overview.md":
+          "# Overview\n\n## Dependencies\n\n| Zone | Reason |\n|---|---|\n| auth | User identity |",
+        "docs/zones/auth/table_users.md": "# Users",
+      },
+      { zonesDir: "docs/zones/" },
     );
     expect(messages).toEqual([]);
   });

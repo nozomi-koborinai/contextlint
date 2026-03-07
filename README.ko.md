@@ -136,7 +136,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     },
 
     // REF-004: 영역 간 링크가 해당 영역의 개요에서 선언되어야 함
-    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } }
+    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
+
+    // REF-005: 앵커 프래그먼트가 대상 파일의 제목과 일치해야 함
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
   ]
 }
 ```
@@ -206,6 +209,7 @@ npm install -D @contextlint/mcp-server
 | REF-002 | ID 정의와 참조의 정합성이 유지되어야 함 | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | 의존 관계에서 안정성 순서가 지켜져야 함 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | 영역 간 링크가 개요 파일에서 선언되어야 함 | `zonesDir`, `dependencySection` |
+| REF-005 | 앵커 프래그먼트가 대상 파일의 제목과 일치해야 함 | `files`(선택) |
 
 ### 활용 사례
 

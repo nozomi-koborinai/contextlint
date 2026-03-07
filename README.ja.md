@@ -134,7 +134,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     },
 
     // REF-004: ゾーンをまたぐリンクが、そのゾーンの概要（overview）で宣言されていること
-    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } }
+    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
+
+    // REF-005: アンカーフラグメントがリンク先ファイルの見出しと一致すること
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
   ]
 }
 ```
@@ -206,6 +209,7 @@ npm install -D @contextlint/mcp-server
 | REF-002 | ID の定義と参照の整合性が取れていること | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | ゾーン間リンクが概要ファイルで宣言されていること | `zonesDir`, `dependencySection` |
+| REF-005 | アンカーフラグメントがリンク先の見出しと一致すること | `files`（任意） |
 
 ### ユースケース
 

@@ -12,6 +12,7 @@ import { ref001 } from "./rules/ref-001.js";
 import { tbl005 } from "./rules/tbl-005.js";
 import { ref004 } from "./rules/ref-004.js";
 import { ref005 } from "./rules/ref-005.js";
+import { sec002 } from "./rules/sec-002.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -76,6 +77,15 @@ const registry: Record<string, RuleFactory> = {
     ),
   ref005: (options) =>
     ref005(options as { files?: string } | undefined),
+  sec002: (options) =>
+    sec002(
+      options as {
+        order: string[];
+        level?: number;
+        section?: string;
+        files?: string;
+      },
+    ),
 };
 
 export function resolveRule(

@@ -96,6 +96,14 @@ Example `contextlint.config.json`:
     // SEC-001: Required sections must exist in the document
     { "rule": "sec001", "options": { "sections": ["Overview", "Requirements"], "files": "**/overview.md" } },
 
+    // SEC-002: Sections must appear in the specified order
+    //   Basic — check order across the whole file:
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"] } },
+    //   With level — group by parent heading and check each group independently:
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"], "level": 3, "files": "**/spec.md" } },
+    //   With section — scope to a specific parent group only:
+    { "rule": "sec002", "options": { "order": ["Endpoints", "Error Handling"], "level": 3, "section": "API" } },
+
     // STR-001: Required files must exist in the project
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
@@ -191,6 +199,7 @@ Available tools:
 | ID | Description | Config |
 | --- | ----------- | ------ |
 | SEC-001 | Required sections must exist in the document | `sections`, `files` (optional) |
+| SEC-002 | Sections must appear in the specified order | `order`, `level` (optional), `section` (optional), `files` (optional) |
 | STR-001 | Required files must exist in the project | `files` |
 
 ### Reference rules

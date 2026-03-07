@@ -92,6 +92,14 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // SEC-001: 文档中必须存在必需章节
     { "rule": "sec001", "options": { "sections": ["Overview", "Requirements"], "files": "**/overview.md" } },
 
+    // SEC-002: 章节必须按指定顺序排列
+    //   基本 — 在整个文件中检查顺序：
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"] } },
+    //   指定 level — 按父标题分组，独立检查各组：
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"], "level": 3, "files": "**/spec.md" } },
+    //   指定 section — 仅检查特定父分组：
+    { "rule": "sec002", "options": { "order": ["Endpoints", "Error Handling"], "level": 3, "section": "API" } },
+
     // STR-001: 项目中必须存在必需文件
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
@@ -185,6 +193,7 @@ npm install -D @contextlint/mcp-server
 | ID | 说明 | 配置项 |
 | ---- | ------------- | -------- |
 | SEC-001 | 文档中必须存在必需章节 | `sections`, `files`（可选） |
+| SEC-002 | 章节必须按指定顺序排列 | `order`, `level`（可选）, `section`（可选）, `files`（可选） |
 | STR-001 | 项目中必须存在必需文件 | `files` |
 
 ### 引用规则

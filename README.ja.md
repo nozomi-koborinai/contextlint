@@ -105,6 +105,14 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // SEC-001: ドキュメント内に必須セクションが存在すること
     { "rule": "sec001", "options": { "sections": ["Overview", "Requirements"], "files": "**/overview.md" } },
 
+    // SEC-002: セクションが指定された順序で並んでいること
+    //   基本 — ファイル全体で順序をチェック：
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"] } },
+    //   level 指定 — 上位見出しごとにグループ化し、各グループを独立チェック：
+    { "rule": "sec002", "options": { "order": ["Overview", "Requirements", "Design"], "level": 3, "files": "**/spec.md" } },
+    //   section 指定 — 特定の親グループのみチェック：
+    { "rule": "sec002", "options": { "order": ["Endpoints", "Error Handling"], "level": 3, "section": "API" } },
+
     // STR-001: プロジェクト内に必須ファイルが存在すること
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
@@ -199,6 +207,7 @@ npm install -D @contextlint/mcp-server
 | ID | 説明 | 設定項目 |
 | ---- | ------------- | -------- |
 | SEC-001 | ドキュメント内に必須セクションが存在すること | `sections`, `files`（任意） |
+| SEC-002 | セクションが指定された順序で並んでいること | `order`, `level`（任意）, `section`（任意）, `files`（任意） |
 | STR-001 | プロジェクト内に必須ファイルが存在すること | `files` |
 
 ### 参照に関するルール

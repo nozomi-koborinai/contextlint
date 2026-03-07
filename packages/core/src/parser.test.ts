@@ -56,6 +56,10 @@ Some text.
     expect(doc.tables[0].section).toBe("Section One");
     expect(doc.tables[1].section).toBe("Section Two");
     expect(doc.sections).toEqual(["Section One", "Section Two"]);
+    expect(doc.headings).toEqual([
+      { text: "Section One", level: 1, line: 2 },
+      { text: "Section Two", level: 2, line: 10 },
+    ]);
   });
 
   it("returns empty tables for document without tables", () => {
@@ -67,6 +71,9 @@ Some paragraph text.
     const doc = parseDocument(md);
     expect(doc.tables).toHaveLength(0);
     expect(doc.sections).toEqual(["Just a heading"]);
+    expect(doc.headings).toEqual([
+      { text: "Just a heading", level: 1, line: 2 },
+    ]);
   });
 
   it("includes line numbers", () => {

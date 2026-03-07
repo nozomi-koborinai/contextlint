@@ -1,0 +1,516 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "contextlint Configuration",
+  "description": "Configuration file for contextlint — a rule-based linter for structured Markdown documents.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URL to the contextlint JSON Schema for IDE autocomplete."
+    },
+    "rules": {
+      "type": "array",
+      "description": "List of lint rules to apply.",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "TBL-001: Required columns must exist in tables.",
+            "properties": {
+              "rule": { "const": "tbl001" },
+              "options": {
+                "type": "object",
+                "description": "Options for TBL-001.",
+                "properties": {
+                  "requiredColumns": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Column names that must exist in every matched table."
+                  },
+                  "section": {
+                    "type": "string",
+                    "description": "Only check tables under a heading containing this text."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to (e.g. \"*.md\", \"docs/**\")."
+                  }
+                },
+                "required": ["requiredColumns"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "TBL-002: Table cells must not be empty.",
+            "properties": {
+              "rule": { "const": "tbl002" },
+              "options": {
+                "type": "object",
+                "description": "Options for TBL-002.",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Column names to check. If omitted, all columns are checked."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "TBL-003: Cell values must be from an allowed list.",
+            "properties": {
+              "rule": { "const": "tbl003" },
+              "options": {
+                "type": "object",
+                "description": "Options for TBL-003.",
+                "properties": {
+                  "column": {
+                    "type": "string",
+                    "description": "The column name to validate."
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "List of allowed values for the column."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "required": ["column", "values"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "TBL-004: Cell values must match a regex pattern.",
+            "properties": {
+              "rule": { "const": "tbl004" },
+              "options": {
+                "type": "object",
+                "description": "Options for TBL-004.",
+                "properties": {
+                  "column": {
+                    "type": "string",
+                    "description": "The column name to validate."
+                  },
+                  "pattern": {
+                    "type": "string",
+                    "description": "Regular expression pattern that cell values must match."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "required": ["column", "pattern"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "TBL-005: Cross-column conditional constraints — when a condition on one column is met, another column must satisfy a constraint.",
+            "properties": {
+              "rule": { "const": "tbl005" },
+              "options": {
+                "type": "object",
+                "description": "Options for TBL-005.",
+                "properties": {
+                  "when": {
+                    "type": "object",
+                    "description": "Condition to match on a column value.",
+                    "properties": {
+                      "column": {
+                        "type": "string",
+                        "description": "The column name to check the condition against."
+                      },
+                      "equals": {
+                        "type": "string",
+                        "description": "Matches if the cell value equals this string exactly."
+                      },
+                      "oneOf": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "Matches if the cell value is one of these strings."
+                      },
+                      "matches": {
+                        "type": "string",
+                        "description": "Matches if the cell value matches this regex pattern."
+                      }
+                    },
+                    "required": ["column"],
+                    "additionalProperties": false
+                  },
+                  "then": {
+                    "type": "object",
+                    "description": "Constraint that must be satisfied when the condition is met.",
+                    "properties": {
+                      "column": {
+                        "type": "string",
+                        "description": "The column name to apply the constraint to."
+                      },
+                      "notEmpty": {
+                        "type": "boolean",
+                        "description": "If true, the cell must not be empty."
+                      },
+                      "equals": {
+                        "type": "string",
+                        "description": "The cell value must equal this string exactly."
+                      },
+                      "oneOf": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "The cell value must be one of these strings."
+                      },
+                      "matches": {
+                        "type": "string",
+                        "description": "The cell value must match this regex pattern."
+                      }
+                    },
+                    "required": ["column"],
+                    "additionalProperties": false
+                  },
+                  "section": {
+                    "type": "string",
+                    "description": "Only check tables under a heading containing this text."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "required": ["when", "then"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "TBL-006: IDs in a column must be unique across all matched files.",
+            "properties": {
+              "rule": { "const": "tbl006" },
+              "options": {
+                "type": "object",
+                "description": "Options for TBL-006.",
+                "properties": {
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to select files for cross-file uniqueness checking."
+                  },
+                  "column": {
+                    "type": "string",
+                    "description": "The column name containing the IDs to check for uniqueness."
+                  },
+                  "idPattern": {
+                    "type": "string",
+                    "description": "Optional regex pattern. Only values matching this pattern are treated as IDs."
+                  }
+                },
+                "required": ["files", "column"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "SEC-001: Required sections must exist in the document.",
+            "properties": {
+              "rule": { "const": "sec001" },
+              "options": {
+                "type": "object",
+                "description": "Options for SEC-001.",
+                "properties": {
+                  "sections": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "List of section heading texts that must exist."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "required": ["sections"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "SEC-002: Sections must appear in the specified order.",
+            "properties": {
+              "rule": { "const": "sec002" },
+              "options": {
+                "type": "object",
+                "description": "Options for SEC-002.",
+                "properties": {
+                  "order": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Expected order of section heading texts."
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 6,
+                    "description": "Heading level to check (e.g. 2 for ##, 3 for ###). When set, headings are grouped by their parent heading."
+                  },
+                  "section": {
+                    "type": "string",
+                    "description": "Only check headings under this specific parent heading. Requires 'level' to be set."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "required": ["order"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "STR-001: Required files must exist in the project.",
+            "properties": {
+              "rule": { "const": "str001" },
+              "options": {
+                "type": "object",
+                "description": "Options for STR-001.",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "List of file paths that must exist in the project."
+                  }
+                },
+                "required": ["files"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "REF-001: All relative Markdown links must point to files that exist.",
+            "properties": {
+              "rule": { "const": "ref001" },
+              "options": {
+                "type": "object",
+                "description": "Options for REF-001.",
+                "properties": {
+                  "exclude": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Glob patterns for link targets to exclude from checking (e.g. [\"*.pdf\", \"external/**\"])."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "REF-002: Validate cross-file ID traceability — referenced IDs must be defined, and defined IDs should be referenced.",
+            "properties": {
+              "rule": { "const": "ref002" },
+              "options": {
+                "type": "object",
+                "description": "Options for REF-002.",
+                "properties": {
+                  "definitions": {
+                    "type": "string",
+                    "description": "Glob pattern for files where IDs are defined (e.g. \"requirements/*.md\")."
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Glob patterns for files where IDs are referenced."
+                  },
+                  "idColumn": {
+                    "type": "string",
+                    "description": "Table column name that contains the IDs."
+                  },
+                  "idPattern": {
+                    "type": "string",
+                    "description": "Regex pattern that valid IDs must match (e.g. \"^REQ-\\\\d+$\")."
+                  }
+                },
+                "required": ["definitions", "references", "idColumn", "idPattern"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "REF-003: A document item's stability should not exceed the stability of items it depends on.",
+            "properties": {
+              "rule": { "const": "ref003" },
+              "options": {
+                "type": "object",
+                "description": "Options for REF-003.",
+                "properties": {
+                  "stabilityColumn": {
+                    "type": "string",
+                    "description": "Table column name that contains the stability level."
+                  },
+                  "stabilityOrder": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Stability levels ordered from least stable to most stable (e.g. [\"Draft\", \"Review\", \"Stable\"])."
+                  },
+                  "definitions": {
+                    "type": "string",
+                    "description": "Glob pattern for files where items with stability levels are defined."
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Glob patterns for files that reference items from definition files."
+                  },
+                  "idColumn": {
+                    "type": "string",
+                    "description": "Table column name that contains the IDs. Defaults to \"ID\"."
+                  },
+                  "idPattern": {
+                    "type": "string",
+                    "description": "Regex pattern that valid IDs must match."
+                  }
+                },
+                "required": ["stabilityColumn", "stabilityOrder", "definitions", "references"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "REF-004: Cross-zone Markdown links must be backed by an explicit dependency declaration.",
+            "properties": {
+              "rule": { "const": "ref004" },
+              "options": {
+                "type": "object",
+                "description": "Options for REF-004.",
+                "properties": {
+                  "zonesDir": {
+                    "type": "string",
+                    "description": "Directory name that contains zone subdirectories (e.g. \"zones\")."
+                  },
+                  "dependencySection": {
+                    "type": "string",
+                    "description": "Heading text for the dependency declaration section in overview.md. Defaults to \"Dependencies\"."
+                  }
+                },
+                "required": ["zonesDir"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "REF-005: Anchor fragments in Markdown links must point to headings that exist in the target file.",
+            "properties": {
+              "rule": { "const": "ref005" },
+              "options": {
+                "type": "object",
+                "description": "Options for REF-005.",
+                "properties": {
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "REF-006: Image references must point to files that exist.",
+            "properties": {
+              "rule": { "const": "ref006" },
+              "options": {
+                "type": "object",
+                "description": "Options for REF-006.",
+                "properties": {
+                  "exclude": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Glob patterns for image targets to exclude from checking (e.g. [\"*.svg\", \"generated/**\"])."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "CHK-001: All checklist items must be checked.",
+            "properties": {
+              "rule": { "const": "chk001" },
+              "options": {
+                "type": "object",
+                "description": "Options for CHK-001.",
+                "properties": {
+                  "section": {
+                    "type": "string",
+                    "description": "Only check checklist items under this specific section heading."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": ["rules"],
+  "additionalProperties": false
+}

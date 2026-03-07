@@ -70,6 +70,8 @@ contextlint --config contextlint.config.json "docs/**/*.md"
 
 ```jsonc
 {
+  // 添加 $schema 可在 VS Code、Cursor、JetBrains 等编辑器中启用自动补全
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     // TBL-001: 表格中必须存在必需列
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },

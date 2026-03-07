@@ -68,4 +68,4 @@ export type { Ref006Options } from "./rules/ref-006.js";
 export { chk001 } from "./rules/chk-001.js";
 export type { Chk001Options } from "./rules/chk-001.js";
 
-export { resolveRule } from "./registry.js";
+export { resolveRule, ruleNames } from "./registry.js";

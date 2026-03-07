@@ -85,6 +85,8 @@ contextlint --config contextlint.config.json "docs/**/*.md"
 
 ```jsonc
 {
+  // $schema를 추가하면 VS Code, Cursor, JetBrains 등의 편집기에서 자동 완성이 활성화됩니다
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     // TBL-001: 테이블에 필수 컬럼이 존재해야 함
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },

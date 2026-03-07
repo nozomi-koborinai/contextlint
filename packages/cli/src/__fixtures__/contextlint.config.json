@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     {
       "rule": "tbl001",

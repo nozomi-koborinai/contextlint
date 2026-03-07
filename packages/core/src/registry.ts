@@ -14,6 +14,7 @@ import { ref004 } from "./rules/ref-004.js";
 import { ref005 } from "./rules/ref-005.js";
 import { sec002 } from "./rules/sec-002.js";
 import { chk001 } from "./rules/chk-001.js";
+import { ref006 } from "./rules/ref-006.js";
 
 type RuleFactory = (options?: Record<string, unknown>) => Rule;
 
@@ -89,6 +90,8 @@ const registry: Record<string, RuleFactory> = {
     ),
   chk001: (options) =>
     chk001(options as { section?: string; files?: string } | undefined),
+  ref006: (options) =>
+    ref006(options as { exclude?: string[] } | undefined),
 };
 
 export function resolveRule(

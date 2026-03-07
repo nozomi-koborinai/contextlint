@@ -150,7 +150,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
 
     // REF-005: 앵커 프래그먼트가 대상 파일의 제목과 일치해야 함
-    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
+
+    // REF-006: 이미지 참조가 실재하는 파일을 가리켜야 함
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
   ]
 }
 ```
@@ -222,6 +225,7 @@ npm install -D @contextlint/mcp-server
 | REF-003 | 의존 관계에서 안정성 순서가 지켜져야 함 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | 영역 간 링크가 개요 파일에서 선언되어야 함 | `zonesDir`, `dependencySection` |
 | REF-005 | 앵커 프래그먼트가 대상 파일의 제목과 일치해야 함 | `files`(선택) |
+| REF-006 | 이미지 참조가 실재하는 파일을 가리켜야 함 | `exclude`(선택) |
 
 ### 체크리스트 규칙
 

@@ -22,14 +22,13 @@ jobs:
 
       - run: bun test
 
-      - name: Set version from tag
+      - name: Set version and resolve workspace dependencies
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           for pkg in packages/*/; do
             (cd "$pkg" && npm pkg set "version=${VERSION}")
           done
-
-      - run: bun install
+          sed -i 's/"workspace:\*"/"'"${VERSION}"'"/g' packages/*/package.json
 
       - name: Publish to npm
         run: |

@@ -103,6 +103,9 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     // STR-001: 项目中必须存在必需文件
     { "rule": "str001", "options": { "files": ["docs/overview.md", "docs/requirements.md"] } },
 
+    // CHK-001: 清单中的所有项目必须已勾选
+    { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
     // REF-001: 相对路径的 Markdown 链接必须指向存在的文件
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },
 
@@ -205,6 +208,12 @@ npm install -D @contextlint/mcp-server
 | REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | 跨区域链接必须在概要文件中声明 | `zonesDir`, `dependencySection` |
 | REF-005 | 锚点片段必须指向目标文件中存在的标题 | `files`（可选） |
+
+### 清单规则
+
+| ID | 说明 | 配置项 |
+| ---- | ------------- | -------- |
+| CHK-001 | 清单中的所有项目必须已勾选 | `section`（可选）, `files`（可选） |
 
 ### 使用场景
 

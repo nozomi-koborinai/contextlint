@@ -187,6 +187,25 @@ describe("REF-005", () => {
     expect(messages).toEqual([]);
   });
 
+  // --- URL-encoded anchors ---
+
+  it("matches heading '日本語' via URL-encoded anchor", () => {
+    const anchor = encodeURIComponent("日本語");
+    const messages = lint("/project/docs/overview.md", {
+      "/project/docs/overview.md": `# 日本語\n\n[link](#${anchor})`,
+    });
+    expect(messages).toEqual([]);
+  });
+
+  it("matches heading '概要' via URL-encoded cross-file anchor", () => {
+    const anchor = encodeURIComponent("概要");
+    const messages = lint("/project/docs/a.md", {
+      "/project/docs/a.md": `[link](./b.md#${anchor})`,
+      "/project/docs/b.md": "# 概要\n\nContent...",
+    });
+    expect(messages).toEqual([]);
+  });
+
   // --- CJK content ---
 
   it("handles Japanese headings as anchors", () => {

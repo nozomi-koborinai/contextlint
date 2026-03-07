@@ -1,10 +1,13 @@
 import { resolve, dirname } from "node:path";
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Ref005Options {
-  files?: string;
-}
+export const ref005Schema = z.object({
+  files: z.string().optional(),
+}).strict().optional();
+
+export type Ref005Options = z.infer<typeof ref005Schema>;
 
 /**
  * Generate GitHub-style anchor slugs from heading texts.
@@ -36,7 +39,7 @@ function generateAnchors(sections: string[]): Set<string> {
 }
 
 export function ref005(options?: Ref005Options): Rule {
-  const fileMatcher = options?.files ? picomatch(options.files) : undefined;
+  const isMatch = options?.files ? picomatch(`**/${options.files}`) : null;
 
   return {
     id: "REF-005",
@@ -48,7 +51,7 @@ export function ref005(options?: Ref005Options): Rule {
         return;
       }
 
-      if (fileMatcher && !fileMatcher(context.filePath)) {
+      if (isMatch && !isMatch(context.filePath)) {
         return;
       }
 
@@ -59,9 +62,16 @@ export function ref005(options?: Ref005Options): Rule {
         }
 
         const filePart = link.url.slice(0, hashIndex);
-        const anchor = link.url.slice(hashIndex + 1);
-        if (!anchor) {
+        const rawAnchor = link.url.slice(hashIndex + 1);
+        if (!rawAnchor) {
           continue;
+        }
+
+        let anchor: string;
+        try {
+          anchor = decodeURIComponent(rawAnchor);
+        } catch {
+          anchor = rawAnchor;
         }
 
         let targetDoc;

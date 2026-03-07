@@ -51,6 +51,7 @@ npm install -D @contextlint/cli
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+  "include": ["docs/**/*.md"],
   "rules": [
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status"] } },
     { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
@@ -62,8 +63,13 @@ npm install -D @contextlint/cli
 실행:
 
 ```bash
-npx contextlint --config contextlint.config.json "docs/**/*.md"
+npx contextlint
 ```
+
+contextlint는 현재 디렉터리 또는 상위 디렉터리에서
+`contextlint.config.json`을 자동 감지합니다. `include` 필드로
+기본 대상 파일을 지정할 수 있으며, CLI 인수로 재정의할 수 있습니다.
+둘 다 지정하지 않으면 `**/*.md`가 사용됩니다.
 
 출력 예시:
 
@@ -74,7 +80,7 @@ docs/requirements.md
 docs/design.md
   line 12  error    Link target "./api.md" does not exist  REF-001
 
-2 errors in 2 files
+1 error, 1 warning in 2 files
 ```
 
 > `$schema`를 추가하면 VS Code, Cursor, JetBrains 등의 편집기에서
@@ -123,6 +129,10 @@ docs/design.md
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+
+  // 기본 대상 파일 패턴 (CLI에서 파일을 지정하지 않을 때 사용)
+  "include": ["docs/**/*.md"],
+
   "rules": [
     // TBL-001: 테이블에 필수 컬럼이 존재해야 함
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },
@@ -216,7 +226,7 @@ docs/design.md
 ### GitHub Actions
 
 ```yaml
-- run: npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+- run: npx @contextlint/cli
 ```
 
 ## MCP 서버

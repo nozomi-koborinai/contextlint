@@ -141,6 +141,7 @@ Some paragraph text.
 [email](mailto:user@example.com)
 [phone](tel:+1234567890)
 [data](data:text/plain;base64,abc)
+[protocol-relative](//cdn.example.com/lib.js)
 [anchor](#section)
 [relative](../docs/spec.md)
 `;

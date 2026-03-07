@@ -49,6 +49,7 @@ npm install -D @contextlint/cli
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+  "include": ["docs/**/*.md"],
   "rules": [
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status"] } },
     { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
@@ -60,8 +61,13 @@ npm install -D @contextlint/cli
 実行：
 
 ```bash
-npx contextlint --config contextlint.config.json "docs/**/*.md"
+npx contextlint
 ```
+
+contextlint は現在のディレクトリまたは親ディレクトリから
+`contextlint.config.json` を自動検出します。`include` フィールドで
+デフォルトの対象ファイルを指定でき、CLI 引数で上書きできます。
+どちらも指定がない場合は `**/*.md` が使用されます。
 
 出力例：
 
@@ -72,7 +78,7 @@ docs/requirements.md
 docs/design.md
   line 12  error    Link target "./api.md" does not exist  REF-001
 
-2 errors in 2 files
+1 error, 1 warning in 2 files
 ```
 
 > `$schema` を追加すると、VS Code・Cursor・JetBrains 等のエディタで
@@ -121,6 +127,10 @@ docs/design.md
 ```jsonc
 {
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+
+  // デフォルトの対象ファイルパターン（CLI でファイル指定がない場合に使用）
+  "include": ["docs/**/*.md"],
+
   "rules": [
     // TBL-001: テーブルに必須カラムが存在すること
     { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status", "Description"], "files": "**/requirements.md" } },
@@ -217,7 +227,7 @@ docs/design.md
 ### GitHub Actions
 
 ```yaml
-- run: npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+- run: npx @contextlint/cli
 ```
 
 ## MCP サーバー

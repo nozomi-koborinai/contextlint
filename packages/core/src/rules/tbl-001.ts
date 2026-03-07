@@ -1,11 +1,14 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Tbl001Options {
-  requiredColumns: string[];
-  section?: string;
-  files?: string;
-}
+export const tbl001Schema = z.object({
+  requiredColumns: z.array(z.string()),
+  section: z.string().optional(),
+  files: z.string().optional(),
+}).strict();
+
+export type Tbl001Options = z.infer<typeof tbl001Schema>;
 
 export function tbl001(options: Tbl001Options): Rule {
   const isMatch = options.files ? picomatch(`**/${options.files}`) : null;

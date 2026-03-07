@@ -1,6 +1,16 @@
 import { describe, it, expect } from "bun:test";
-import { parseDocument, runRules, resolveRule } from "@contextlint/core";
-import { formatContentResults } from "./format.js";
+import { writeFileSync, mkdirSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import {
+  parseDocument,
+  runRules,
+  resolveRule,
+  formatContentResults,
+  findConfig,
+  loadConfig,
+  lintFiles,
+  formatFileResults,
+} from "@contextlint/core";
 
 function lintContent(
   content: string,
@@ -45,5 +55,37 @@ describe("lint tool logic", () => {
     expect(() => lintContent("test", [{ rule: "unknown-rule" }])).toThrow(
       'Unknown rule: "unknown-rule"',
     );
+  });
+});
+
+describe("lint-files tool logic", () => {
+  const tmpDir = join(import.meta.dirname, "__tmp_mcp_lint_files__");
+
+  it("lints files using config and formats results", () => {
+    mkdirSync(tmpDir, { recursive: true });
+    try {
+      writeFileSync(
+        join(tmpDir, "contextlint.config.json"),
+        JSON.stringify({
+          rules: [{ rule: "tbl001", options: { requiredColumns: ["ID"] } }],
+        }),
+      );
+      writeFileSync(
+        join(tmpDir, "doc.md"),
+        "# Doc\n\n| Name |\n|------|\n| Foo  |\n",
+      );
+
+      const configPath = findConfig(tmpDir);
+      expect(configPath).toBeDefined();
+      if (!configPath) throw new Error("unreachable");
+
+      const config = loadConfig(configPath);
+      const results = lintFiles(["**/*.md"], config, tmpDir);
+      const output = formatFileResults(results, tmpDir);
+      expect(output).toContain("TBL-001");
+      expect(output).toContain("ID");
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });

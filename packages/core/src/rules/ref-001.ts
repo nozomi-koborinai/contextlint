@@ -1,10 +1,13 @@
 import { resolve, dirname } from "node:path";
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Ref001Options {
-  exclude?: string[];
-}
+export const ref001Schema = z.object({
+  exclude: z.array(z.string()).optional(),
+}).strict().optional();
+
+export type Ref001Options = z.infer<typeof ref001Schema>;
 
 export function ref001(options?: Ref001Options): Rule {
   const excludeMatchers = options?.exclude?.map((p) => picomatch(`**/${p}`)) ?? [];

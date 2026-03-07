@@ -1,27 +1,33 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
+import { regexString } from "../utils/regex-string.js";
 
-export interface Tbl005Condition {
-  column: string;
-  equals?: string;
-  oneOf?: string[];
-  matches?: string;
-}
+const tbl005ConditionSchema = z.object({
+  column: z.string(),
+  equals: z.string().optional(),
+  oneOf: z.array(z.string()).optional(),
+  matches: regexString.optional(),
+}).strict();
 
-export interface Tbl005Constraint {
-  column: string;
-  notEmpty?: boolean;
-  equals?: string;
-  oneOf?: string[];
-  matches?: string;
-}
+const tbl005ConstraintSchema = z.object({
+  column: z.string(),
+  notEmpty: z.boolean().optional(),
+  equals: z.string().optional(),
+  oneOf: z.array(z.string()).optional(),
+  matches: regexString.optional(),
+}).strict();
 
-export interface Tbl005Options {
-  when: Tbl005Condition;
-  then: Tbl005Constraint;
-  section?: string;
-  files?: string;
-}
+export const tbl005Schema = z.object({
+  when: tbl005ConditionSchema,
+  then: tbl005ConstraintSchema,
+  section: z.string().optional(),
+  files: z.string().optional(),
+}).strict();
+
+export type Tbl005Condition = z.infer<typeof tbl005ConditionSchema>;
+export type Tbl005Constraint = z.infer<typeof tbl005ConstraintSchema>;
+export type Tbl005Options = z.infer<typeof tbl005Schema>;
 
 function matchesCondition(value: string, condition: Tbl005Condition): boolean {
   if (condition.equals !== undefined) {

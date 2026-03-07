@@ -1,15 +1,18 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Chk001Options {
-  section?: string;
-  files?: string;
-}
+export const chk001Schema = z.object({
+  section: z.string().optional(),
+  files: z.string().optional(),
+}).strict().optional();
+
+export type Chk001Options = z.infer<typeof chk001Schema>;
 
 export function chk001(options?: Chk001Options): Rule {
-  const fileMatcher = options?.files
-    ? picomatch(options.files)
-    : undefined;
+  const isMatch = options?.files
+    ? picomatch(`**/${options.files}`)
+    : null;
 
   return {
     id: "CHK-001",
@@ -17,7 +20,7 @@ export function chk001(options?: Chk001Options): Rule {
       "All checklist items in the specified section must be checked",
     severity: "warning",
     check: (context) => {
-      if (fileMatcher && !fileMatcher(context.filePath)) {
+      if (isMatch && !isMatch(context.filePath)) {
         return;
       }
 

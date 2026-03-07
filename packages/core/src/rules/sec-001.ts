@@ -1,10 +1,13 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
-export interface Sec001Options {
-  sections: string[];
-  files?: string;
-}
+export const sec001Schema = z.object({
+  sections: z.array(z.string()),
+  files: z.string().optional(),
+}).strict();
+
+export type Sec001Options = z.infer<typeof sec001Schema>;
 
 export function sec001(options: Sec001Options): Rule {
   const isMatch = options.files

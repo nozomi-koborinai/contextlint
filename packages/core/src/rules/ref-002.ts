@@ -1,12 +1,16 @@
 import picomatch from "picomatch";
+import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
+import { regexString } from "../utils/regex-string.js";
 
-export interface Ref002Options {
-  definitions: string;
-  references: string[];
-  idColumn: string;
-  idPattern: string;
-}
+export const ref002Schema = z.object({
+  definitions: z.string(),
+  references: z.array(z.string()),
+  idColumn: z.string(),
+  idPattern: regexString,
+}).strict();
+
+export type Ref002Options = z.infer<typeof ref002Schema>;
 
 export function ref002(options: Ref002Options): Rule {
   const isDefinition = picomatch(`**/${options.definitions}`);

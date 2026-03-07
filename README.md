@@ -1,8 +1,14 @@
 # contextlint
 
-🌐 [日本語](README.ja.md) | [中文](README.zh.md) | [한국어](README.ko.md)
+[![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
+[![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+[日本語](README.ja.md) | [中文](README.zh.md) | [한국어](README.ko.md)
 
 A rule-based linter for structured Markdown documents.
+Catch broken references, duplicate IDs, missing sections, and
+structural issues — deterministically, in seconds, CI-friendly.
 
 ## Why contextlint?
 
@@ -12,69 +18,105 @@ writing specifications in Markdown first, then letting AI
 generate implementation based on those documents. As projects
 adopt document-driven workflows, the number of interconnected
 Markdown files grows: requirements, design decisions, API specs,
-ADRs (Architecture Decision Records),
-RFCs (Request for Comments), and more.
+ADRs, RFCs, and more.
 
 These documents form a dependency graph. IDs reference other IDs,
 files link to other files, and stability levels flow downstream.
 When this graph breaks — a deleted requirement, a mistyped ID,
-a missing section — the consequences are silent. And because
-LLM-based reviews are inherently non-deterministic, relying on
-them alone to catch structural inconsistencies is unreliable.
+a missing section — the consequences are silent.
 
 contextlint provides **deterministic, static validation** for
-structured Markdown. It catches broken references, duplicate IDs,
-missing sections, and structural issues in seconds — no AI,
-no cost, CI-friendly.
+structured Markdown. No AI, no cost, CI-friendly.
 
-### What contextlint checks (and what it doesn't)
+> contextlint focuses on **content semantics and cross-file
+> integrity**. For Markdown syntax, formatting, and style, use
+> [markdownlint](https://github.com/DavidAnson/markdownlint)
+> alongside contextlint — they complement each other well.
 
-contextlint focuses on **content semantics and cross-file
-integrity**. For Markdown syntax, formatting, and style, use
-[markdownlint](https://github.com/DavidAnson/markdownlint)
-alongside contextlint — they complement each other well.
+## Quick Start
 
-| Domain | Tool |
-| ------ | ---- |
-| Table formatting, heading style, line length | markdownlint |
-| Table content (IDs, required columns, value validation) | contextlint |
-| Markdown syntax and style | markdownlint |
-| Cross-file references, traceability, link integrity | contextlint |
-| Section coverage, file structure | contextlint |
-
-## Installation
+Install:
 
 ```bash
 npm install -D @contextlint/cli
 ```
 
-Or run without installing:
+Create `contextlint.config.json`:
 
-```bash
-npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+  "rules": [
+    { "rule": "tbl001", "options": { "requiredColumns": ["ID", "Status"] } },
+    { "rule": "tbl002", "options": { "columns": ["ID", "Status"] } },
+    { "rule": "ref001" }
+  ]
+}
 ```
 
-## Packages
-
-| Package | Description |
-| ------- | ----------- |
-| `@contextlint/core` | Rule engine and Markdown parser |
-| `@contextlint/cli` | CLI entry point (`contextlint` command) |
-| `@contextlint/mcp-server` | MCP server for AI tool integration |
-
-## Usage
-
-### With a config file
+Run:
 
 ```bash
-contextlint --config contextlint.config.json "docs/**/*.md"
+npx contextlint --config contextlint.config.json "docs/**/*.md"
 ```
 
-Example `contextlint.config.json`:
+Output:
+
+```text
+docs/requirements.md
+  line 3   warning  Empty cell in column "Status"  TBL-002
+
+docs/design.md
+  line 12  error    Link target "./api.md" does not exist  REF-001
+
+2 errors in 2 files
+```
+
+> Adding `$schema` enables autocomplete in VS Code, Cursor,
+> JetBrains, and other editors.
+
+## Rules
+
+### Table rules
+
+| ID | Description | Config |
+| --- | --- | --- |
+| TBL-001 | Required columns must exist in tables | `requiredColumns`, `section`?, `files`? |
+| TBL-002 | Key columns must not have empty cells | `columns`?, `files`? |
+| TBL-003 | Column values must be from an allowed set | `column`, `values`, `files`? |
+| TBL-004 | Cell values must match a regex pattern | `column`, `pattern`, `files`? |
+| TBL-005 | Cross-column conditional constraints | `when`, `then`, `section`?, `files`? |
+| TBL-006 | IDs must be unique across all matched files | `files`, `column`, `idPattern`? |
+
+### Section / Structure rules
+
+| ID | Description | Config |
+| --- | --- | --- |
+| SEC-001 | Required sections must exist | `sections`, `files`? |
+| SEC-002 | Sections must appear in order | `order`, `level`?, `section`?, `files`? |
+| STR-001 | Required files must exist in the project | `files` |
+
+### Reference rules
+
+| ID | Description | Config |
+| --- | --- | --- |
+| REF-001 | Relative links must point to existing files | `exclude`? |
+| REF-002 | Defined IDs must be referenced; referenced IDs must exist | `definitions`, `references`, `idColumn`, `idPattern` |
+| REF-003 | Stability must not exceed that of dependencies | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
+| REF-004 | Cross-zone links must be declared in overview | `zonesDir`, `dependencySection`? |
+| REF-005 | Anchor fragments must point to existing headings | `files`? |
+| REF-006 | Image references must point to existing files | `exclude`? |
+
+### Checklist rules
+
+| ID | Description | Config |
+| --- | --- | --- |
+| CHK-001 | All checklist items must be checked | `section`?, `files`? |
+
+## Configuration
 
 ```jsonc
 {
-  // Adding $schema enables autocomplete in VS Code, Cursor, JetBrains, and other editors
   "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
   "rules": [
     // TBL-001: Required columns must exist in tables
@@ -149,15 +191,31 @@ Example `contextlint.config.json`:
 }
 ```
 
-### In CI (GitHub Actions)
+## Use cases
+
+These rules are designed to be general-purpose. Some examples:
+
+- **SDD (Spec Driven Development)** — Validate that specs
+  reference existing requirements and that IDs are consistent
+  across files
+- **ADRs (Architecture Decision Records)** — Ensure all ADRs
+  contain required sections (Status, Context, Decision) and
+  that status transitions are valid
+- **RFCs (Request for Comments)** — Check that RFC documents
+  include required headings and that cross-references between
+  proposals are not broken
+- **Any structured Markdown project** — Catch broken links,
+  duplicate IDs, and missing files in CI
+
+## CI Integration
+
+### GitHub Actions
 
 ```yaml
-- run: >
-    npx @contextlint/cli
-    --config contextlint.config.json "docs/**/*.md"
+- run: npx @contextlint/cli --config contextlint.config.json "docs/**/*.md"
 ```
 
-### As an MCP server
+## MCP Server
 
 contextlint can run as an
 [MCP](https://modelcontextprotocol.io/) server, allowing AI
@@ -189,60 +247,14 @@ Available tools:
 | `lint` | Lint Markdown content directly with specified rules |
 | `lint-files` | Lint files matching glob patterns using a config file |
 
-## Rules
+## Packages
 
-### Table rules
-
-| ID | Description | Config |
-| --- | ----------- | ------ |
-| TBL-001 | Required columns must exist in tables | `requiredColumns`, `section` (optional), `files` (optional) |
-| TBL-002 | Key columns must not have empty cells | `columns`, `files` (optional) |
-| TBL-003 | Column values must be from an allowed set | `column`, `values`, `files` (optional) |
-| TBL-004 | Cell values must match a regex pattern | `column`, `pattern`, `files` (optional) |
-| TBL-005 | Cross-column conditional constraints | `when`, `then`, `section` (optional), `files` (optional) |
-| TBL-006 | IDs must be unique across all matched files | `files`, `column`, `idPattern` |
-
-### Section / Structure rules
-
-| ID | Description | Config |
-| --- | ----------- | ------ |
-| SEC-001 | Required sections must exist in the document | `sections`, `files` (optional) |
-| SEC-002 | Sections must appear in the specified order | `order`, `level` (optional), `section` (optional), `files` (optional) |
-| STR-001 | Required files must exist in the project | `files` |
-
-### Reference rules
-
-| ID | Description | Config |
-| --- | ----------- | ------ |
-| REF-001 | Relative Markdown links must point to existing files | `exclude` (optional) |
-| REF-002 | Defined IDs must be referenced; referenced IDs must exist | `definitions`, `references`, `idColumn`, `idPattern` |
-| REF-003 | An item's stability must not exceed the stability of items it depends on | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
-| REF-004 | Cross-zone links must be declared in the zone's overview | `zonesDir`, `dependencySection` |
-| REF-005 | Anchor fragments must point to existing headings | `files` (optional) |
-| REF-006 | Image references must point to existing files | `exclude` (optional) |
-
-### Checklist rules
-
-| ID | Description | Config |
-| --- | ----------- | ------ |
-| CHK-001 | All checklist items must be checked | `section` (optional), `files` (optional) |
-
-### Use cases
-
-These rules are designed to be general-purpose. Some examples:
-
-- **SDD (Spec Driven Development)** — Validate that specs
-  reference existing requirements and that IDs are consistent
-  across files
-- **ADRs (Architecture Decision Records)** — Ensure all ADRs
-  contain required sections (Status, Context, Decision) and
-  that status transitions are valid
-- **RFCs (Request for Comments)** — Check that RFC documents
-  include required headings and that cross-references between
-  proposals are not broken
-- **Any structured Markdown project** — Catch broken links,
-  duplicate IDs, and missing files in CI
+| Package | Description |
+| ------- | ----------- |
+| `@contextlint/core` | Rule engine and Markdown parser |
+| `@contextlint/cli` | CLI entry point (`contextlint` command) |
+| `@contextlint/mcp-server` | MCP server for AI tool integration |
 
 ## License
 
-MIT
+[MIT](LICENSE)

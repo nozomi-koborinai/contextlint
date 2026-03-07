@@ -69,3 +69,10 @@ export { chk001 } from "./rules/chk-001.js";
 export type { Chk001Options } from "./rules/chk-001.js";
 
 export { resolveRule, ruleNames } from "./registry.js";
+
+export { lintFiles } from "./lint-files.js";
+export type {
+  RuleEntry,
+  LintFilesConfig,
+  FileLintResult,
+} from "./lint-files.js";

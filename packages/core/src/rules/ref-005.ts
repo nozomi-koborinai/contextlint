@@ -27,7 +27,7 @@ function generateAnchors(sections: string[]): Set<string> {
       .replace(/ /g, "-");
 
     const count = counts.get(base) ?? 0;
-    const anchor = count === 0 ? base : `${base}-${count}`;
+    const anchor = count === 0 ? base : `${base}-${String(count)}`;
     anchors.add(anchor);
     counts.set(base, count + 1);
   }

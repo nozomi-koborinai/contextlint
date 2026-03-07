@@ -37,7 +37,7 @@ jobs:
       - name: Publish to npm
         run: |
           for pkg in packages/*/; do
-            (cd "$pkg" && npm publish --no-git-checks --access public)
+            (cd "$pkg" && bun publish --no-git-checks --access public)
           done
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

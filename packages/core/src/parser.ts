@@ -81,19 +81,19 @@ export function parseDocument(content: string): ParsedDocument {
     tables.push({ line: tableLine, section, headers, rows });
   });
 
-  // Collect relative links (inline and reference-style)
-  // Skip absolute URLs, anchors, and non-file URI schemes (mailto:, tel:, data:, etc.)
-  const isRelativeFileLink = (url: string) =>
-    !url.startsWith("#") && !/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url);
+  // Collect relative links (inline and reference-style), including anchor-only links
+  // Skip absolute URLs and non-file URI schemes (mailto:, tel:, data:, etc.)
+  const isRelativeLink = (url: string) =>
+    !/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url);
 
   visit(tree, "link", (node: Link) => {
-    if (isRelativeFileLink(node.url)) {
+    if (isRelativeLink(node.url)) {
       links.push({ url: node.url, line: node.position?.start.line ?? 0 });
     }
   });
 
   visit(tree, "definition", (node: Definition) => {
-    if (isRelativeFileLink(node.url)) {
+    if (isRelativeLink(node.url)) {
       links.push({ url: node.url, line: node.position?.start.line ?? 0 });
     }
   });

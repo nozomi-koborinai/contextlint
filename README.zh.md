@@ -121,7 +121,10 @@ contextlint --config contextlint.config.json "docs/**/*.md"
     },
 
     // REF-004: 跨区域链接必须在区域概要中声明
-    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } }
+    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
+
+    // REF-005: 锚点片段必须指向目标文件中存在的标题
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
   ]
 }
 ```
@@ -192,6 +195,7 @@ npm install -D @contextlint/mcp-server
 | REF-002 | ID 的定义与引用必须保持一致 | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | 跨区域链接必须在概要文件中声明 | `zonesDir`, `dependencySection` |
+| REF-005 | 锚点片段必须指向目标文件中存在的标题 | `files`（可选） |
 
 ### 使用场景
 

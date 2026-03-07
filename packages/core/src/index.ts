@@ -49,4 +49,7 @@ export type { Ref003Options } from "./rules/ref-003.js";
 export { ref004 } from "./rules/ref-004.js";
 export type { Ref004Options } from "./rules/ref-004.js";
 
+export { ref005 } from "./rules/ref-005.js";
+export type { Ref005Options } from "./rules/ref-005.js";
+
 export { resolveRule } from "./registry.js";

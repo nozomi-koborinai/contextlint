@@ -125,7 +125,10 @@ Example `contextlint.config.json`:
     },
 
     // REF-004: Cross-zone links must be declared in the zone's overview
-    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } }
+    { "rule": "ref004", "options": { "zonesDir": "docs/zones" } },
+
+    // REF-005: Anchor fragments must point to headings that exist in the target file
+    { "rule": "ref005", "options": { "files": "docs/**/*.md" } }
   ]
 }
 ```
@@ -198,6 +201,7 @@ Available tools:
 | REF-002 | Defined IDs must be referenced; referenced IDs must exist | `definitions`, `references`, `idColumn`, `idPattern` |
 | REF-003 | An item's stability must not exceed the stability of items it depends on | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
 | REF-004 | Cross-zone links must be declared in the zone's overview | `zonesDir`, `dependencySection` |
+| REF-005 | Anchor fragments must point to existing headings | `files` (optional) |
 
 ### Use cases
 

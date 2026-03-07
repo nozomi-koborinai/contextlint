@@ -127,7 +127,7 @@ Some paragraph text.
     expect(doc.tables[0].section).toBe("需求定义");
   });
 
-  it("collects relative file links but skips URI schemes", () => {
+  it("collects relative file links and anchor-only links but skips URI schemes", () => {
     const md = `
 [local](./other.md)
 [absolute](https://example.com)
@@ -138,8 +138,9 @@ Some paragraph text.
 [relative](../docs/spec.md)
 `;
     const doc = parseDocument(md);
-    expect(doc.links).toHaveLength(2);
+    expect(doc.links).toHaveLength(3);
     expect(doc.links[0].url).toBe("./other.md");
-    expect(doc.links[1].url).toBe("../docs/spec.md");
+    expect(doc.links[1].url).toBe("#section");
+    expect(doc.links[2].url).toBe("../docs/spec.md");
   });
 });

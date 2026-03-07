@@ -35,6 +35,25 @@ describe("loadConfig", () => {
     }
   });
 
+  it("loads config with $schema field", () => {
+    setup();
+    try {
+      const configPath = join(tmpDir, "contextlint.config.json");
+      writeFileSync(
+        configPath,
+        JSON.stringify({
+          $schema: "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+          rules: [{ rule: "tbl001", options: { requiredColumns: ["ID"] } }],
+        }),
+      );
+
+      const config = loadConfig(configPath);
+      expect(config.rules).toHaveLength(1);
+    } finally {
+      cleanup();
+    }
+  });
+
   it("loads config with include field", () => {
     setup();
     try {

@@ -5,6 +5,7 @@ import * as z from "zod/v4";
 const CONFIG_NAME = "contextlint.config.json";
 
 const configSchema = z.object({
+  $schema: z.string().optional(),
   include: z.array(z.string()).optional(),
   rules: z.array(
     z.object({

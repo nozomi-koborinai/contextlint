@@ -5,6 +5,7 @@ import { relative, resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { parseDocument, runRules, resolveRule } from "@contextlint/core";
+import type { ParsedDocument } from "@contextlint/core";
 import { glob } from "glob";
 import * as z from "zod/v4";
 import {
@@ -141,6 +142,13 @@ server.tool(
 
       const projectFiles = files.map((f) => relative(resolvedCwd, f));
 
+      // Parse all files upfront (shared by document and project rules)
+      const documents = new Map<string, ParsedDocument>();
+      for (const filePath of files) {
+        const fileContent = readFileSync(filePath, "utf-8");
+        documents.set(filePath, parseDocument(fileContent));
+      }
+
       const results: FileLintResult[] = [];
 
       // Run project-scoped rules once
@@ -148,6 +156,7 @@ server.tool(
         const emptyDoc = parseDocument("");
         const messages = runRules(projectRules, emptyDoc, "<project>", {
           projectFiles,
+          documents,
         });
         if (messages.length > 0) {
           results.push({ filePath: "<project>", messages });
@@ -156,9 +165,8 @@ server.tool(
 
       // Run document-scoped rules per file
       for (const filePath of files) {
-        const fileContent = readFileSync(filePath, "utf-8");
-        const document = parseDocument(fileContent);
-        const messages = runRules(docRules, document, filePath);
+        const document = documents.get(filePath)!;
+        const messages = runRules(docRules, document, filePath, { documents });
         results.push({ filePath, messages });
       }
 

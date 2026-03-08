@@ -1,5 +1,9 @@
 # contextlint
 
+<p align="center">
+  <img src="assets/hero.png" alt="contextlint — Markdown Document Integrity Linter" width="800">
+</p>
+
 [![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
 [![cli downloads](https://img.shields.io/npm/dm/@contextlint/cli.svg?label=cli%20downloads)](https://www.npmjs.com/package/@contextlint/cli)
 [![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
@@ -271,6 +275,10 @@ npm install -D @contextlint/mcp-server
 | `@contextlint/core` | 규칙 엔진 및 Markdown 파서 |
 | `@contextlint/cli` | CLI 진입점 (`contextlint` 명령어) |
 | `@contextlint/mcp-server` | AI 도구 연동을 위한 MCP 서버 |
+
+## 관련 자료
+
+- [Introducing contextlint — A Linter for Markdown Document Integrity](https://koborin.ai/tech/contextlint-introduction/)
 
 ## 라이선스
 

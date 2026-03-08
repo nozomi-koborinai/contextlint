@@ -1,5 +1,9 @@
 # contextlint
 
+<p align="center">
+  <img src="assets/hero.png" alt="contextlint — Markdown Document Integrity Linter" width="800">
+</p>
+
 [![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
 [![cli downloads](https://img.shields.io/npm/dm/@contextlint/cli.svg?label=cli%20downloads)](https://www.npmjs.com/package/@contextlint/cli)
 [![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
@@ -266,6 +270,10 @@ Available tools:
 | `@contextlint/core` | Rule engine and Markdown parser |
 | `@contextlint/cli` | CLI entry point (`contextlint` command) |
 | `@contextlint/mcp-server` | MCP server for AI tool integration |
+
+## Resources
+
+- [Introducing contextlint — A Linter for Markdown Document Integrity](https://koborin.ai/tech/contextlint-introduction/)
 
 ## License
 

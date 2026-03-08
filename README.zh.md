@@ -1,8 +1,16 @@
 # contextlint
 
+<p align="center">
+  <img src="assets/hero.png" alt="contextlint — Markdown Document Integrity Linter" width="800">
+</p>
+
 [![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
+[![cli downloads](https://img.shields.io/npm/dm/@contextlint/cli.svg?label=cli%20downloads)](https://www.npmjs.com/package/@contextlint/cli)
+[![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
 [![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+🌐 [English](README.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 基于规则的结构化 Markdown 文档检查工具。
 确定性地、在数秒内检测断裂引用、重复 ID、缺失章节和结构性问题，
@@ -103,7 +111,7 @@ docs/design.md
 | --- | --- | --- |
 | REF-001 | Markdown 链接目标必须存在 | `exclude`? |
 | REF-002 | ID 的定义与引用必须保持一致 | `definitions`, `references`, `idColumn`, `idPattern` |
-| REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
+| REF-003 | 依赖关系中的稳定性顺序必须一致 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references`, `idColumn`?, `idPattern`? |
 | REF-004 | 跨区域链接必须在概要文件中声明 | `zonesDir`, `dependencySection`? |
 | REF-005 | 锚点片段必须指向目标文件中存在的标题 | `files`? |
 | REF-006 | 图片引用必须指向存在的文件 | `exclude`? |
@@ -256,6 +264,10 @@ npm install -D @contextlint/mcp-server
 | `@contextlint/core` | 规则引擎和 Markdown 解析器 |
 | `@contextlint/cli` | CLI 入口（`contextlint` 命令） |
 | `@contextlint/mcp-server` | AI 工具集成的 MCP 服务器 |
+
+## 相关资源
+
+- [Introducing contextlint — A Linter for Markdown Document Integrity](https://koborin.ai/tech/contextlint-introduction/)
 
 ## 许可证
 

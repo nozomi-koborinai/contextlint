@@ -3,6 +3,10 @@
 [![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
 [![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![cli downloads](https://img.shields.io/npm/dm/@contextlint/cli.svg?label=cli%20downloads)](https://www.npmjs.com/package/@contextlint/cli)
+[![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
+
+🌐 [English](README.md) | [中文](README.zh.md) | [한국어](README.ko.md)
 
 構造化された Markdown ドキュメントのためのルールベースのリンター。
 リンク切れ、重複 ID、セクションの不足、構造上の問題を
@@ -111,7 +115,7 @@ docs/design.md
 | --- | --- | --- |
 | REF-001 | Markdown のリンク先が実在すること | `exclude`? |
 | REF-002 | ID の定義と参照の整合性が取れていること | `definitions`, `references`, `idColumn`, `idPattern` |
-| REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
+| REF-003 | 依存関係における安定性の順序が守られていること | `stabilityColumn`, `stabilityOrder`, `definitions`, `references`, `idColumn`?, `idPattern`? |
 | REF-004 | ゾーン間リンクが概要ファイルで宣言されていること | `zonesDir`, `dependencySection`? |
 | REF-005 | アンカーフラグメントがリンク先の見出しと一致すること | `files`? |
 | REF-006 | 画像参照が実在するファイルを指していること | `exclude`? |

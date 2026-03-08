@@ -3,8 +3,10 @@
 [![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
 [![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![cli downloads](https://img.shields.io/npm/dm/@contextlint/cli.svg?label=cli%20downloads)](https://www.npmjs.com/package/@contextlint/cli)
+[![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
 
-[日本語](README.ja.md) | [中文](README.zh.md) | [한국어](README.ko.md)
+🌐 [日本語](README.ja.md) | [中文](README.zh.md) | [한국어](README.ko.md)
 
 A rule-based linter for structured Markdown documents.
 Catch broken references, duplicate IDs, missing sections, and
@@ -108,7 +110,7 @@ docs/design.md
 | --- | --- | --- |
 | REF-001 | Relative links must point to existing files | `exclude`? |
 | REF-002 | Defined IDs must be referenced; referenced IDs must exist | `definitions`, `references`, `idColumn`, `idPattern` |
-| REF-003 | Stability must not exceed that of dependencies | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
+| REF-003 | Stability must not exceed that of dependencies | `stabilityColumn`, `stabilityOrder`, `definitions`, `references`, `idColumn`?, `idPattern`? |
 | REF-004 | Cross-zone links must be declared in overview | `zonesDir`, `dependencySection`? |
 | REF-005 | Anchor fragments must point to existing headings | `files`? |
 | REF-006 | Image references must point to existing files | `exclude`? |

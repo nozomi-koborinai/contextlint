@@ -3,6 +3,10 @@
 [![npm version](https://img.shields.io/npm/v/@contextlint/cli.svg)](https://www.npmjs.com/package/@contextlint/cli)
 [![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![cli downloads](https://img.shields.io/npm/dm/@contextlint/cli.svg?label=cli%20downloads)](https://www.npmjs.com/package/@contextlint/cli)
+[![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
+
+🌐 [English](README.md) | [日本語](README.ja.md) | [中文](README.zh.md)
 
 구조화된 Markdown 문서를 위한 규칙 기반 린터.
 끊어진 참조, 중복 ID, 누락된 섹션, 구조적 문제를
@@ -113,7 +117,7 @@ docs/design.md
 | --- | --- | --- |
 | REF-001 | Markdown 링크 대상이 실재해야 함 | `exclude`? |
 | REF-002 | ID 정의와 참조의 정합성이 유지되어야 함 | `definitions`, `references`, `idColumn`, `idPattern` |
-| REF-003 | 의존 관계에서 안정성 순서가 지켜져야 함 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references` |
+| REF-003 | 의존 관계에서 안정성 순서가 지켜져야 함 | `stabilityColumn`, `stabilityOrder`, `definitions`, `references`, `idColumn`?, `idPattern`? |
 | REF-004 | 영역 간 링크가 개요 파일에서 선언되어야 함 | `zonesDir`, `dependencySection`? |
 | REF-005 | 앵커 프래그먼트가 대상 파일의 제목과 일치해야 함 | `files`? |
 | REF-006 | 이미지 참조가 실재하는 파일을 가리켜야 함 | `exclude`? |

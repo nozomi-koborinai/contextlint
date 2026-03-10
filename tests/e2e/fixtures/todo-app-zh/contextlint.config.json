@@ -1,0 +1,90 @@
+{
+  "$schema": "../../../../schema.json",
+  "include": ["docs/**/*.md"],
+  "rules": [
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["ID", "需求", "稳定度"],
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["No", "列名", "数据类型", "稳定度"],
+        "section": "列定义",
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "tbl003",
+      "options": {
+        "column": "稳定度",
+        "values": ["draft", "review", "stable"]
+      }
+    },
+    {
+      "rule": "tbl004",
+      "options": {
+        "column": "ID",
+        "pattern": "^REQ-",
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl005",
+      "options": {
+        "when": { "column": "稳定度", "equals": "stable" },
+        "then": { "column": "依据", "notEmpty": true },
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl006",
+      "options": {
+        "files": "requirements.md",
+        "column": "ID",
+        "idPattern": "^REQ-"
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "sections": ["职责范围", "职责外"],
+        "files": "overview.md"
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "sections": ["业务价值（Why）", "需求（What）", "规格（Spec）"],
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "sec002",
+      "options": {
+        "order": ["业务价值（Why）", "需求（What）", "规格（Spec）", "设计（How）"],
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "str001",
+      "options": {
+        "files": [
+          "docs/zones/task/overview.md",
+          "docs/zones/task/requirements.md",
+          "docs/zones/auth/overview.md",
+          "docs/zones/auth/requirements.md"
+        ]
+      }
+    },
+    {
+      "rule": "ref001"
+    },
+    {
+      "rule": "ref005"
+    }
+  ]
+}

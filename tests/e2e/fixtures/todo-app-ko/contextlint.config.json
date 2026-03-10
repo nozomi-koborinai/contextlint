@@ -1,0 +1,90 @@
+{
+  "$schema": "../../../../schema.json",
+  "include": ["docs/**/*.md"],
+  "rules": [
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["ID", "요구사항", "안정도"],
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["No", "컬럼명", "데이터 타입", "안정도"],
+        "section": "컬럼 정의",
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "tbl003",
+      "options": {
+        "column": "안정도",
+        "values": ["draft", "review", "stable"]
+      }
+    },
+    {
+      "rule": "tbl004",
+      "options": {
+        "column": "ID",
+        "pattern": "^REQ-",
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl005",
+      "options": {
+        "when": { "column": "안정도", "equals": "stable" },
+        "then": { "column": "근거", "notEmpty": true },
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl006",
+      "options": {
+        "files": "requirements.md",
+        "column": "ID",
+        "idPattern": "^REQ-"
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "sections": ["책임 범위", "담당 외"],
+        "files": "overview.md"
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "sections": ["비즈니스 가치 (Why)", "요구사항 (What)", "사양 (Spec)"],
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "sec002",
+      "options": {
+        "order": ["비즈니스 가치 (Why)", "요구사항 (What)", "사양 (Spec)", "설계 (How)"],
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "str001",
+      "options": {
+        "files": [
+          "docs/zones/task/overview.md",
+          "docs/zones/task/requirements.md",
+          "docs/zones/auth/overview.md",
+          "docs/zones/auth/requirements.md"
+        ]
+      }
+    },
+    {
+      "rule": "ref001"
+    },
+    {
+      "rule": "ref005"
+    }
+  ]
+}

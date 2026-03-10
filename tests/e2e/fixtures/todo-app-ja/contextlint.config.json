@@ -1,0 +1,90 @@
+{
+  "$schema": "../../../../schema.json",
+  "include": ["docs/**/*.md"],
+  "rules": [
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["ID", "要件", "安定度"],
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl001",
+      "options": {
+        "requiredColumns": ["No", "カラム名", "データ型", "安定度"],
+        "section": "カラム定義",
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "tbl003",
+      "options": {
+        "column": "安定度",
+        "values": ["draft", "review", "stable"]
+      }
+    },
+    {
+      "rule": "tbl004",
+      "options": {
+        "column": "ID",
+        "pattern": "^REQ-",
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl005",
+      "options": {
+        "when": { "column": "安定度", "equals": "stable" },
+        "then": { "column": "根拠", "notEmpty": true },
+        "files": "requirements.md"
+      }
+    },
+    {
+      "rule": "tbl006",
+      "options": {
+        "files": "requirements.md",
+        "column": "ID",
+        "idPattern": "^REQ-"
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "sections": ["責任範囲", "担当外"],
+        "files": "overview.md"
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "sections": ["業務価値（Why）", "要件（What）", "仕様（Spec）"],
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "sec002",
+      "options": {
+        "order": ["業務価値（Why）", "要件（What）", "仕様（Spec）", "設計（How）"],
+        "files": "table_*.md"
+      }
+    },
+    {
+      "rule": "str001",
+      "options": {
+        "files": [
+          "docs/zones/task/overview.md",
+          "docs/zones/task/requirements.md",
+          "docs/zones/auth/overview.md",
+          "docs/zones/auth/requirements.md"
+        ]
+      }
+    },
+    {
+      "rule": "ref001"
+    },
+    {
+      "rule": "ref005"
+    }
+  ]
+}

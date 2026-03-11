@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import picomatch from "picomatch";
 import * as z from "zod/v4";
@@ -37,7 +38,7 @@ export function ref006(options?: Ref006Options): Rule {
 
         const resolved = resolve(dirname(context.filePath), urlWithoutAnchor);
 
-        if (!allPaths.has(resolved)) {
+        if (!allPaths.has(resolved) && !existsSync(resolved)) {
           context.report({
             severity: "error",
             message: `Image target "${image.url}" does not exist`,

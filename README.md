@@ -240,6 +240,22 @@ These rules are designed to be general-purpose. Some examples:
 - run: npx @contextlint/cli
 ```
 
+## Watch Mode
+
+Re-run validation automatically when files change:
+
+```bash
+npx contextlint --watch
+npx contextlint --watch docs/**/*.md
+npx contextlint --watch --config contextlint.config.json
+```
+
+Watch mode runs an initial full lint, then monitors the working directory
+for `.md` file changes. On each change it re-lints **all** matched files
+(required for cross-file rules such as REF-002 and TBL-006), clears the
+terminal, and displays the updated results with a timestamp. Rapid changes
+are debounced (300 ms). Exit with Ctrl+C.
+
 ## MCP Server
 
 contextlint can run as an

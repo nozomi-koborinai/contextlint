@@ -246,6 +246,24 @@ docs/design.md
 - run: npx @contextlint/cli
 ```
 
+## 워치 모드
+
+파일 변경 시 자동으로 재검증을 수행합니다:
+
+```bash
+npx contextlint --watch
+npx contextlint --watch docs/**/*.md
+npx contextlint --watch --config contextlint.config.json
+```
+
+워치 모드는 먼저 초기 전체 검사를 실행한 후,
+작업 디렉터리의 `.md` 파일 변경을 감시합니다.
+변경이 감지되면 매칭되는 **모든** 파일을 재검사하고
+(REF-002, TBL-006 등 크로스 파일 규칙에 필요),
+터미널을 지우고 타임스탬프와 함께 최신 결과를 표시합니다.
+연속적인 빠른 변경은 300밀리초 디바운스 처리됩니다.
+Ctrl+C로 종료합니다.
+
 ## MCP 서버
 
 contextlint는

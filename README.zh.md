@@ -362,6 +362,7 @@ npm install -D @contextlint/mcp-server
 | `lint-files` | 使用配置文件检查匹配模式的文件 |
 | `context-graph` | 构建并返回项目的文档依赖关系图 |
 | `context-slice` | 提取与给定查询相关的最小文档集 |
+| `impact-analysis` | 分析指定文件的更改会影响哪些文档 |
 
 ## 编程式 API
 

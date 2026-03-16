@@ -105,5 +105,8 @@ export {
   topologicalSort,
   getComponents,
   formatContextGraphSummary,
+  classifyImpact,
+  formatImpactSummary,
+  relativizeImpact,
 } from "./context-graph.js";
 export type { ContextGraph, GraphNode, GraphEdge } from "./context-graph.js";

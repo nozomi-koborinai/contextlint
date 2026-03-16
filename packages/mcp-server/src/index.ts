@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { resolve } from "node:path";
+import { resolve, relative as relPath } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { readFileSync } from "node:fs";
@@ -16,6 +16,9 @@ import {
   buildContextGraph,
   formatContextGraphSummary,
   getContextSlice,
+  classifyImpact,
+  formatImpactSummary,
+  relativizeImpact,
 } from "@contextlint/core";
 import type { ParsedDocument } from "@contextlint/core";
 import { globSync } from "glob";
@@ -289,6 +292,113 @@ server.registerTool(
         })),
         totalFiles: sliceFiles.length,
         summary: `Found '${query}' — ${String(sliceFiles.length)} related file(s) (depth: ${String(depth ?? 2)})`,
+      };
+
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      return {
+        content: [{ type: "text", text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "impact-analysis",
+  {
+    description:
+      "Analyze which documents are affected by changes to a given file",
+    inputSchema: {
+      file: z
+        .string()
+        .describe("Path to the changed file (relative to cwd)"),
+      configPath: z
+        .string()
+        .optional()
+        .describe("Path to contextlint.config.json"),
+      cwd: z
+        .string()
+        .optional()
+        .describe("Working directory"),
+    },
+  },
+  ({ file, configPath, cwd }) => {
+    const resolvedCwd = resolve(cwd ?? ".");
+
+    try {
+      let resolvedConfigPath: string;
+      if (configPath) {
+        resolvedConfigPath = resolve(resolvedCwd, configPath);
+      } else {
+        const found = findConfig(resolvedCwd);
+        if (!found) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: No contextlint.config.json found. Provide a configPath or create a config file.",
+              },
+            ],
+            isError: true,
+          };
+        }
+        resolvedConfigPath = found;
+      }
+
+      const config = loadConfig(resolvedConfigPath);
+      const patterns = config.include ?? ["**/*.md"];
+
+      const rawFiles = globSync(patterns, {
+        cwd: resolvedCwd,
+        absolute: true,
+        nodir: true,
+      });
+      const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
+      files.sort();
+
+      const documents = new Map<string, ParsedDocument>();
+      for (const filePath of files) {
+        const content = readFileSync(filePath, "utf-8");
+        documents.set(filePath, parseDocument(content));
+      }
+
+      const resolvedFile = resolve(resolvedCwd, file).replace(/\\/g, "/");
+
+      if (!documents.has(resolvedFile)) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: File "${file}" is not in the matched file set. Check your include patterns.`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      const graph = buildContextGraph(documents);
+      const impact = classifyImpact(graph, resolvedFile);
+      const relImpact = relativizeImpact(impact, resolvedCwd);
+      const summary = formatImpactSummary(
+        relImpact.directlyAffected.length,
+        relImpact.transitivelyAffected.length,
+      );
+
+      const changedFileRel = relPath(resolvedCwd, resolvedFile).replace(
+        /\\/g,
+        "/",
+      );
+
+      const result = {
+        changedFile: changedFileRel,
+        directlyAffected: relImpact.directlyAffected,
+        transitivelyAffected: relImpact.transitivelyAffected,
+        summary,
       };
 
       return {

@@ -21,6 +21,26 @@ export interface FileLintResult {
   messages: LintMessage[];
 }
 
+/**
+ * Resolve glob patterns, read matched files, and parse them into documents.
+ * Returns the parsed document map keyed by absolute file path.
+ */
+export function loadDocuments(
+  patterns: string[],
+  cwd: string,
+): Map<string, ParsedDocument> {
+  const rawFiles = globSync(patterns, { cwd, absolute: true, nodir: true });
+  const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
+  files.sort();
+
+  const documents = new Map<string, ParsedDocument>();
+  for (const filePath of files) {
+    const content = readFileSync(filePath, "utf-8");
+    documents.set(filePath, parseDocument(content));
+  }
+  return documents;
+}
+
 export function lintFiles(
   patterns: string[],
   config: LintFilesConfig,
@@ -33,17 +53,10 @@ export function lintFiles(
   const docRules = rules.filter((r) => (r.scope ?? "document") === "document");
   const projectRules = rules.filter((r) => r.scope === "project");
 
-  const rawFiles = globSync(patterns, { cwd, absolute: true, nodir: true });
-  const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
-  files.sort();
+  const documents = loadDocuments(patterns, cwd);
+  const files = [...documents.keys()];
 
   const projectFiles = files.map((f) => relative(cwd, f).replace(/\\/g, "/"));
-
-  const documents = new Map<string, ParsedDocument>();
-  for (const filePath of files) {
-    const content = readFileSync(filePath, "utf-8");
-    documents.set(filePath, parseDocument(content));
-  }
 
   const results: FileLintResult[] = [];
 

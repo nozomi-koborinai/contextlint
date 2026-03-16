@@ -377,6 +377,7 @@ npm install -D @contextlint/mcp-server
 | `lint-files` | 設定ファイルを使用して、パターンに一致するファイルをチェックする |
 | `context-graph` | プロジェクトのドキュメント依存関係グラフを構築して返す |
 | `context-slice` | クエリに関連するドキュメントの最小セットを抽出する |
+| `impact-analysis` | 指定ファイルの変更がどのドキュメントに影響するかを分析する |
 
 ## プログラマティック API
 

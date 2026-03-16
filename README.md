@@ -367,6 +367,7 @@ Available tools:
 | `lint-files` | Lint files matching glob patterns using a config file |
 | `context-graph` | Build and return the document dependency graph for the project |
 | `context-slice` | Extract the minimal set of documents relevant to a given query |
+| `impact-analysis` | Analyze which documents are affected by changes to a given file |
 
 ## Programmatic API
 

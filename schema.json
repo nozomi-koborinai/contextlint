@@ -568,6 +568,31 @@
           },
           {
             "type": "object",
+            "description": "GRP-003: Every document in the matched set should have at least one incoming reference.",
+            "properties": {
+              "rule": { "const": "grp003" },
+              "options": {
+                "type": "object",
+                "description": "Options for GRP-003.",
+                "properties": {
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files are checked for orphan status."
+                  },
+                  "entryPoints": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "File patterns for entry points that are expected to have no incoming references (e.g. [\"README.md\", \"index.md\"])."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
             "description": "CTX-002: Terms used across documents must match definitions in a glossary table.",
             "properties": {
               "rule": { "const": "ctx002" },

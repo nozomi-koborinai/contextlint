@@ -145,6 +145,7 @@ docs/design.md
 | --- | --- | --- |
 | GRP-001 | 모든 ID가 문서 체인의 전 단계에서 추적 가능해야 함 | `chain`, `idPattern`? |
 | GRP-002 | 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지) | `files`?, `exclude`? |
+| GRP-003 | 모든 문서에 최소 하나의 수신 참조가 있어야 함 | `files`?, `entryPoints`? |
 
 ## 설정 레퍼런스
 
@@ -243,6 +244,8 @@ docs/design.md
 
     // GRP-002: 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지)
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
+    // GRP-003: 모든 문서에 최소 하나의 수신 참조가 있어야 함
+    { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
   ]
 }
 ```

@@ -80,6 +80,9 @@ export type { Grp001Options } from "./rules/grp-001.js";
 export { grp002, grp002Schema } from "./rules/grp-002.js";
 export type { Grp002Options } from "./rules/grp-002.js";
 
+export { grp003, grp003Schema } from "./rules/grp-003.js";
+export type { Grp003Options } from "./rules/grp-003.js";
+
 export { resolveRule, ruleNames } from "./registry.js";
 
 export { lintFiles } from "./lint-files.js";

@@ -350,6 +350,54 @@ npm install -D @contextlint/mcp-server
 | `lint` | 指定されたルールで Markdown コンテンツを直接チェックする |
 | `lint-files` | 設定ファイルを使用して、パターンに一致するファイルをチェックする |
 
+## プログラマティック API
+
+### コンテキストグラフ
+
+`@contextlint/core` は、ドキュメント間の依存関係をプログラムから分析するための
+コンテキストグラフ API を提供しています。Markdown ドキュメント同士の関係性を
+把握する必要があるツールの構築に役立ちます。
+
+```typescript
+import {
+  parseDocument,
+  buildContextGraph,
+  getImpactSet,
+  getContextSlice,
+  topologicalSort,
+  getComponents,
+} from "@contextlint/core";
+import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
+```
+
+| 関数 | 説明 |
+| ---- | --- |
+| `buildContextGraph(documents)` | パースされたドキュメントから依存関係グラフを構築する |
+| `getImpactSet(graph, filePath)` | 指定ファイルの変更によって影響を受けるファイルを取得する（直接・間接） |
+| `getContextSlice(graph, documents, query, maxDepth?)` | クエリ（ファイルパスまたは ID）に関連するファイルの最小セットを取得する |
+| `topologicalSort(graph)` | ドキュメントグラフのトポロジカルソート（依存順序） |
+| `getComponents(graph)` | 連結成分を取得する（関連ファイルのクラスター） |
+
+使用例：
+
+```typescript
+import { readFileSync } from "node:fs";
+import { parseDocument, buildContextGraph, getImpactSet } from "@contextlint/core";
+
+// ドキュメントをパース
+const documents = new Map();
+documents.set("docs/overview.md", parseDocument(readFileSync("docs/overview.md", "utf-8")));
+documents.set("docs/requirements.md", parseDocument(readFileSync("docs/requirements.md", "utf-8")));
+documents.set("docs/design.md", parseDocument(readFileSync("docs/design.md", "utf-8")));
+
+// グラフを構築
+const graph = buildContextGraph(documents);
+
+// requirements.md が変更された場合に影響を受けるファイルは？
+const impacted = getImpactSet(graph, "docs/requirements.md");
+// => ["docs/design.md", "docs/overview.md"]
+```
+
 ## パッケージ構成
 
 | パッケージ | 説明 |

@@ -340,6 +340,55 @@ Available tools:
 | `lint` | Lint Markdown content directly with specified rules |
 | `lint-files` | Lint files matching glob patterns using a config file |
 
+## Programmatic API
+
+### Context Graph
+
+`@contextlint/core` exposes a Context Graph API for analysing
+document dependencies programmatically. This is useful for building
+tools that need to understand how Markdown documents relate to each
+other.
+
+```typescript
+import {
+  parseDocument,
+  buildContextGraph,
+  getImpactSet,
+  getContextSlice,
+  topologicalSort,
+  getComponents,
+} from "@contextlint/core";
+import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
+```
+
+| Function | Description |
+| -------- | ----------- |
+| `buildContextGraph(documents)` | Build a dependency graph from parsed documents |
+| `getImpactSet(graph, filePath)` | Get all files affected by changing a given file (direct + transitive) |
+| `getContextSlice(graph, documents, query, maxDepth?)` | Get the minimal set of files relevant to a query (file path or ID) |
+| `topologicalSort(graph)` | Topological sort of the document graph (dependency order) |
+| `getComponents(graph)` | Get connected components (clusters of related files) |
+
+Example:
+
+```typescript
+import { readFileSync } from "node:fs";
+import { parseDocument, buildContextGraph, getImpactSet } from "@contextlint/core";
+
+// Parse documents
+const documents = new Map();
+documents.set("docs/overview.md", parseDocument(readFileSync("docs/overview.md", "utf-8")));
+documents.set("docs/requirements.md", parseDocument(readFileSync("docs/requirements.md", "utf-8")));
+documents.set("docs/design.md", parseDocument(readFileSync("docs/design.md", "utf-8")));
+
+// Build the graph
+const graph = buildContextGraph(documents);
+
+// What files are impacted if requirements.md changes?
+const impacted = getImpactSet(graph, "docs/requirements.md");
+// => ["docs/design.md", "docs/overview.md"]
+```
+
 ## Packages
 
 | Package | Description |

@@ -3,6 +3,7 @@
 import { resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { readFileSync } from "node:fs";
 import {
   parseDocument,
   runRules,
@@ -12,7 +13,11 @@ import {
   loadConfig,
   formatContentResults,
   formatFileResults,
+  buildContextGraph,
+  formatContextGraphSummary,
 } from "@contextlint/core";
+import type { ParsedDocument } from "@contextlint/core";
+import { globSync } from "glob";
 import * as z from "zod/v4";
 
 const server = new McpServer({
@@ -110,6 +115,88 @@ server.registerTool(
 
       const results = lintFiles(resolvedPatterns, config, resolvedCwd);
       const text = formatFileResults(results, resolvedCwd);
+      return { content: [{ type: "text", text }] };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      return {
+        content: [{ type: "text", text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "context-graph",
+  {
+    description:
+      "Build and return the document dependency graph for the project",
+    inputSchema: {
+      configPath: z
+        .string()
+        .optional()
+        .describe("Path to contextlint.config.json"),
+      cwd: z
+        .string()
+        .optional()
+        .describe("Working directory"),
+      format: z
+        .enum(["json", "summary"])
+        .optional()
+        .describe("Output format (default: summary)"),
+    },
+  },
+  ({ configPath, cwd, format }) => {
+    const resolvedCwd = resolve(cwd ?? ".");
+
+    try {
+      let resolvedConfigPath: string;
+      if (configPath) {
+        resolvedConfigPath = resolve(resolvedCwd, configPath);
+      } else {
+        const found = findConfig(resolvedCwd);
+        if (!found) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: No contextlint.config.json found. Provide a configPath or create a config file.",
+              },
+            ],
+            isError: true,
+          };
+        }
+        resolvedConfigPath = found;
+      }
+
+      const config = loadConfig(resolvedConfigPath);
+      const patterns = config.include ?? ["**/*.md"];
+
+      const rawFiles = globSync(patterns, {
+        cwd: resolvedCwd,
+        absolute: true,
+        nodir: true,
+      });
+      const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
+      files.sort();
+
+      const documents = new Map<string, ParsedDocument>();
+      for (const filePath of files) {
+        const content = readFileSync(filePath, "utf-8");
+        documents.set(filePath, parseDocument(content));
+      }
+
+      const graph = buildContextGraph(documents);
+
+      const outputFormat = format ?? "summary";
+      let text: string;
+      if (outputFormat === "json") {
+        text = JSON.stringify(graph, null, 2);
+      } else {
+        text = formatContextGraphSummary(graph);
+      }
+
       return { content: [{ type: "text", text }] };
     } catch (error) {
       const message =

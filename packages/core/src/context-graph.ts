@@ -384,3 +384,43 @@ export function getComponents(graph: ContextGraph): string[][] {
 
   return components;
 }
+
+/**
+ * Format a human-readable summary of the context graph.
+ *
+ * Shows entry points (no incoming refs) and most connected nodes
+ * (by incoming ref count). Used by the MCP context-graph tool.
+ */
+export function formatContextGraphSummary(graph: ContextGraph): string {
+  const { nodes, edges } = graph;
+  const lines: string[] = [];
+
+  lines.push(`Document Graph: ${String(nodes.length)} files, ${String(edges.length)} edges`);
+
+  // Entry points: nodes with no incoming refs
+  const entryPoints = nodes.filter((n) => n.inDegree === 0);
+  if (entryPoints.length > 0) {
+    lines.push("");
+    lines.push("Entry points (no incoming refs):");
+    for (const node of entryPoints) {
+      lines.push(`  - ${node.filePath}`);
+    }
+  }
+
+  // Most connected by incoming refs
+  const connected = nodes
+    .filter((n) => n.inDegree > 0)
+    .sort((a, b) => b.inDegree - a.inDegree);
+  if (connected.length > 0) {
+    lines.push("");
+    lines.push("Most connected (by incoming refs):");
+    const top = connected.slice(0, 5);
+    for (const node of top) {
+      lines.push(
+        `  - ${node.filePath} (${String(node.inDegree)} in, ${String(node.outDegree)} out)`,
+      );
+    }
+  }
+
+  return lines.join("\n");
+}

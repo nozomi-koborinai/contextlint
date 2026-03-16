@@ -375,6 +375,7 @@ npm install -D @contextlint/mcp-server
 | ------ | --- |
 | `lint` | 指定されたルールで Markdown コンテンツを直接チェックする |
 | `lint-files` | 設定ファイルを使用して、パターンに一致するファイルをチェックする |
+| `context-graph` | プロジェクトのドキュメント依存関係グラフを構築して返す |
 
 ## プログラマティック API
 

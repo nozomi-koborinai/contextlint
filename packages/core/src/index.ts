@@ -104,5 +104,6 @@ export {
   getContextSlice,
   topologicalSort,
   getComponents,
+  formatContextGraphSummary,
 } from "./context-graph.js";
 export type { ContextGraph, GraphNode, GraphEdge } from "./context-graph.js";

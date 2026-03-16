@@ -137,6 +137,7 @@ docs/design.md
 | ID | 설명 | 설정 항목 |
 | --- | --- | --- |
 | CTX-001 | 섹션에 플레이스홀더가 아닌 실질적인 내용이 있어야 함 | `section`?, `placeholders`?, `files`? |
+| CTX-002 | 용어가 용어집 정의와 일치해야 함 | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
 
 ## 설정 레퍼런스
 

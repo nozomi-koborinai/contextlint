@@ -130,6 +130,7 @@ docs/design.md
 | ID | Description | Config |
 | --- | --- | --- |
 | CTX-001 | Sections must contain meaningful content, not placeholders | `section`?, `placeholders`?, `files`? |
+| CTX-002 | Terms must match glossary definitions | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
 
 ## Configuration
 

@@ -540,6 +540,43 @@
             },
             "required": ["rule"],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "CTX-002: Terms used across documents must match definitions in a glossary table.",
+            "properties": {
+              "rule": { "const": "ctx002" },
+              "options": {
+                "type": "object",
+                "description": "Options for CTX-002.",
+                "properties": {
+                  "glossary": {
+                    "type": "string",
+                    "description": "File path (glob pattern) containing the glossary table."
+                  },
+                  "section": {
+                    "type": "string",
+                    "description": "Section heading containing the glossary table. If omitted, all tables in the glossary file are checked."
+                  },
+                  "termColumn": {
+                    "type": "string",
+                    "description": "Column name for canonical terms."
+                  },
+                  "aliasColumn": {
+                    "type": "string",
+                    "description": "Column name for comma-separated aliases."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files are scanned for alias usage."
+                  }
+                },
+                "required": ["glossary", "termColumn", "aliasColumn"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
           }
         ]
       }

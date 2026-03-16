@@ -137,6 +137,12 @@ docs/design.md
 | CTX-001 | セクションにプレースホルダーではない実質的な内容があること | `section`?, `placeholders`?, `files`? |
 | CTX-002 | 用語が用語集の定義と一致していること | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
 
+### グラフに関するルール
+
+| ID | 説明 | 設定項目 |
+| --- | --- | --- |
+| GRP-002 | ドキュメント参照グラフが非循環であること（循環参照の検出） | `files`?, `exclude`? |
+
 ## 設定リファレンス
 
 ```jsonc
@@ -217,7 +223,10 @@ docs/design.md
     { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
 
     // REF-006: 画像参照が実在するファイルを指していること
-    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-002: ドキュメント参照グラフが非循環であること（循環参照の検出）
+    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
   ]
 }
 ```

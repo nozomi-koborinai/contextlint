@@ -139,6 +139,12 @@ docs/design.md
 | CTX-001 | 섹션에 플레이스홀더가 아닌 실질적인 내용이 있어야 함 | `section`?, `placeholders`?, `files`? |
 | CTX-002 | 용어가 용어집 정의와 일치해야 함 | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
 
+### 그래프 규칙
+
+| ID | 설명 | 설정 항목 |
+| --- | --- | --- |
+| GRP-002 | 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지) | `files`?, `exclude`? |
+
 ## 설정 레퍼런스
 
 ```jsonc
@@ -219,7 +225,10 @@ docs/design.md
     { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
 
     // REF-006: 이미지 참조가 실재하는 파일을 가리켜야 함
-    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-002: 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지)
+    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
   ]
 }
 ```

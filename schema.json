@@ -543,6 +543,31 @@
           },
           {
             "type": "object",
+            "description": "GRP-002: Document reference graph must be acyclic (no circular references).",
+            "properties": {
+              "rule": { "const": "grp002" },
+              "options": {
+                "type": "object",
+                "description": "Options for GRP-002.",
+                "properties": {
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  },
+                  "exclude": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Glob patterns for files to exclude from cycle detection (e.g. [\"CHANGELOG.md\"])."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
             "description": "CTX-002: Terms used across documents must match definitions in a glossary table.",
             "properties": {
               "rule": { "const": "ctx002" },

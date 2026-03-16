@@ -132,6 +132,12 @@ docs/design.md
 | CTX-001 | Sections must contain meaningful content, not placeholders | `section`?, `placeholders`?, `files`? |
 | CTX-002 | Terms must match glossary definitions | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
 
+### Graph rules
+
+| ID | Description | Config |
+| --- | --- | --- |
+| GRP-002 | Document reference graph must be acyclic (no circular references) | `files`?, `exclude`? |
+
 ## Configuration
 
 ```jsonc
@@ -212,7 +218,10 @@ docs/design.md
     { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
 
     // REF-006: Image references must point to files that exist
-    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-002: Document reference graph must be acyclic (no circular references)
+    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
   ]
 }
 ```

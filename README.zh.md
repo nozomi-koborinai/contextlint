@@ -129,6 +129,12 @@ docs/design.md
 | CTX-001 | 章节必须包含有意义的内容，而非占位符 | `section`?, `placeholders`?, `files`? |
 | CTX-002 | 术语必须与词汇表定义一致 | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
 
+### 图规则
+
+| ID | 说明 | 配置项 |
+| --- | --- | --- |
+| GRP-002 | 文档引用图必须无环（检测循环引用） | `files`?, `exclude`? |
+
 ## 配置参考
 
 ```jsonc
@@ -209,7 +215,10 @@ docs/design.md
     { "rule": "ref005", "options": { "files": "docs/**/*.md" } },
 
     // REF-006: 图片引用必须指向存在的文件
-    { "rule": "ref006", "options": { "exclude": ["*.svg"] } }
+    { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-002: 文档引用图必须无环（检测循环引用）
+    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
   ]
 }
 ```

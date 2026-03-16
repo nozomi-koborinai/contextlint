@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import type { ParsedHeading } from "../parser.js";
@@ -63,7 +63,7 @@ function checkOrder(
 }
 
 export function sec002(options: Sec002Options): Rule {
-  const isMatch = options.files ? picomatch(`**/${options.files}`) : null;
+  const isMatch = options.files ? globMatch(`**/${options.files}`) : null;
 
   return {
     id: "SEC-002",

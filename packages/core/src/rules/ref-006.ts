@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
@@ -12,7 +12,7 @@ export type Ref006Options = z.infer<typeof ref006Schema>;
 
 export function ref006(options?: Ref006Options): Rule {
   const excludeMatchers =
-    options?.exclude?.map((p) => picomatch(`**/${p}`)) ?? [];
+    options?.exclude?.map((p) => globMatch(`**/${p}`)) ?? [];
 
   return {
     id: "REF-006",

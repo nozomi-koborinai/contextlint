@@ -1,5 +1,5 @@
 import { resolve, dirname } from "node:path";
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
@@ -39,7 +39,7 @@ function generateAnchors(sections: string[]): Set<string> {
 }
 
 export function ref005(options?: Ref005Options): Rule {
-  const isMatch = options?.files ? picomatch(`**/${options.files}`) : null;
+  const isMatch = options?.files ? globMatch(`**/${options.files}`) : null;
 
   return {
     id: "REF-005",

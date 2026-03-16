@@ -17,6 +17,10 @@ Handles CRUD operations for tasks, status management, and tag-based categorizati
 |------|----------|-----------|
 | auth | depends-on | References users.id (task creator) |
 
+## Future Enhancements
+
+TBD
+
 ## Key Documents
 
 | Document | Category | Description |

@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import type { ParsedHeading } from "../parser.js";
@@ -65,7 +65,7 @@ function isPlaceholderContent(
 
 export function ctx001(options?: Ctx001Options): Rule {
   const isMatch = options?.files
-    ? picomatch(`**/${options.files}`)
+    ? globMatch(`**/${options.files}`)
     : null;
 
   const placeholders = options?.placeholders ?? DEFAULT_PLACEHOLDERS;

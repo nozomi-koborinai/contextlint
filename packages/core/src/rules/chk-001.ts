@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
@@ -11,7 +11,7 @@ export type Chk001Options = z.infer<typeof chk001Schema>;
 
 export function chk001(options?: Chk001Options): Rule {
   const isMatch = options?.files
-    ? picomatch(`**/${options.files}`)
+    ? globMatch(`**/${options.files}`)
     : null;
 
   return {

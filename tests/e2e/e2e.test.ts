@@ -36,14 +36,17 @@ for (const fixture of fixtures) {
     const results = runFixtureLint(fixtureDir);
 
     it("loads config and lints all fixture files", () => {
+      // 11 zone docs + 1 glossary.md = 12 files
       const fileCount = results.filter((r) => r.filePath !== "<project>").length;
-      expect(fileCount).toBe(11);
+      expect(fileCount).toBe(12);
     });
+
+    // --- Table rules ---
 
     it("TBL-001: detects missing columns in non-requirement tables", () => {
       const violations = messagesFor(results, "TBL-001");
       // task/requirements.md has an "open items" table without ID/Requirement/Stability.
-      // 1 table × 3 missing columns = 3 expected violations.
+      // 1 table x 3 missing columns = 3 expected violations.
       expect(violations).toHaveLength(3);
       expect(violations.every((v) => v.message.includes("Missing required column"))).toBe(true);
     });
@@ -63,6 +66,8 @@ for (const fixture of fixtures) {
     it("TBL-006: requirement IDs are unique across files", () => {
       expect(messagesFor(results, "TBL-006")).toHaveLength(0);
     });
+
+    // --- Section rules ---
 
     it("SEC-001: overview files have required sections", () => {
       const violations = results
@@ -86,6 +91,8 @@ for (const fixture of fixtures) {
       expect(messagesFor(results, "STR-001")).toHaveLength(0);
     });
 
+    // --- Reference rules ---
+
     it("REF-001: detects the intentional broken link in spec_task.md", () => {
       const violations = messagesFor(results, "REF-001");
       expect(violations).toHaveLength(1);
@@ -96,10 +103,39 @@ for (const fixture of fixtures) {
       expect(messagesFor(results, "REF-005")).toHaveLength(0);
     });
 
-    it("total violation count is 4", () => {
+    // --- Context rules (CTX) ---
+
+    it("CTX-001: detects placeholder content in overview", () => {
+      const violations = messagesFor(results, "CTX-001");
+      // task/overview.md has a "Future Enhancements" section with only "TBD"
+      expect(violations).toHaveLength(1);
+      expect(violations[0]?.message).toContain("TBD");
+    });
+
+    it("CTX-002: no glossary alias misuse detected", () => {
+      // Glossary defines aliases but they are not used in the zone documents
+      expect(messagesFor(results, "CTX-002")).toHaveLength(0);
+    });
+
+    // --- Graph rules (GRP) ---
+
+    it("GRP-002: no circular references detected", () => {
+      expect(messagesFor(results, "GRP-002")).toHaveLength(0);
+    });
+
+    it("GRP-003: detects orphan document (screen_login.md)", () => {
+      const violations = messagesFor(results, "GRP-003");
+      // screen_login.md has no incoming references from any other document
+      // (overview.md and glossary.md are entry points, so excluded)
+      expect(violations).toHaveLength(1);
+      expect(violations[0]?.message).toContain("screen_login.md");
+    });
+
+    it("total violation count is 6", () => {
       const total = results.reduce((sum, r) => sum + r.messages.length, 0);
-      // 3 TBL-001 (open items table) + 1 REF-001 (broken link) = 4
-      expect(total).toBe(4);
+      // 3 TBL-001 (open items table) + 1 REF-001 (broken link)
+      // + 1 CTX-001 (TBD placeholder) + 1 GRP-003 (orphan) = 6
+      expect(total).toBe(6);
     });
   });
 }

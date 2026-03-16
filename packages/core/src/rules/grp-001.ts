@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import { regexString } from "../utils/regex-string.js";
@@ -18,7 +18,7 @@ export const grp001Schema = z.object({
 export type Grp001Options = z.infer<typeof grp001Schema>;
 
 export function grp001(options: Grp001Options): Rule {
-  const matchers = options.chain.map((s) => picomatch(`**/${s.files}`));
+  const matchers = options.chain.map((s) => globMatch(`**/${s.files}`));
   const idRegex = options.idPattern ? new RegExp(options.idPattern) : null;
 
   return {

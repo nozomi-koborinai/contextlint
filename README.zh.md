@@ -361,6 +361,7 @@ npm install -D @contextlint/mcp-server
 | `lint` | 使用指定规则直接检查 Markdown 内容 |
 | `lint-files` | 使用配置文件检查匹配模式的文件 |
 | `context-graph` | 构建并返回项目的文档依赖关系图 |
+| `context-slice` | 提取与给定查询相关的最小文档集 |
 
 ## 编程式 API
 

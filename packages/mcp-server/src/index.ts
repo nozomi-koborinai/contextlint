@@ -15,6 +15,7 @@ import {
   formatFileResults,
   buildContextGraph,
   formatContextGraphSummary,
+  getContextSlice,
 } from "@contextlint/core";
 import type { ParsedDocument } from "@contextlint/core";
 import { globSync } from "glob";
@@ -198,6 +199,101 @@ server.registerTool(
       }
 
       return { content: [{ type: "text", text }] };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      return {
+        content: [{ type: "text", text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "context-slice",
+  {
+    description:
+      "Extract the minimal set of documents relevant to a given query (ID, keyword, or file path)",
+    inputSchema: {
+      query: z.string().describe("ID, keyword, or file path to search for"),
+      depth: z
+        .number()
+        .optional()
+        .describe("Max traversal depth (default: 2)"),
+      configPath: z
+        .string()
+        .optional()
+        .describe("Path to contextlint.config.json"),
+      cwd: z
+        .string()
+        .optional()
+        .describe("Working directory"),
+    },
+  },
+  ({ query, depth, configPath, cwd }) => {
+    const resolvedCwd = resolve(cwd ?? ".");
+
+    try {
+      let resolvedConfigPath: string;
+      if (configPath) {
+        resolvedConfigPath = resolve(resolvedCwd, configPath);
+      } else {
+        const found = findConfig(resolvedCwd);
+        if (!found) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: No contextlint.config.json found. Provide a configPath or create a config file.",
+              },
+            ],
+            isError: true,
+          };
+        }
+        resolvedConfigPath = found;
+      }
+
+      const config = loadConfig(resolvedConfigPath);
+      const patterns = config.include ?? ["**/*.md"];
+
+      const rawFiles = globSync(patterns, {
+        cwd: resolvedCwd,
+        absolute: true,
+        nodir: true,
+      });
+      const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
+      files.sort();
+
+      const documents = new Map<string, ParsedDocument>();
+      for (const filePath of files) {
+        const content = readFileSync(filePath, "utf-8");
+        documents.set(filePath, parseDocument(content));
+      }
+
+      const graph = buildContextGraph(documents);
+      const sliceFiles = getContextSlice(graph, documents, query, depth);
+
+      const matchFiles = sliceFiles.filter((f) => {
+        const doc = documents.get(f);
+        if (!doc) return false;
+        return doc.content.includes(query);
+      });
+
+      const result = {
+        query,
+        matchType: matchFiles.length > 0 ? "content" : "graph",
+        files: sliceFiles.map((f) => ({
+          file: f,
+          role: matchFiles.includes(f) ? "match" : "linked",
+        })),
+        totalFiles: sliceFiles.length,
+        summary: `Found '${query}' — ${String(sliceFiles.length)} related file(s) (depth: ${String(depth ?? 2)})`,
+      };
+
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
     } catch (error) {
       const message =
         error instanceof Error ? error.message : String(error);

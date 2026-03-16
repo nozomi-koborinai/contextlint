@@ -125,6 +125,12 @@ docs/design.md
 | --- | --- | --- |
 | CHK-001 | All checklist items must be checked | `section`?, `files`? |
 
+### Context rules
+
+| ID | Description | Config |
+| --- | --- | --- |
+| CTX-001 | Sections must contain meaningful content, not placeholders | `section`?, `placeholders`?, `files`? |
+
 ## Configuration
 
 ```jsonc
@@ -169,6 +175,9 @@ docs/design.md
 
     // CHK-001: All checklist items must be checked
     { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
+    // CTX-001: Sections must contain meaningful content, not placeholders
+    { "rule": "ctx001", "options": { "section": "Overview", "files": "docs/**/*.md" } },
 
     // REF-001: Relative Markdown links must point to existing files
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },

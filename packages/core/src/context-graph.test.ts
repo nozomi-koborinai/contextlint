@@ -7,6 +7,7 @@ import {
   getContextSlice,
   topologicalSort,
   getComponents,
+  formatContextGraphSummary,
 } from "./context-graph.js";
 import type { ContextGraph } from "./context-graph.js";
 
@@ -608,6 +609,52 @@ describe("getComponents", () => {
     expect(koComponent).toHaveLength(2);
     expect(koComponent).toContain("/project/설계.md");
     expect(koComponent).toContain("/project/구현.md");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// formatContextGraphSummary
+// ---------------------------------------------------------------------------
+describe("formatContextGraphSummary", () => {
+  it("formats a summary with entry points and most connected", () => {
+    const docs = makeDocs({
+      "/project/docs/index.md": "[a](./a.md)\n[b](./b.md)",
+      "/project/docs/a.md": "[b](./b.md)",
+      "/project/docs/b.md": "# B",
+    });
+
+    const graph = buildContextGraph(docs);
+    const summary = formatContextGraphSummary(graph);
+
+    expect(summary).toContain("Document Graph: 3 files, 3 edges");
+    expect(summary).toContain("Entry points (no incoming refs):");
+    expect(summary).toContain("/project/docs/index.md");
+    expect(summary).toContain("Most connected (by incoming refs):");
+    expect(summary).toContain("/project/docs/b.md (2 in, 0 out)");
+  });
+
+  it("formats an empty graph", () => {
+    const documents = new Map<string, ParsedDocument>();
+    const graph = buildContextGraph(documents);
+    const summary = formatContextGraphSummary(graph);
+
+    expect(summary).toBe("Document Graph: 0 files, 0 edges");
+  });
+
+  it("formats graph with no edges", () => {
+    const docs = makeDocs({
+      "/project/a.md": "# A",
+      "/project/b.md": "# B",
+    });
+
+    const graph = buildContextGraph(docs);
+    const summary = formatContextGraphSummary(graph);
+
+    expect(summary).toContain("Document Graph: 2 files, 0 edges");
+    expect(summary).toContain("Entry points (no incoming refs):");
+    expect(summary).toContain("/project/a.md");
+    expect(summary).toContain("/project/b.md");
+    expect(summary).not.toContain("Most connected");
   });
 });
 

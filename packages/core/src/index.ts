@@ -83,4 +83,5 @@ export type {
 export { findConfig, loadConfig } from "./config.js";
 export type { ContextlintConfig } from "./config.js";
 
-export { formatFileResults, formatContentResults } from "./format.js";
+export { formatFileResults, formatFileResultsJson, formatContentResults } from "./format.js";
+export type { JsonLintEntry } from "./format.js";

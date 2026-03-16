@@ -239,9 +239,60 @@ docs/design.md
   CI でリンク切れ、重複 ID、
   ファイルの不足などを自動的に検出する
 
+## CLI オプション
+
+| オプション | 説明 |
+| ---------- | --- |
+| `[files...]` | チェック対象のファイルまたは glob パターン（設定の `include` を上書き） |
+| `--config <path>` | `contextlint.config.json` のパス |
+| `--format <format>` | 出力形式: `human`（デフォルト）または `json` |
+| `--cwd <path>` | 作業ディレクトリ |
+
+### JSON 出力
+
+`--format json` を指定すると、機械可読な出力が得られます（CI やエディタ連携に便利です）：
+
+```bash
+npx contextlint --format json
+```
+
+```json
+[
+  {
+    "file": "docs/requirements.md",
+    "line": 12,
+    "severity": "error",
+    "message": "Required column \"Status\" not found in table",
+    "ruleId": "TBL-001"
+  }
+]
+```
+
 ## CI での利用
 
 ### GitHub Actions
+
+このリポジトリには、すぐに使えるコンポジットアクションが含まれています。
+`--format json` で contextlint を実行し、PR にインラインアノテーションを作成します。
+
+```yaml
+name: contextlint
+on:
+  pull_request:
+    paths: ["docs/**"]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nozomi-koborinai/contextlint/.github/actions/contextlint@main
+        # with:
+        #   config: 'contextlint.config.json'  # 任意
+        #   files: 'docs/**/*.md'              # 任意
+        #   version: 'latest'                  # 任意
+```
+
+または直接実行：
 
 ```yaml
 - run: npx @contextlint/cli

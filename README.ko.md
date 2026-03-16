@@ -238,9 +238,60 @@ docs/design.md
 - **모든 구조화된 Markdown 프로젝트** — CI에서 끊어진 링크,
   중복 ID, 누락된 파일을 자동으로 감지
 
+## CLI 옵션
+
+| 옵션 | 설명 |
+| ---- | --- |
+| `[files...]` | 검사할 파일 또는 glob 패턴 (설정의 `include`를 재정의) |
+| `--config <path>` | `contextlint.config.json` 경로 |
+| `--format <format>` | 출력 형식: `human` (기본값) 또는 `json` |
+| `--cwd <path>` | 작업 디렉터리 |
+
+### JSON 출력
+
+`--format json`을 사용하면 기계 판독 가능한 출력을 얻을 수 있습니다 (CI 및 편집기 연동에 유용합니다):
+
+```bash
+npx contextlint --format json
+```
+
+```json
+[
+  {
+    "file": "docs/requirements.md",
+    "line": 12,
+    "severity": "error",
+    "message": "Required column \"Status\" not found in table",
+    "ruleId": "TBL-001"
+  }
+]
+```
+
 ## CI 통합
 
 ### GitHub Actions
+
+이 저장소에는 바로 사용할 수 있는 복합 액션이 포함되어 있습니다.
+`--format json`으로 contextlint를 실행하고 PR에 인라인 주석을 생성합니다.
+
+```yaml
+name: contextlint
+on:
+  pull_request:
+    paths: ["docs/**"]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nozomi-koborinai/contextlint/.github/actions/contextlint@main
+        # with:
+        #   config: 'contextlint.config.json'  # 선택 사항
+        #   files: 'docs/**/*.md'              # 선택 사항
+        #   version: 'latest'                  # 선택 사항
+```
+
+또는 직접 실행:
 
 ```yaml
 - run: npx @contextlint/cli

@@ -19,6 +19,7 @@ import { chk001, chk001Schema } from "./rules/chk-001.js";
 import { ctx001, ctx001Schema } from "./rules/ctx-001.js";
 import { ctx002, ctx002Schema } from "./rules/ctx-002.js";
 import { grp002, grp002Schema } from "./rules/grp-002.js";
+import { grp003, grp003Schema } from "./rules/grp-003.js";
 
 function defineRule<T>(
   schema: z.ZodType<T>,
@@ -50,6 +51,7 @@ const registry = {
   ctx001: defineRule(ctx001Schema, ctx001),
   ctx002: defineRule(ctx002Schema, ctx002),
   grp002: defineRule(grp002Schema, grp002),
+  grp003: defineRule(grp003Schema, grp003),
 };
 
 export const ruleNames = Object.keys(registry);

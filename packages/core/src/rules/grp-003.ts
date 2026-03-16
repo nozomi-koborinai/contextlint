@@ -1,0 +1,109 @@
+import { resolve, dirname, basename } from "node:path";
+import picomatch from "picomatch";
+import * as z from "zod/v4";
+import type { Rule } from "../rule.js";
+
+export const grp003Schema = z.object({
+  files: z.string().optional(),
+  entryPoints: z.array(z.string()).optional(),
+}).strict().optional();
+
+export type Grp003Options = z.infer<typeof grp003Schema>;
+
+export function grp003(options?: Grp003Options): Rule {
+  const isMatch = options?.files
+    ? picomatch(`**/${options.files}`)
+    : null;
+
+  const entryPointMatchers = options?.entryPoints
+    ? options.entryPoints.map((pattern) => picomatch(`**/${pattern}`))
+    : [];
+
+  return {
+    id: "GRP-003",
+    description:
+      "Every document in the matched set should have at least one incoming reference",
+    severity: "warning",
+    scope: "project",
+    check: (context) => {
+      if (!context.documents) {
+        return;
+      }
+
+      // Build a lookup from resolved (absolute) path to original key.
+      // This ensures link resolution matches regardless of whether
+      // the map uses relative or absolute paths.
+      const resolvedToOriginal = new Map<string, string>();
+      for (const filePath of context.documents.keys()) {
+        resolvedToOriginal.set(resolve(filePath), filePath);
+      }
+
+      // Collect all file paths that pass the files filter
+      const matchedFiles = new Set<string>();
+      for (const filePath of context.documents.keys()) {
+        if (isMatch && !isMatch(filePath)) {
+          continue;
+        }
+        matchedFiles.add(resolve(filePath));
+      }
+
+      if (matchedFiles.size === 0) {
+        return;
+      }
+
+      // Build incoming reference count for each matched file
+      const incomingCount = new Map<string, number>();
+      for (const absPath of matchedFiles) {
+        incomingCount.set(absPath, 0);
+      }
+
+      // Scan all documents (not just matched ones) for outgoing links
+      for (const [sourcePath, doc] of context.documents) {
+        for (const link of doc.links) {
+          // Strip anchor fragment
+          const urlWithoutAnchor = link.url.split("#")[0] ?? "";
+          if (urlWithoutAnchor === "") {
+            continue;
+          }
+
+          // Resolve relative path from source file's directory
+          const resolvedTarget = resolve(
+            dirname(sourcePath),
+            urlWithoutAnchor,
+          );
+
+          if (incomingCount.has(resolvedTarget)) {
+            const current = incomingCount.get(resolvedTarget);
+            if (current !== undefined) {
+              incomingCount.set(resolvedTarget, current + 1);
+            }
+          }
+        }
+      }
+
+      // Report orphan files (zero incoming references, not entry points)
+      for (const [absPath, count] of incomingCount) {
+        if (count > 0) {
+          continue;
+        }
+
+        // Use the original path from the documents map for display and matching
+        const originalPath = resolvedToOriginal.get(absPath) ?? absPath;
+
+        // Check if the file matches any entry point pattern
+        const isEntryPoint = entryPointMatchers.some(
+          (matcher) => matcher(originalPath) || matcher(basename(originalPath)),
+        );
+        if (isEntryPoint) {
+          continue;
+        }
+
+        context.report({
+          severity: "warning",
+          message: `${originalPath} has no incoming references from any other document`,
+          line: 0,
+        });
+      }
+    },
+  };
+}

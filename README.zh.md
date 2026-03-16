@@ -134,6 +134,7 @@ docs/design.md
 | ID | 说明 | 配置项 |
 | --- | --- | --- |
 | GRP-002 | 文档引用图必须无环（检测循环引用） | `files`?, `exclude`? |
+| GRP-003 | 每个文档必须至少有一个被引用 | `files`?, `entryPoints`? |
 
 ## 配置参考
 
@@ -219,6 +220,8 @@ docs/design.md
 
     // GRP-002: 文档引用图必须无环（检测循环引用）
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
+    // GRP-003: 每个文档必须至少有一个被引用
+    { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
   ]
 }
 ```

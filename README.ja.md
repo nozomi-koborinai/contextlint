@@ -142,6 +142,7 @@ docs/design.md
 | ID | 説明 | 設定項目 |
 | --- | --- | --- |
 | GRP-002 | ドキュメント参照グラフが非循環であること（循環参照の検出） | `files`?, `exclude`? |
+| GRP-003 | すべてのドキュメントに少なくとも 1 つの被参照があること | `files`?, `entryPoints`? |
 
 ## 設定リファレンス
 
@@ -227,6 +228,8 @@ docs/design.md
 
     // GRP-002: ドキュメント参照グラフが非循環であること（循環参照の検出）
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
+    // GRP-003: すべてのドキュメントに少なくとも 1 つの被参照があること
+    { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
   ]
 }
 ```

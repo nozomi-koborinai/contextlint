@@ -137,6 +137,7 @@ docs/design.md
 | ID | Description | Config |
 | --- | --- | --- |
 | GRP-002 | Document reference graph must be acyclic (no circular references) | `files`?, `exclude`? |
+| GRP-003 | Every document must have at least one incoming reference | `files`?, `entryPoints`? |
 
 ## Configuration
 
@@ -222,6 +223,8 @@ docs/design.md
 
     // GRP-002: Document reference graph must be acyclic (no circular references)
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
+    // GRP-003: Every document must have at least one incoming reference
+    { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
   ]
 }
 ```

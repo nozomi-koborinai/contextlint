@@ -1,6 +1,14 @@
 import { relative } from "node:path";
-import type { LintMessage } from "./rule.js";
+import type { LintMessage, Severity } from "./rule.js";
 import type { FileLintResult } from "./lint-files.js";
+
+export interface JsonLintEntry {
+  file: string;
+  line: number;
+  severity: Severity;
+  message: string;
+  ruleId: string;
+}
 
 function summarize(errors: number, warnings: number): string {
   const parts: string[] = [];
@@ -78,4 +86,30 @@ export function formatFileResults(
   );
 
   return lines.join("\n");
+}
+
+export function formatFileResultsJson(
+  results: FileLintResult[],
+  cwd: string,
+): string {
+  const entries: JsonLintEntry[] = [];
+
+  for (const result of results) {
+    const file =
+      result.filePath === "<project>"
+        ? "(project)"
+        : relative(cwd, result.filePath);
+
+    for (const msg of result.messages) {
+      entries.push({
+        file,
+        line: msg.line,
+        severity: msg.severity,
+        message: msg.message,
+        ruleId: msg.ruleId,
+      });
+    }
+  }
+
+  return JSON.stringify(entries, null, 2);
 }

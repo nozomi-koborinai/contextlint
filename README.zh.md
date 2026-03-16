@@ -226,9 +226,60 @@ docs/design.md
 - **任何结构化 Markdown 项目** — 在 CI 中自动检测断裂链接、
   重复 ID 和缺失文件
 
+## CLI 选项
+
+| 选项 | 说明 |
+| ---- | --- |
+| `[files...]` | 要检查的文件或 glob 模式（覆盖配置中的 `include`） |
+| `--config <path>` | `contextlint.config.json` 的路径 |
+| `--format <format>` | 输出格式：`human`（默认）或 `json` |
+| `--cwd <path>` | 工作目录 |
+
+### JSON 输出
+
+使用 `--format json` 获取机器可读的输出（适用于 CI 和编辑器集成）：
+
+```bash
+npx contextlint --format json
+```
+
+```json
+[
+  {
+    "file": "docs/requirements.md",
+    "line": 12,
+    "severity": "error",
+    "message": "Required column \"Status\" not found in table",
+    "ruleId": "TBL-001"
+  }
+]
+```
+
 ## CI 集成
 
 ### GitHub Actions
+
+本仓库包含一个即用型组合 Action。
+它使用 `--format json` 运行 contextlint，并在 PR 上创建内联注释。
+
+```yaml
+name: contextlint
+on:
+  pull_request:
+    paths: ["docs/**"]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nozomi-koborinai/contextlint/.github/actions/contextlint@main
+        # with:
+        #   config: 'contextlint.config.json'  # 可选
+        #   files: 'docs/**/*.md'              # 可选
+        #   version: 'latest'                  # 可选
+```
+
+或直接运行：
 
 ```yaml
 - run: npx @contextlint/cli

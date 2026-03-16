@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
-import { formatFileResults } from "@contextlint/core";
-import type { FileLintResult } from "@contextlint/core";
+import { formatFileResults, formatFileResultsJson } from "@contextlint/core";
+import type { FileLintResult, JsonLintEntry } from "@contextlint/core";
 
 describe("formatFileResults", () => {
   it("returns 'No issues found.' when there are no errors", () => {
@@ -102,5 +102,102 @@ describe("formatFileResults", () => {
     const output = formatFileResults(results, "/project");
     expect(output).toContain("1 warning in 1 file");
     expect(output).not.toContain("error");
+  });
+});
+
+describe("formatFileResultsJson", () => {
+  it("returns an empty JSON array when there are no issues", () => {
+    const results: FileLintResult[] = [
+      { filePath: "/project/doc.md", messages: [] },
+    ];
+    const output = formatFileResultsJson(results, "/project");
+    const parsed: JsonLintEntry[] = JSON.parse(output) as JsonLintEntry[];
+    expect(parsed).toEqual([]);
+  });
+
+  it("outputs valid JSON with correct fields", () => {
+    const results: FileLintResult[] = [
+      {
+        filePath: "/project/docs/requirements.md",
+        messages: [
+          {
+            ruleId: "TBL-001",
+            severity: "error",
+            message: 'Required column "Status" not found in table',
+            line: 12,
+          },
+        ],
+      },
+    ];
+    const output = formatFileResultsJson(results, "/project");
+    const parsed: JsonLintEntry[] = JSON.parse(output) as JsonLintEntry[];
+    expect(parsed).toHaveLength(1);
+    const entry = parsed[0];
+    if (!entry) throw new Error("Expected entry");
+    expect(entry.file).toBe("docs/requirements.md");
+    expect(entry.line).toBe(12);
+    expect(entry.severity).toBe("error");
+    expect(entry.message).toBe('Required column "Status" not found in table');
+    expect(entry.ruleId).toBe("TBL-001");
+  });
+
+  it("flattens messages from multiple files into a single array", () => {
+    const results: FileLintResult[] = [
+      {
+        filePath: "/project/a.md",
+        messages: [
+          { ruleId: "TBL-001", severity: "error", message: "msg1", line: 1 },
+        ],
+      },
+      {
+        filePath: "/project/b.md",
+        messages: [
+          { ruleId: "TBL-002", severity: "warning", message: "msg2", line: 5 },
+        ],
+      },
+    ];
+    const output = formatFileResultsJson(results, "/project");
+    const parsed: JsonLintEntry[] = JSON.parse(output) as JsonLintEntry[];
+    expect(parsed).toHaveLength(2);
+    const first = parsed[0];
+    const second = parsed[1];
+    if (!first || !second) throw new Error("Expected two entries");
+    expect(first.file).toBe("a.md");
+    expect(second.file).toBe("b.md");
+  });
+
+  it("uses '(project)' for project-level results", () => {
+    const results: FileLintResult[] = [
+      {
+        filePath: "<project>",
+        messages: [
+          { ruleId: "STR-001", severity: "error", message: "Missing file", line: 0 },
+        ],
+      },
+    ];
+    const output = formatFileResultsJson(results, "/project");
+    const parsed: JsonLintEntry[] = JSON.parse(output) as JsonLintEntry[];
+    expect(parsed).toHaveLength(1);
+    const entry = parsed[0];
+    if (!entry) throw new Error("Expected entry");
+    expect(entry.file).toBe("(project)");
+  });
+
+  it("skips files with no messages", () => {
+    const results: FileLintResult[] = [
+      { filePath: "/project/clean.md", messages: [] },
+      {
+        filePath: "/project/dirty.md",
+        messages: [
+          { ruleId: "TBL-001", severity: "error", message: "err", line: 3 },
+        ],
+      },
+    ];
+    const output = formatFileResultsJson(results, "/project");
+    const parsed: JsonLintEntry[] = JSON.parse(output) as JsonLintEntry[];
+    expect(parsed).toHaveLength(1);
+    const entry = parsed[0];
+    if (!entry) throw new Error("Expected entry");
+    expect(entry.file).toBe("dirty.md");
   });
 });

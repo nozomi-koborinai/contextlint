@@ -232,9 +232,60 @@ These rules are designed to be general-purpose. Some examples:
 - **Any structured Markdown project** — Catch broken links,
   duplicate IDs, and missing files in CI
 
+## CLI Options
+
+| Option | Description |
+| ------ | ----------- |
+| `[files...]` | File or glob patterns to lint (overrides `include` in config) |
+| `--config <path>` | Path to `contextlint.config.json` |
+| `--format <format>` | Output format: `human` (default) or `json` |
+| `--cwd <path>` | Working directory |
+
+### JSON output
+
+Use `--format json` for machine-readable output (useful for CI and editor integrations):
+
+```bash
+npx contextlint --format json
+```
+
+```json
+[
+  {
+    "file": "docs/requirements.md",
+    "line": 12,
+    "severity": "error",
+    "message": "Required column \"Status\" not found in table",
+    "ruleId": "TBL-001"
+  }
+]
+```
+
 ## CI Integration
 
 ### GitHub Actions
+
+A ready-to-use composite action is included in this repository.
+It runs contextlint with `--format json` and creates inline annotations on PRs.
+
+```yaml
+name: contextlint
+on:
+  pull_request:
+    paths: ["docs/**"]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nozomi-koborinai/contextlint/.github/actions/contextlint@main
+        # with:
+        #   config: 'contextlint.config.json'  # optional
+        #   files: 'docs/**/*.md'              # optional
+        #   version: 'latest'                  # optional
+```
+
+Or run directly:
 
 ```yaml
 - run: npx @contextlint/cli

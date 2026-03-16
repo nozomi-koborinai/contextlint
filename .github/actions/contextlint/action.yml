@@ -1,0 +1,77 @@
+name: 'contextlint'
+description: 'Lint structured Markdown documents with contextlint'
+inputs:
+  config:
+    description: 'Path to contextlint.config.json'
+    required: false
+  files:
+    description: 'File glob patterns to lint (space-separated)'
+    required: false
+  version:
+    description: 'contextlint version to install'
+    required: false
+    default: 'latest'
+runs:
+  using: 'composite'
+  steps:
+    - uses: oven-sh/setup-bun@v2
+
+    - name: Run contextlint
+      shell: bash
+      run: |
+        args=("--format" "json")
+        if [ -n "${{ inputs.config }}" ]; then
+          args+=("--config" "${{ inputs.config }}")
+        fi
+
+        # Build the full command
+        cmd="bunx @contextlint/cli@${{ inputs.version }}"
+        if [ -n "${{ inputs.files }}" ]; then
+          cmd="$cmd ${{ inputs.files }}"
+        fi
+        cmd="$cmd ${args[*]}"
+
+        # Run contextlint and capture output; allow non-zero exit (lint errors)
+        output=$($cmd 2>&1) || true
+
+        # Parse JSON output and create GitHub annotations
+        if echo "$output" | head -1 | grep -q '^\['; then
+          echo "$output" | \
+            bun -e '
+              import type { Readable } from "node:stream";
+
+              interface Entry {
+                file: string;
+                line: number;
+                severity: string;
+                message: string;
+                ruleId: string;
+              }
+
+              const chunks: Buffer[] = [];
+              const stdin = process.stdin as Readable;
+              for await (const chunk of stdin) {
+                chunks.push(chunk as Buffer);
+              }
+              const data = Buffer.concat(chunks).toString();
+              const entries: Entry[] = JSON.parse(data) as Entry[];
+              let hasErrors = false;
+
+              for (const e of entries) {
+                if (e.severity === "error") hasErrors = true;
+                const level = e.severity === "error" ? "error" : "warning";
+                const file = e.file === "(project)" ? "" : `file=${e.file},`;
+                const line = e.line > 0 ? `line=${String(e.line)},` : "";
+                console.log(`::${level} ${file}${line}title=${e.ruleId}::${e.message}`);
+              }
+
+              if (entries.length === 0) {
+                console.log("contextlint: No issues found.");
+              }
+
+              process.exit(hasErrors ? 1 : 0);
+            '
+        else
+          echo "$output"
+          exit 1
+        fi

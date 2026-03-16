@@ -335,6 +335,53 @@ npm install -D @contextlint/mcp-server
 | `lint` | 使用指定规则直接检查 Markdown 内容 |
 | `lint-files` | 使用配置文件检查匹配模式的文件 |
 
+## 编程式 API
+
+### 上下文图
+
+`@contextlint/core` 提供了上下文图 API，用于以编程方式分析
+文档依赖关系。这对于构建需要理解 Markdown 文档之间关系的工具非常有用。
+
+```typescript
+import {
+  parseDocument,
+  buildContextGraph,
+  getImpactSet,
+  getContextSlice,
+  topologicalSort,
+  getComponents,
+} from "@contextlint/core";
+import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
+```
+
+| 函数 | 说明 |
+| ---- | --- |
+| `buildContextGraph(documents)` | 从解析后的文档构建依赖关系图 |
+| `getImpactSet(graph, filePath)` | 获取更改指定文件时受影响的所有文件（直接和间接） |
+| `getContextSlice(graph, documents, query, maxDepth?)` | 获取与查询（文件路径或 ID）相关的最小文件集 |
+| `topologicalSort(graph)` | 文档图的拓扑排序（依赖顺序） |
+| `getComponents(graph)` | 获取连通分量（相关文件的聚类） |
+
+使用示例：
+
+```typescript
+import { readFileSync } from "node:fs";
+import { parseDocument, buildContextGraph, getImpactSet } from "@contextlint/core";
+
+// 解析文档
+const documents = new Map();
+documents.set("docs/overview.md", parseDocument(readFileSync("docs/overview.md", "utf-8")));
+documents.set("docs/requirements.md", parseDocument(readFileSync("docs/requirements.md", "utf-8")));
+documents.set("docs/design.md", parseDocument(readFileSync("docs/design.md", "utf-8")));
+
+// 构建图
+const graph = buildContextGraph(documents);
+
+// 如果 requirements.md 发生变更，哪些文件会受到影响？
+const impacted = getImpactSet(graph, "docs/requirements.md");
+// => ["docs/design.md", "docs/overview.md"]
+```
+
 ## 包结构
 
 | 包名 | 说明 |

@@ -88,3 +88,12 @@ export type { ContextlintConfig } from "./config.js";
 
 export { formatFileResults, formatFileResultsJson, formatContentResults } from "./format.js";
 export type { JsonLintEntry } from "./format.js";
+
+export {
+  buildContextGraph,
+  getImpactSet,
+  getContextSlice,
+  topologicalSort,
+  getComponents,
+} from "./context-graph.js";
+export type { ContextGraph, GraphNode, GraphEdge } from "./context-graph.js";

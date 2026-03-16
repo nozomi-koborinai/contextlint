@@ -347,6 +347,54 @@ npm install -D @contextlint/mcp-server
 | `lint` | 지정된 규칙으로 Markdown 콘텐츠를 직접 검사 |
 | `lint-files` | 설정 파일을 사용하여 패턴에 맞는 파일을 검사 |
 
+## 프로그래밍 API
+
+### 컨텍스트 그래프
+
+`@contextlint/core`는 문서 의존 관계를 프로그래밍 방식으로 분석하기 위한
+컨텍스트 그래프 API를 제공합니다. Markdown 문서 간의 관계를 이해해야 하는
+도구를 구축하는 데 유용합니다.
+
+```typescript
+import {
+  parseDocument,
+  buildContextGraph,
+  getImpactSet,
+  getContextSlice,
+  topologicalSort,
+  getComponents,
+} from "@contextlint/core";
+import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
+```
+
+| 함수 | 설명 |
+| ---- | --- |
+| `buildContextGraph(documents)` | 파싱된 문서에서 의존 관계 그래프를 구축 |
+| `getImpactSet(graph, filePath)` | 지정 파일 변경 시 영향받는 모든 파일을 조회 (직접 + 간접) |
+| `getContextSlice(graph, documents, query, maxDepth?)` | 쿼리(파일 경로 또는 ID)에 관련된 최소 파일 집합을 조회 |
+| `topologicalSort(graph)` | 문서 그래프의 위상 정렬 (의존 순서) |
+| `getComponents(graph)` | 연결 컴포넌트 조회 (관련 파일 클러스터) |
+
+사용 예시:
+
+```typescript
+import { readFileSync } from "node:fs";
+import { parseDocument, buildContextGraph, getImpactSet } from "@contextlint/core";
+
+// 문서 파싱
+const documents = new Map();
+documents.set("docs/overview.md", parseDocument(readFileSync("docs/overview.md", "utf-8")));
+documents.set("docs/requirements.md", parseDocument(readFileSync("docs/requirements.md", "utf-8")));
+documents.set("docs/design.md", parseDocument(readFileSync("docs/design.md", "utf-8")));
+
+// 그래프 구축
+const graph = buildContextGraph(documents);
+
+// requirements.md가 변경되면 어떤 파일이 영향을 받나요?
+const impacted = getImpactSet(graph, "docs/requirements.md");
+// => ["docs/design.md", "docs/overview.md"]
+```
+
 ## 패키지 구성
 
 | 패키지 | 설명 |

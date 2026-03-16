@@ -238,6 +238,24 @@ docs/design.md
 - run: npx @contextlint/cli
 ```
 
+## ウォッチモード
+
+ファイルの変更を検知して自動的に再検証を行います：
+
+```bash
+npx contextlint --watch
+npx contextlint --watch docs/**/*.md
+npx contextlint --watch --config contextlint.config.json
+```
+
+ウォッチモードはまず初回の完全なチェックを実行し、
+その後ワーキングディレクトリ内の `.md` ファイルの変更を監視します。
+変更を検知すると、マッチする **すべての** ファイルを再チェックし
+（REF-002 や TBL-006 などのクロスファイルルールに必要）、
+ターミナルをクリアして、タイムスタンプ付きの最新結果を表示します。
+連続する変更は 300 ミリ秒でデバウンスされます。
+Ctrl+C で終了します。
+
 ## MCP サーバー
 
 contextlint は

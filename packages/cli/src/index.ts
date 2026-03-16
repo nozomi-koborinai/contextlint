@@ -3,6 +3,7 @@
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { findConfig, loadConfig, lintFiles, formatFileResults } from "@contextlint/core";
+import { startWatch } from "./watch.js";
 
 const program = new Command();
 
@@ -15,10 +16,11 @@ program
     "Path to config file",
   )
   .option("--cwd <path>", "Working directory", process.cwd())
+  .option("--watch", "Watch for file changes and re-lint automatically")
   .action(
     (
       files: string[],
-      opts: { config?: string; cwd: string },
+      opts: { config?: string; cwd: string; watch?: true },
     ) => {
       const cwd = resolve(opts.cwd);
 
@@ -50,6 +52,11 @@ program
         files.length > 0
           ? files
           : config.include ?? ["**/*.md"];
+
+      if (opts.watch) {
+        startWatch(patterns, config, cwd);
+        return;
+      }
 
       try {
         const results = lintFiles(patterns, config, cwd);

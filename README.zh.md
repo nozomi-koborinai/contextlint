@@ -225,6 +225,23 @@ docs/design.md
 - run: npx @contextlint/cli
 ```
 
+## 监视模式
+
+文件更改时自动重新验证：
+
+```bash
+npx contextlint --watch
+npx contextlint --watch docs/**/*.md
+npx contextlint --watch --config contextlint.config.json
+```
+
+监视模式首先执行一次完整检查，然后监视工作目录中 `.md` 文件的变更。
+检测到变更后，会重新检查**所有**匹配的文件
+（跨文件规则如 REF-002 和 TBL-006 需要此行为），
+清除终端并显示带有时间戳的最新结果。
+连续的快速变更会进行 300 毫秒的防抖处理。
+按 Ctrl+C 退出。
+
 ## MCP 服务器
 
 contextlint 可以作为

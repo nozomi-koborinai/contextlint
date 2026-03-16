@@ -602,6 +602,55 @@
             },
             "required": ["rule", "options"],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "GRP-001: Every ID must be traceable through all specified stages of the document chain.",
+            "properties": {
+              "rule": { "const": "grp001" },
+              "options": {
+                "type": "object",
+                "description": "Options for GRP-001.",
+                "properties": {
+                  "chain": {
+                    "type": "array",
+                    "minItems": 2,
+                    "description": "Ordered list of document stages forming the traceability chain.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "stage": {
+                          "type": "string",
+                          "description": "Human-readable name for this stage (e.g. \"Requirements\", \"Design\")."
+                        },
+                        "files": {
+                          "type": "string",
+                          "description": "Glob pattern to match files belonging to this stage."
+                        },
+                        "idColumn": {
+                          "type": "string",
+                          "description": "Table column where IDs are defined (used for the first stage)."
+                        },
+                        "refColumn": {
+                          "type": "string",
+                          "description": "Table column where IDs are referenced (used for subsequent stages)."
+                        }
+                      },
+                      "required": ["stage", "files"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "idPattern": {
+                    "type": "string",
+                    "description": "Optional regex pattern. Only IDs matching this pattern are checked."
+                  }
+                },
+                "required": ["chain"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule", "options"],
+            "additionalProperties": false
           }
         ]
       }

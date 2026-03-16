@@ -143,6 +143,7 @@ docs/design.md
 
 | ID | 설명 | 설정 항목 |
 | --- | --- | --- |
+| GRP-001 | 모든 ID가 문서 체인의 전 단계에서 추적 가능해야 함 | `chain`, `idPattern`? |
 | GRP-002 | 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지) | `files`?, `exclude`? |
 
 ## 설정 레퍼런스
@@ -226,6 +227,19 @@ docs/design.md
 
     // REF-006: 이미지 참조가 실재하는 파일을 가리켜야 함
     { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-001: 모든 ID가 문서 체인의 전 단계에서 추적 가능해야 함
+    {
+      "rule": "grp001",
+      "options": {
+        "chain": [
+          { "stage": "Requirements", "files": "**/requirements.md", "idColumn": "ID" },
+          { "stage": "Design", "files": "**/design.md", "refColumn": "Requirement" },
+          { "stage": "Test", "files": "**/test-plan.md", "refColumn": "Covers" }
+        ],
+        "idPattern": "^REQ-\\d{3}$"
+      }
+    },
 
     // GRP-002: 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지)
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }

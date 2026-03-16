@@ -136,6 +136,7 @@ docs/design.md
 
 | ID | Description | Config |
 | --- | --- | --- |
+| GRP-001 | Every ID must be traceable through all stages of the document chain | `chain`, `idPattern`? |
 | GRP-002 | Document reference graph must be acyclic (no circular references) | `files`?, `exclude`? |
 
 ## Configuration
@@ -219,6 +220,19 @@ docs/design.md
 
     // REF-006: Image references must point to files that exist
     { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-001: Every ID must be traceable through all stages of the document chain
+    {
+      "rule": "grp001",
+      "options": {
+        "chain": [
+          { "stage": "Requirements", "files": "**/requirements.md", "idColumn": "ID" },
+          { "stage": "Design", "files": "**/design.md", "refColumn": "Requirement" },
+          { "stage": "Test", "files": "**/test-plan.md", "refColumn": "Covers" }
+        ],
+        "idPattern": "^REQ-\\d{3}$"
+      }
+    },
 
     // GRP-002: Document reference graph must be acyclic (no circular references)
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }

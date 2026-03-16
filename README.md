@@ -366,6 +366,7 @@ Available tools:
 | `lint` | Lint Markdown content directly with specified rules |
 | `lint-files` | Lint files matching glob patterns using a config file |
 | `context-graph` | Build and return the document dependency graph for the project |
+| `context-slice` | Extract the minimal set of documents relevant to a given query |
 
 ## Programmatic API
 

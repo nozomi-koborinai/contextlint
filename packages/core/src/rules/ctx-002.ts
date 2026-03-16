@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import type { ParsedDocument } from "../parser.js";
@@ -101,8 +101,8 @@ function findLineNumber(content: string, index: number): number {
 }
 
 export function ctx002(options: Ctx002Options): Rule {
-  const isGlossaryMatch = picomatch(`**/${options.glossary}`);
-  const isMatch = options.files ? picomatch(`**/${options.files}`) : null;
+  const isGlossaryMatch = globMatch(`**/${options.glossary}`);
+  const isMatch = options.files ? globMatch(`**/${options.files}`) : null;
 
   return {
     id: "CTX-002",

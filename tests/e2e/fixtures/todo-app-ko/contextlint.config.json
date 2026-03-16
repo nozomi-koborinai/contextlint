@@ -85,6 +85,29 @@
     },
     {
       "rule": "ref005"
+    },
+    {
+      "rule": "ctx001",
+      "options": {
+        "files": "overview.md"
+      }
+    },
+    {
+      "rule": "ctx002",
+      "options": {
+        "glossary": "glossary.md",
+        "termColumn": "용어",
+        "aliasColumn": "별칭"
+      }
+    },
+    {
+      "rule": "grp002"
+    },
+    {
+      "rule": "grp003",
+      "options": {
+        "entryPoints": ["overview.md", "glossary.md"]
+      }
     }
   ]
 }

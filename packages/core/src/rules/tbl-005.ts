@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import { regexString } from "../utils/regex-string.js";
@@ -59,7 +59,7 @@ function violatesConstraint(value: string | undefined, constraint: Tbl005Constra
 }
 
 export function tbl005(options: Tbl005Options): Rule {
-  const isMatch = options.files ? picomatch(`**/${options.files}`) : null;
+  const isMatch = options.files ? globMatch(`**/${options.files}`) : null;
 
   return {
     id: "TBL-005",

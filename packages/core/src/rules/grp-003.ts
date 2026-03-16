@@ -1,5 +1,5 @@
 import { resolve, dirname, basename } from "node:path";
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
@@ -12,11 +12,11 @@ export type Grp003Options = z.infer<typeof grp003Schema>;
 
 export function grp003(options?: Grp003Options): Rule {
   const isMatch = options?.files
-    ? picomatch(`**/${options.files}`)
+    ? globMatch(`**/${options.files}`)
     : null;
 
   const entryPointMatchers = options?.entryPoints
-    ? options.entryPoints.map((pattern) => picomatch(`**/${pattern}`))
+    ? options.entryPoints.map((pattern) => globMatch(`**/${pattern}`))
     : [];
 
   return {

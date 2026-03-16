@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import { regexString } from "../utils/regex-string.js";
@@ -15,8 +15,8 @@ export const ref003Schema = z.object({
 export type Ref003Options = z.infer<typeof ref003Schema>;
 
 export function ref003(options: Ref003Options): Rule {
-  const isDefinition = picomatch(`**/${options.definitions}`);
-  const isReference = options.references.map((p) => picomatch(`**/${p}`));
+  const isDefinition = globMatch(`**/${options.definitions}`);
+  const isReference = options.references.map((p) => globMatch(`**/${p}`));
   const idColumn = options.idColumn ?? "ID";
   const idRegex = options.idPattern ? new RegExp(options.idPattern) : null;
 

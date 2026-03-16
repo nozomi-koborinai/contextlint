@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
@@ -10,7 +10,7 @@ export const tbl002Schema = z.object({
 export type Tbl002Options = z.infer<typeof tbl002Schema>;
 
 export function tbl002(options?: Tbl002Options): Rule {
-  const isMatch = options?.files ? picomatch(`**/${options.files}`) : null;
+  const isMatch = options?.files ? globMatch(`**/${options.files}`) : null;
 
   return {
     id: "TBL-002",

@@ -241,7 +241,7 @@ docs/design.md
     },
 
     // GRP-002: ドキュメント参照グラフが非循環であること（循環参照の検出）
-    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
+    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } },
     // GRP-003: すべてのドキュメントに少なくとも 1 つの被参照があること
     { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
   ]
@@ -377,6 +377,7 @@ npm install -D @contextlint/mcp-server
 | `lint-files` | 設定ファイルを使用して、パターンに一致するファイルをチェックする |
 | `context-graph` | プロジェクトのドキュメント依存関係グラフを構築して返す |
 | `context-slice` | クエリに関連するドキュメントの最小セットを抽出する |
+| `impact-analysis` | 指定ファイルの変更がどのドキュメントに影響するかを分析する |
 
 ## プログラマティック API
 

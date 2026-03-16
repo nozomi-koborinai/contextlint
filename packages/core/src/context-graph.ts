@@ -1,4 +1,4 @@
-import { dirname, resolve } from "node:path";
+import { dirname, resolve, relative } from "node:path";
 import type { ParsedDocument } from "./parser.js";
 
 export interface GraphNode {
@@ -423,4 +423,124 @@ export function formatContextGraphSummary(graph: ContextGraph): string {
   }
 
   return lines.join("\n");
+}
+export function classifyImpact(
+  graph: ContextGraph,
+  filePath: string,
+): {
+  directlyAffected: { file: string; references: number }[];
+  transitivelyAffected: { file: string; via: string }[];
+} {
+  // Build reverse adjacency list
+  const reverseAdj = new Map<string, string[]>();
+  for (const edge of graph.edges) {
+    const sources = reverseAdj.get(edge.target);
+    if (sources) {
+      if (!sources.includes(edge.source)) {
+        sources.push(edge.source);
+      }
+    } else {
+      reverseAdj.set(edge.target, [edge.source]);
+    }
+  }
+
+  // Count direct reverse edges per source for reference count
+  const reverseEdgeCounts = new Map<string, Map<string, number>>();
+  for (const edge of graph.edges) {
+    let sourceCounts = reverseEdgeCounts.get(edge.target);
+    if (!sourceCounts) {
+      sourceCounts = new Map<string, number>();
+      reverseEdgeCounts.set(edge.target, sourceCounts);
+    }
+    sourceCounts.set(edge.source, (sourceCounts.get(edge.source) ?? 0) + 1);
+  }
+
+  // BFS with depth tracking
+  const visited = new Set<string>();
+  visited.add(filePath);
+
+  const directlyAffected: { file: string; references: number }[] = [];
+  const transitivelyAffected: { file: string; via: string }[] = [];
+
+  // Track which file led to discovering each node (for "via" path)
+  const parent = new Map<string, string>();
+
+  // Depth-layered BFS
+  let currentLayer = [filePath];
+
+  let depth = 0;
+  while (currentLayer.length > 0) {
+    const nextLayer: string[] = [];
+    depth++;
+
+    for (const current of currentLayer) {
+      const sources = reverseAdj.get(current);
+      if (!sources) continue;
+
+      for (const source of sources) {
+        if (visited.has(source)) continue;
+        visited.add(source);
+        nextLayer.push(source);
+        parent.set(source, current);
+
+        if (depth === 1) {
+          // Direct references to the changed file
+          const edgeCounts = reverseEdgeCounts.get(filePath);
+          const refCount = edgeCounts?.get(source) ?? 0;
+          directlyAffected.push({ file: source, references: refCount });
+        } else {
+          // Transitive: find the directly-affected ancestor as "via"
+          let via = source;
+          let ancestor = parent.get(via);
+          while (ancestor && ancestor !== filePath) {
+            via = ancestor;
+            ancestor = parent.get(via);
+          }
+          transitivelyAffected.push({ file: source, via });
+        }
+      }
+    }
+
+    currentLayer = nextLayer;
+  }
+
+  directlyAffected.sort((a, b) => a.file.localeCompare(b.file));
+  transitivelyAffected.sort((a, b) => a.file.localeCompare(b.file));
+
+  return { directlyAffected, transitivelyAffected };
+}
+
+/**
+ * Format impact analysis results as a human-readable summary line.
+ */
+export function formatImpactSummary(
+  directCount: number,
+  transitiveCount: number,
+): string {
+  return `1 file changed → ${String(directCount)} directly affected → ${String(transitiveCount)} transitively affected`;
+}
+
+/**
+ * Convert absolute paths to cwd-relative paths in impact results.
+ */
+export function relativizeImpact(
+  impact: {
+    directlyAffected: { file: string; references: number }[];
+    transitivelyAffected: { file: string; via: string }[];
+  },
+  cwd: string,
+): {
+  directlyAffected: { file: string; references: number }[];
+  transitivelyAffected: { file: string; via: string }[];
+} {
+  return {
+    directlyAffected: impact.directlyAffected.map((d) => ({
+      file: relative(cwd, d.file).replace(/\\/g, "/"),
+      references: d.references,
+    })),
+    transitivelyAffected: impact.transitivelyAffected.map((t) => ({
+      file: relative(cwd, t.file).replace(/\\/g, "/"),
+      via: relative(cwd, t.via).replace(/\\/g, "/"),
+    })),
+  };
 }

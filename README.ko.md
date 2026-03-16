@@ -243,7 +243,7 @@ docs/design.md
     },
 
     // GRP-002: 문서 참조 그래프가 비순환이어야 함 (순환 참조 감지)
-    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }
+    { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } },
     // GRP-003: 모든 문서에 최소 하나의 수신 참조가 있어야 함
     { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
   ]
@@ -374,6 +374,7 @@ npm install -D @contextlint/mcp-server
 | `lint-files` | 설정 파일을 사용하여 패턴에 맞는 파일을 검사 |
 | `context-graph` | 프로젝트의 문서 의존 관계 그래프를 구축하여 반환 |
 | `context-slice` | 주어진 쿼리와 관련된 최소 문서 집합을 추출 |
+| `impact-analysis` | 지정 파일의 변경이 어떤 문서에 영향을 미치는지 분석 |
 
 ## 프로그래밍 API
 

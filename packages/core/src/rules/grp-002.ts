@@ -1,5 +1,5 @@
 import { resolve, dirname } from "node:path";
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule, RuleContext } from "../rule.js";
 import type { ParsedDocument } from "../parser.js";
@@ -197,9 +197,12 @@ function findLinkLine(
 }
 
 export function grp002(options?: Grp002Options): Rule {
-  const isFileMatch = options?.files ? picomatch(`**/${options.files}`) : null;
-  const isExclude = options?.exclude
-    ? picomatch(options.exclude.map((p) => `**/${p}`))
+  const isFileMatch = options?.files ? globMatch(`**/${options.files}`) : null;
+  const excludeMatchers = options?.exclude
+    ? options.exclude.map((p) => globMatch(`**/${p}`))
+    : null;
+  const isExclude = excludeMatchers
+    ? (path: string) => excludeMatchers.some((m) => m(path))
     : null;
 
   return {

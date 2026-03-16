@@ -1,4 +1,4 @@
-import picomatch from "picomatch";
+import { globMatch } from "../utils/glob-match.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import { regexString } from "../utils/regex-string.js";
@@ -13,7 +13,7 @@ export type Tbl004Options = z.infer<typeof tbl004Schema>;
 
 export function tbl004(options: Tbl004Options): Rule {
   const regex = new RegExp(options.pattern);
-  const isMatch = options.files ? picomatch(`**/${options.files}`) : null;
+  const isMatch = options.files ? globMatch(`**/${options.files}`) : null;
 
   return {
     id: "TBL-004",

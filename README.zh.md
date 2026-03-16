@@ -122,6 +122,12 @@ docs/design.md
 | --- | --- | --- |
 | CHK-001 | 清单中的所有项目必须已勾选 | `section`?, `files`? |
 
+### 上下文规则
+
+| ID | 说明 | 配置项 |
+| --- | --- | --- |
+| CTX-001 | 章节必须包含有意义的内容，而非占位符 | `section`?, `placeholders`?, `files`? |
+
 ## 配置参考
 
 ```jsonc
@@ -166,6 +172,9 @@ docs/design.md
 
     // CHK-001: 清单中的所有项目必须已勾选
     { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
+    // CTX-001: 章节必须包含有意义的内容，而非占位符
+    { "rule": "ctx001", "options": { "section": "Overview", "files": "docs/**/*.md" } },
 
     // REF-001: 相对路径的 Markdown 链接必须指向存在的文件
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },

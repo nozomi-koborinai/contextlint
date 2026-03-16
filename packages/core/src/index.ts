@@ -68,6 +68,9 @@ export type { Ref006Options } from "./rules/ref-006.js";
 export { chk001, chk001Schema } from "./rules/chk-001.js";
 export type { Chk001Options } from "./rules/chk-001.js";
 
+export { ctx001, ctx001Schema } from "./rules/ctx-001.js";
+export type { Ctx001Options } from "./rules/ctx-001.js";
+
 export { resolveRule, ruleNames } from "./registry.js";
 
 export { lintFiles } from "./lint-files.js";

@@ -132,6 +132,12 @@ docs/design.md
 | --- | --- | --- |
 | CHK-001 | 체크리스트의 모든 항목이 체크되어야 함 | `section`?, `files`? |
 
+### 컨텍스트 규칙
+
+| ID | 설명 | 설정 항목 |
+| --- | --- | --- |
+| CTX-001 | 섹션에 플레이스홀더가 아닌 실질적인 내용이 있어야 함 | `section`?, `placeholders`?, `files`? |
+
 ## 설정 레퍼런스
 
 ```jsonc
@@ -176,6 +182,9 @@ docs/design.md
 
     // CHK-001: 체크리스트의 모든 항목이 체크되어야 함
     { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
+    // CTX-001: 섹션에 플레이스홀더가 아닌 실질적인 내용이 있어야 함
+    { "rule": "ctx001", "options": { "section": "Overview", "files": "docs/**/*.md" } },
 
     // REF-001: 상대 경로 Markdown 링크가 실재하는 파일을 가리켜야 함
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },

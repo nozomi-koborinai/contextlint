@@ -130,6 +130,12 @@ docs/design.md
 | --- | --- | --- |
 | CHK-001 | チェックリストの全項目がチェック済みであること | `section`?, `files`? |
 
+### コンテキストに関するルール
+
+| ID | 説明 | 設定項目 |
+| --- | --- | --- |
+| CTX-001 | セクションにプレースホルダーではない実質的な内容があること | `section`?, `placeholders`?, `files`? |
+
 ## 設定リファレンス
 
 ```jsonc
@@ -174,6 +180,9 @@ docs/design.md
 
     // CHK-001: チェックリストの全項目がチェック済みであること
     { "rule": "chk001", "options": { "section": "Review Checklist", "files": "docs/reviews/*.md" } },
+
+    // CTX-001: セクションにプレースホルダーではない実質的な内容があること
+    { "rule": "ctx001", "options": { "section": "Overview", "files": "docs/**/*.md" } },
 
     // REF-001: 相対パスの Markdown リンクが実在するファイルを指していること
     { "rule": "ref001", "options": { "exclude": ["_references/**"] } },

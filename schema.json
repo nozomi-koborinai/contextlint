@@ -511,6 +511,35 @@
             },
             "required": ["rule"],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "CTX-001: Required sections must contain meaningful content, not just placeholders.",
+            "properties": {
+              "rule": { "const": "ctx001" },
+              "options": {
+                "type": "object",
+                "description": "Options for CTX-001.",
+                "properties": {
+                  "section": {
+                    "type": "string",
+                    "description": "Only check this specific section heading."
+                  },
+                  "placeholders": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Custom placeholder strings to detect (case-insensitive). Default: [\"TBD\", \"TODO\", \"WIP\", \"FIXME\", \"N/A\"]."
+                  },
+                  "files": {
+                    "type": "string",
+                    "description": "Glob pattern to limit which files this rule applies to."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["rule"],
+            "additionalProperties": false
           }
         ]
       }

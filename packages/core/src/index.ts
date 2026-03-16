@@ -74,6 +74,9 @@ export type { Ctx001Options } from "./rules/ctx-001.js";
 export { ctx002, ctx002Schema } from "./rules/ctx-002.js";
 export type { Ctx002Options } from "./rules/ctx-002.js";
 
+export { grp001, grp001Schema } from "./rules/grp-001.js";
+export type { Grp001Options } from "./rules/grp-001.js";
+
 export { grp002, grp002Schema } from "./rules/grp-002.js";
 export type { Grp002Options } from "./rules/grp-002.js";
 

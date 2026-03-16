@@ -141,6 +141,7 @@ docs/design.md
 
 | ID | 説明 | 設定項目 |
 | --- | --- | --- |
+| GRP-001 | すべての ID がドキュメントチェーンの全ステージで追跡可能であること | `chain`, `idPattern`? |
 | GRP-002 | ドキュメント参照グラフが非循環であること（循環参照の検出） | `files`?, `exclude`? |
 
 ## 設定リファレンス
@@ -224,6 +225,19 @@ docs/design.md
 
     // REF-006: 画像参照が実在するファイルを指していること
     { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-001: すべての ID がドキュメントチェーンの全ステージで追跡可能であること
+    {
+      "rule": "grp001",
+      "options": {
+        "chain": [
+          { "stage": "Requirements", "files": "**/requirements.md", "idColumn": "ID" },
+          { "stage": "Design", "files": "**/design.md", "refColumn": "Requirement" },
+          { "stage": "Test", "files": "**/test-plan.md", "refColumn": "Covers" }
+        ],
+        "idPattern": "^REQ-\\d{3}$"
+      }
+    },
 
     // GRP-002: ドキュメント参照グラフが非循環であること（循環参照の検出）
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }

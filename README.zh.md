@@ -133,6 +133,7 @@ docs/design.md
 
 | ID | 说明 | 配置项 |
 | --- | --- | --- |
+| GRP-001 | 每个 ID 必须在文档链的所有阶段中可追溯 | `chain`, `idPattern`? |
 | GRP-002 | 文档引用图必须无环（检测循环引用） | `files`?, `exclude`? |
 
 ## 配置参考
@@ -216,6 +217,19 @@ docs/design.md
 
     // REF-006: 图片引用必须指向存在的文件
     { "rule": "ref006", "options": { "exclude": ["*.svg"] } },
+
+    // GRP-001: 每个 ID 必须在文档链的所有阶段中可追溯
+    {
+      "rule": "grp001",
+      "options": {
+        "chain": [
+          { "stage": "Requirements", "files": "**/requirements.md", "idColumn": "ID" },
+          { "stage": "Design", "files": "**/design.md", "refColumn": "Requirement" },
+          { "stage": "Test", "files": "**/test-plan.md", "refColumn": "Covers" }
+        ],
+        "idPattern": "^REQ-\\d{3}$"
+      }
+    },
 
     // GRP-002: 文档引用图必须无环（检测循环引用）
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } }

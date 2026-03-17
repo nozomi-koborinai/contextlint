@@ -19,6 +19,7 @@ runs:
     - name: Run contextlint
       shell: bash
       run: |
+        set -f  # Disable glob expansion so patterns are passed literally to the CLI
         args=("--format" "json")
         if [ -n "${{ inputs.config }}" ]; then
           args+=("--config" "${{ inputs.config }}")

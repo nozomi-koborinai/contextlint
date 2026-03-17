@@ -4,6 +4,24 @@ import * as z from "zod/v4";
 
 const CONFIG_NAME = "contextlint.config.json";
 
+const compilerSectionsSchema = z.object({
+  architecture: z.boolean().optional(),
+  rules: z.boolean().optional(),
+  dependencies: z.boolean().optional(),
+  workflow: z.boolean().optional(),
+}).strict();
+
+const compilerConfigSchema = z.object({
+  outdir: z.string().optional(),
+  skill: z.object({
+    name: z.string(),
+    description: z.string(),
+  }),
+  sections: compilerSectionsSchema.optional(),
+}).strict();
+
+export type CompilerConfig = z.infer<typeof compilerConfigSchema>;
+
 const configSchema = z.object({
   $schema: z.string().optional(),
   include: z.array(z.string()).optional(),
@@ -13,6 +31,7 @@ const configSchema = z.object({
       options: z.record(z.string(), z.unknown()).optional(),
     }).strict(),
   ),
+  compile: compilerConfigSchema.optional(),
 }).strict();
 
 export type ContextlintConfig = z.infer<typeof configSchema>;

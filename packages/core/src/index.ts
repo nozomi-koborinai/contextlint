@@ -93,7 +93,7 @@ export type {
 } from "./lint-files.js";
 
 export { findConfig, loadConfig } from "./config.js";
-export type { ContextlintConfig } from "./config.js";
+export type { ContextlintConfig, CompilerConfig } from "./config.js";
 
 export { formatFileResults, formatFileResultsJson, formatContentResults } from "./format.js";
 export type { JsonLintEntry } from "./format.js";
@@ -110,3 +110,22 @@ export {
   relativizeImpact,
 } from "./context-graph.js";
 export type { ContextGraph, GraphNode, GraphEdge } from "./context-graph.js";
+
+export {
+  classifyNodes,
+  analyzeGraph,
+  extractDocProfile,
+  describeRules,
+  synthesize,
+  compileContext,
+} from "./context-compiler.js";
+export type {
+  NodeRole,
+  NodeClassification,
+  GraphAnalysis,
+  OutlineEntry,
+  TableSchema,
+  DocProfile,
+  RuleDescription,
+  CompileResult,
+} from "./context-compiler.js";

@@ -55,6 +55,7 @@ export function registerSliceCommand(program: Command): void {
               : formatSliceResult(resolvedQuery, files, ctx.cwd);
 
           console.log(output);
+          process.exit(0);
         } catch (err) {
           console.error(
             `Error: ${err instanceof Error ? err.message : String(err)}`,

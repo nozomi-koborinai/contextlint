@@ -40,6 +40,7 @@ export function registerGraphCommand(program: Command): void {
                 );
 
           console.log(output);
+          process.exit(0);
         } catch (err) {
           console.error(
             `Error: ${err instanceof Error ? err.message : String(err)}`,

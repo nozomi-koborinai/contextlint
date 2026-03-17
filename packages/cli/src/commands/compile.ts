@@ -70,6 +70,7 @@ export function registerCompileCommand(program: Command): void {
             `Source: ${String(documentCount)} ${docWord}, ${String(ruleCount)} ${ruleWord}, ${String(componentCount)} ${clusterWord}`,
           );
           console.log(lines.join("\n"));
+          process.exit(0);
         } catch (err) {
           console.error(
             `Error: ${err instanceof Error ? err.message : String(err)}`,

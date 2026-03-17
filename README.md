@@ -239,7 +239,22 @@ docs/design.md
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } },
     // GRP-003: Every document must have at least one incoming reference
     { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
-  ]
+  ],
+
+  // Context Compiler: generate SKILL.md for Claude Code
+  "compile": {
+    "skill": {
+      "name": "my-project",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  }
 }
 ```
 
@@ -258,6 +273,45 @@ These rules are designed to be general-purpose. Some examples:
   proposals are not broken
 - **Any structured Markdown project** — Catch broken links,
   duplicate IDs, and missing files in CI
+
+## Commands
+
+### Lint (default)
+
+```bash
+contextlint [files...]              # Lint structured Markdown documents
+contextlint --format json           # Machine-readable output
+contextlint --watch                 # Re-run on file changes
+```
+
+### Impact Analysis
+
+```bash
+contextlint impact <file>           # Analyze change impact + lint affected files
+contextlint impact docs/req.md --format json
+```
+
+### Context Slice
+
+```bash
+contextlint slice <query>           # Extract related documents
+contextlint slice docs/req.md --depth 3
+```
+
+### Document Graph
+
+```bash
+contextlint graph                   # Show document dependency graph
+contextlint graph --format json
+```
+
+### Compile
+
+```bash
+contextlint compile                 # Generate SKILL.md for Claude Code
+contextlint compile --dry-run       # Preview without writing
+contextlint compile --outdir .claude/skills/my-skill
+```
 
 ## CLI Options
 
@@ -368,6 +422,7 @@ Available tools:
 | `context-graph` | Build and return the document dependency graph for the project |
 | `context-slice` | Extract the minimal set of documents relevant to a given query |
 | `impact-analysis` | Analyze which documents are affected by changes to a given file |
+| `compile-context` | Compile document structure into LLM context text |
 
 ## Programmatic API
 
@@ -386,6 +441,8 @@ import {
   getContextSlice,
   topologicalSort,
   getComponents,
+  classifyImpact,
+  compileContext,
 } from "@contextlint/core";
 import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 ```
@@ -397,6 +454,8 @@ import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 | `getContextSlice(graph, documents, query, maxDepth?)` | Get the minimal set of files relevant to a query (file path or ID) |
 | `topologicalSort(graph)` | Topological sort of the document graph (dependency order) |
 | `getComponents(graph)` | Get connected components (clusters of related files) |
+| `classifyImpact(graph, filePath)` | Classify impact as direct vs transitive |
+| `compileContext(patterns, config, cwd)` | Compile documents + config into SKILL.md content |
 
 Example:
 
@@ -416,6 +475,78 @@ const graph = buildContextGraph(documents);
 // What files are impacted if requirements.md changes?
 const impacted = getImpactSet(graph, "docs/requirements.md");
 // => ["docs/design.md", "docs/overview.md"]
+```
+
+## Context Compiler
+
+The Context Compiler is a deterministic pipeline that transforms your
+documents and config into a `SKILL.md` file for
+[Claude Code custom skills](https://docs.anthropic.com/en/docs/claude-code).
+Same config + same documents always produces the same output -- no LLM
+involved.
+
+### How it works
+
+1. Load documents matching `include` patterns
+2. Build the dependency graph and classify each document's role
+   (entry, hub, leaf, bridge, isolated)
+3. Extract document profiles (outline, table schemas, references)
+4. Describe active lint rules in natural language
+5. Synthesize everything into a single SKILL.md
+
+### Config
+
+Add a `compile` section to `contextlint.config.json`:
+
+```json
+{
+  "include": ["docs/**/*.md"],
+  "compile": {
+    "skill": {
+      "name": "my-project-docs",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  },
+  "rules": []
+}
+```
+
+| Field | Description |
+| ----- | ----------- |
+| `skill.name` | Skill name for SKILL.md frontmatter (required) |
+| `skill.description` | Skill description for SKILL.md frontmatter (required) |
+| `outdir` | Output directory (default: `.claude/skills/contextlint`) |
+| `sections.architecture` | Include architecture overview |
+| `sections.rules` | Include active lint rules |
+| `sections.dependencies` | Include dependency graph |
+| `sections.workflow` | Include workflow instructions |
+
+### Usage
+
+```bash
+# Generate SKILL.md
+contextlint compile
+
+# Preview without writing
+contextlint compile --dry-run
+
+# Custom output directory
+contextlint compile --outdir .claude/skills/my-skill
+```
+
+### CI integration
+
+Add to your CI pipeline to keep SKILL.md in sync with documentation:
+
+```yaml
+- run: npx contextlint compile --dry-run
 ```
 
 ## Packages

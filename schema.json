@@ -679,6 +679,45 @@
           }
         ]
       }
+    },
+    "compile": {
+      "type": "object",
+      "description": "Context Compiler settings for generating SKILL.md files.",
+      "properties": {
+        "outdir": {
+          "type": "string",
+          "description": "Output directory for compiled files."
+        },
+        "skill": {
+          "type": "object",
+          "description": "Skill metadata for SKILL.md frontmatter.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Skill name for SKILL.md frontmatter."
+            },
+            "description": {
+              "type": "string",
+              "description": "Skill description for SKILL.md frontmatter."
+            }
+          },
+          "required": ["name", "description"],
+          "additionalProperties": false
+        },
+        "sections": {
+          "type": "object",
+          "description": "Toggle which sections appear in the compiled output.",
+          "properties": {
+            "architecture": { "type": "boolean" },
+            "rules": { "type": "boolean" },
+            "dependencies": { "type": "boolean" },
+            "workflow": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["skill"],
+      "additionalProperties": false
     }
   },
   "required": ["rules"],

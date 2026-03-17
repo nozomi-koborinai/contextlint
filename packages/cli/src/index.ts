@@ -2,8 +2,9 @@
 
 import { resolve } from "node:path";
 import { Command } from "commander";
-import { findConfig, loadConfig, lintFiles, formatFileResults, formatFileResultsJson } from "@contextlint/core";
+import { lintFiles, formatFileResults, formatFileResultsJson } from "@contextlint/core";
 import { startWatch } from "./watch.js";
+import { validateFormat, resolveConfig } from "./commands/shared.js";
 import { registerImpactCommand } from "./commands/impact.js";
 import { registerSliceCommand } from "./commands/slice.js";
 import { registerGraphCommand } from "./commands/graph.js";
@@ -14,37 +15,9 @@ function lintAction(
   opts: { config?: string; format: string; cwd: string; watch?: true },
 ): void {
   const cwd = resolve(opts.cwd);
+  validateFormat(opts.format);
 
-  if (opts.format !== "human" && opts.format !== "json") {
-    console.error(
-      `Error: Invalid format "${opts.format}". Use "human" or "json".`,
-    );
-    process.exit(2);
-  }
-
-  let configPath: string;
-  if (opts.config) {
-    configPath = resolve(cwd, opts.config);
-  } else {
-    const found = findConfig(cwd);
-    if (!found) {
-      console.error(
-        "Error: No contextlint.config.json found. Create a config file or use --config.",
-      );
-      process.exit(2);
-    }
-    configPath = found;
-  }
-
-  let config;
-  try {
-    config = loadConfig(configPath);
-  } catch (err) {
-    console.error(
-      `Error: ${err instanceof Error ? err.message : String(err)}`,
-    );
-    process.exit(2);
-  }
+  const { config } = resolveConfig(cwd, opts.config);
 
   const patterns =
     files.length > 0

@@ -397,9 +397,11 @@ function describeCtx002(options: Record<string, unknown>): string {
   const aliasCol = options["aliasColumn"] as string | undefined;
   const files = options["files"] as string | undefined;
   const parts: string[] = ["Terms must match glossary definitions"];
-  if (glossary) parts.push(`(glossary: ${glossary}`);
-  if (termCol) parts.push(`term: "${termCol}"`);
-  if (aliasCol) parts.push(`alias: "${aliasCol}")`);
+  const details: string[] = [];
+  if (glossary) details.push(`glossary: ${glossary}`);
+  if (termCol) details.push(`term: "${termCol}"`);
+  if (aliasCol) details.push(`alias: "${aliasCol}"`);
+  if (details.length > 0) parts.push(`(${details.join(", ")})`);
   if (files) parts.push(`(files: ${files})`);
   return parts.join(" ");
 }
@@ -622,18 +624,18 @@ function buildRulesSection(ruleDescriptions: RuleDescription[]): string {
 function buildWorkflowSection(): string {
   return `When creating or editing documents:
 
-1. Identify which zone the document belongs to
-2. Follow the required section order
+1. Check the Document Architecture section above for the expected structure
+2. Follow the required section order for the document type
 3. Ensure all required columns exist in tables
-4. Use valid ID formats
-5. Verify cross-file references
+4. Use valid ID formats as described in Document Rules
+5. Verify cross-file references point to existing files
 
-When creating a new zone:
+When adding a new document:
 
-1. Create overview.md with required sections
-2. Create requirements.md with ID format
-3. Add zone-specific documents
-4. Link all documents from the zone overview`;
+1. Place it in the appropriate directory
+2. Include all required sections and table columns
+3. Add links from related documents to maintain traceability
+4. Run contextlint to validate the new document`;
 }
 
 export function synthesize(

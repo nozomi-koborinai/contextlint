@@ -14,8 +14,8 @@ const compilerSectionsSchema = z.object({
 const compilerConfigSchema = z.object({
   outdir: z.string().optional(),
   skill: z.object({
-    name: z.string(),
-    description: z.string(),
+    name: z.string().min(1),
+    description: z.string().min(1),
   }),
   sections: compilerSectionsSchema.optional(),
 }).strict();

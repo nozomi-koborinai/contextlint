@@ -244,7 +244,22 @@ docs/design.md
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } },
     // GRP-003: すべてのドキュメントに少なくとも 1 つの被参照があること
     { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
-  ]
+  ],
+
+  // コンテキストコンパイラ: Claude Code 用の SKILL.md を生成
+  "compile": {
+    "skill": {
+      "name": "my-project",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  }
 }
 ```
 
@@ -265,6 +280,45 @@ docs/design.md
 - **あらゆる構造化 Markdown プロジェクト** —
   CI でリンク切れ、重複 ID、
   ファイルの不足などを自動的に検出する
+
+## コマンド
+
+### Lint（デフォルト）
+
+```bash
+contextlint [files...]              # 構造化 Markdown ドキュメントをチェック
+contextlint --format json           # 機械可読な出力
+contextlint --watch                 # ファイル変更時に自動再実行
+```
+
+### 影響分析（Impact Analysis）
+
+```bash
+contextlint impact <file>           # 変更影響分析 + 影響範囲の lint
+contextlint impact docs/req.md --format json
+```
+
+### コンテキストスライス（Context Slice）
+
+```bash
+contextlint slice <query>           # 関連ドキュメントの抽出
+contextlint slice docs/req.md --depth 3
+```
+
+### ドキュメントグラフ（Document Graph）
+
+```bash
+contextlint graph                   # ドキュメント依存グラフの表示
+contextlint graph --format json
+```
+
+### コンパイル（Compile）
+
+```bash
+contextlint compile                 # Claude Code 用の SKILL.md を生成
+contextlint compile --dry-run       # 書き込みせずにプレビュー
+contextlint compile --outdir .claude/skills/my-skill
+```
 
 ## CLI オプション
 
@@ -378,6 +432,7 @@ npm install -D @contextlint/mcp-server
 | `context-graph` | プロジェクトのドキュメント依存関係グラフを構築して返す |
 | `context-slice` | クエリに関連するドキュメントの最小セットを抽出する |
 | `impact-analysis` | 指定ファイルの変更がどのドキュメントに影響するかを分析する |
+| `compile-context` | ドキュメント構造を LLM 向けコンテキストテキストにコンパイルする |
 
 ## プログラマティック API
 
@@ -395,6 +450,8 @@ import {
   getContextSlice,
   topologicalSort,
   getComponents,
+  classifyImpact,
+  compileContext,
 } from "@contextlint/core";
 import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 ```
@@ -406,6 +463,8 @@ import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 | `getContextSlice(graph, documents, query, maxDepth?)` | クエリ（ファイルパスまたは ID）に関連するファイルの最小セットを取得する |
 | `topologicalSort(graph)` | ドキュメントグラフのトポロジカルソート（依存順序） |
 | `getComponents(graph)` | 連結成分を取得する（関連ファイルのクラスター） |
+| `classifyImpact(graph, filePath)` | 影響を直接・間接に分類する |
+| `compileContext(patterns, config, cwd)` | ドキュメントと設定を SKILL.md コンテンツにコンパイルする |
 
 使用例：
 
@@ -425,6 +484,78 @@ const graph = buildContextGraph(documents);
 // requirements.md が変更された場合に影響を受けるファイルは？
 const impacted = getImpactSet(graph, "docs/requirements.md");
 // => ["docs/design.md", "docs/overview.md"]
+```
+
+## コンテキストコンパイラ
+
+コンテキストコンパイラは、ドキュメントと設定を決定論的に
+`SKILL.md` ファイルへ変換するパイプラインです。
+[Claude Code カスタムスキル](https://docs.anthropic.com/en/docs/claude-code)
+向けに設計されています。
+同じ設定 + 同じドキュメント = 常に同じ出力。LLM は不要です。
+
+### 仕組み
+
+1. `include` パターンに一致するドキュメントを読み込む
+2. 依存関係グラフを構築し、各ドキュメントの役割を分類する
+   （entry, hub, leaf, bridge, isolated）
+3. ドキュメントプロファイルを抽出する（アウトライン、テーブルスキーマ、参照）
+4. アクティブな lint ルールを自然言語で記述する
+5. すべてを 1 つの SKILL.md に統合する
+
+### 設定
+
+`contextlint.config.json` に `compile` セクションを追加します：
+
+```json
+{
+  "include": ["docs/**/*.md"],
+  "compile": {
+    "skill": {
+      "name": "my-project-docs",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  },
+  "rules": []
+}
+```
+
+| フィールド | 説明 |
+| ---------- | --- |
+| `skill.name` | SKILL.md フロントマター用のスキル名（必須） |
+| `skill.description` | SKILL.md フロントマター用のスキル説明（必須） |
+| `outdir` | 出力ディレクトリ（デフォルト: `.claude/skills/contextlint`） |
+| `sections.architecture` | アーキテクチャ概要を含める |
+| `sections.rules` | アクティブな lint ルールを含める |
+| `sections.dependencies` | 依存関係グラフを含める |
+| `sections.workflow` | ワークフロー指示を含める |
+
+### 使い方
+
+```bash
+# SKILL.md を生成
+contextlint compile
+
+# 書き込みせずにプレビュー
+contextlint compile --dry-run
+
+# 出力ディレクトリを指定
+contextlint compile --outdir .claude/skills/my-skill
+```
+
+### CI パイプラインでの利用
+
+CI パイプラインに追加して、SKILL.md をドキュメントと同期させます：
+
+```yaml
+- run: npx contextlint compile --dry-run
 ```
 
 ## パッケージ構成

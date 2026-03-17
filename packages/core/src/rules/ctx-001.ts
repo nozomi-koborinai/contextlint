@@ -1,4 +1,5 @@
 import { globMatch } from "../utils/glob-match.js";
+import { extractSectionBody } from "../utils/extract-section-body.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import type { ParsedHeading } from "../parser.js";
@@ -14,27 +15,15 @@ export type Ctx001Options = z.infer<typeof ctx001Schema>;
 const DEFAULT_PLACEHOLDERS = ["TBD", "TODO", "WIP", "FIXME", "N/A"];
 
 /**
- * Extract the body content of a section (text between a heading and
- * the next heading of the same or higher level, or end of file).
+ * Extract section body for a specific heading, using the shared utility.
  */
-function extractSectionBody(
+function extractBody(
   content: string,
   heading: ParsedHeading,
   allHeadings: ParsedHeading[],
 ): string {
-  const lines = content.split("\n");
-  const startLine = heading.line; // 1-based
-  // Find the next heading of same or higher (lower number) level
-  let endLine = lines.length; // exclusive, 1-based
-  for (const other of allHeadings) {
-    if (other.line > heading.line && other.level <= heading.level) {
-      endLine = other.line - 1;
-      break;
-    }
-  }
-  // Body starts on the line after the heading
-  const bodyLines = lines.slice(startLine, endLine);
-  return bodyLines.join("\n");
+  // Use the shared utility by name, falling back to empty string
+  return extractSectionBody(content, allHeadings, heading.text) ?? "";
 }
 
 function isPlaceholderContent(
@@ -87,7 +76,7 @@ export function ctx001(options?: Ctx001Options): Rule {
           continue;
         }
 
-        const body = extractSectionBody(content, heading, headings);
+        const body = extractBody(content, heading, headings);
         const result = isPlaceholderContent(body, placeholders);
 
         if (result.isEmpty) {

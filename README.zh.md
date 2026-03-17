@@ -236,7 +236,22 @@ docs/design.md
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } },
     // GRP-003: 每个文档必须至少有一个被引用
     { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
-  ]
+  ],
+
+  // 上下文编译器：为 Claude Code 生成 SKILL.md
+  "compile": {
+    "skill": {
+      "name": "my-project",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  }
 }
 ```
 
@@ -252,6 +267,45 @@ docs/design.md
   以及提案间的交叉引用是否完整
 - **任何结构化 Markdown 项目** — 在 CI 中自动检测断裂链接、
   重复 ID 和缺失文件
+
+## 命令
+
+### Lint（默认）
+
+```bash
+contextlint [files...]              # 检查结构化 Markdown 文档
+contextlint --format json           # 机器可读的输出
+contextlint --watch                 # 文件变更时自动重新运行
+```
+
+### 影响分析（Impact Analysis）
+
+```bash
+contextlint impact <file>           # 变更影响分析 + 受影响文件 lint
+contextlint impact docs/req.md --format json
+```
+
+### 上下文切片（Context Slice）
+
+```bash
+contextlint slice <query>           # 提取相关文档
+contextlint slice docs/req.md --depth 3
+```
+
+### 文档图（Document Graph）
+
+```bash
+contextlint graph                   # 显示文档依赖图
+contextlint graph --format json
+```
+
+### 编译（Compile）
+
+```bash
+contextlint compile                 # 为 Claude Code 生成 SKILL.md
+contextlint compile --dry-run       # 预览而不写入
+contextlint compile --outdir .claude/skills/my-skill
+```
 
 ## CLI 选项
 
@@ -363,6 +417,7 @@ npm install -D @contextlint/mcp-server
 | `context-graph` | 构建并返回项目的文档依赖关系图 |
 | `context-slice` | 提取与给定查询相关的最小文档集 |
 | `impact-analysis` | 分析指定文件的更改会影响哪些文档 |
+| `compile-context` | 将文档结构编译为 LLM 上下文文本 |
 
 ## 编程式 API
 
@@ -379,6 +434,8 @@ import {
   getContextSlice,
   topologicalSort,
   getComponents,
+  classifyImpact,
+  compileContext,
 } from "@contextlint/core";
 import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 ```
@@ -390,6 +447,8 @@ import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 | `getContextSlice(graph, documents, query, maxDepth?)` | 获取与查询（文件路径或 ID）相关的最小文件集 |
 | `topologicalSort(graph)` | 文档图的拓扑排序（依赖顺序） |
 | `getComponents(graph)` | 获取连通分量（相关文件的聚类） |
+| `classifyImpact(graph, filePath)` | 将影响分类为直接和间接 |
+| `compileContext(patterns, config, cwd)` | 将文档和配置编译为 SKILL.md 内容 |
 
 使用示例：
 
@@ -409,6 +468,77 @@ const graph = buildContextGraph(documents);
 // 如果 requirements.md 发生变更，哪些文件会受到影响？
 const impacted = getImpactSet(graph, "docs/requirements.md");
 // => ["docs/design.md", "docs/overview.md"]
+```
+
+## 上下文编译器
+
+上下文编译器是一个确定性管道，将文档和配置转换为
+`SKILL.md` 文件，专为
+[Claude Code 自定义技能](https://docs.anthropic.com/en/docs/claude-code)
+设计。相同配置 + 相同文档 = 始终相同的输出，无需 LLM。
+
+### 工作原理
+
+1. 加载匹配 `include` 模式的文档
+2. 构建依赖关系图并对每个文档的角色进行分类
+   （entry、hub、leaf、bridge、isolated）
+3. 提取文档概要（大纲、表格模式、引用）
+4. 用自然语言描述活跃的 lint 规则
+5. 将所有内容合成为一个 SKILL.md
+
+### 配置
+
+在 `contextlint.config.json` 中添加 `compile` 部分：
+
+```json
+{
+  "include": ["docs/**/*.md"],
+  "compile": {
+    "skill": {
+      "name": "my-project-docs",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  },
+  "rules": []
+}
+```
+
+| 字段 | 说明 |
+| ---- | --- |
+| `skill.name` | SKILL.md 前言中的技能名称（必需） |
+| `skill.description` | SKILL.md 前言中的技能描述（必需） |
+| `outdir` | 输出目录（默认：`.claude/skills/contextlint`） |
+| `sections.architecture` | 包含架构概览 |
+| `sections.rules` | 包含活跃的 lint 规则 |
+| `sections.dependencies` | 包含依赖关系图 |
+| `sections.workflow` | 包含工作流指示 |
+
+### 用法
+
+```bash
+# 生成 SKILL.md
+contextlint compile
+
+# 预览而不写入
+contextlint compile --dry-run
+
+# 指定输出目录
+contextlint compile --outdir .claude/skills/my-skill
+```
+
+### CI 管道集成
+
+添加到 CI 管道中，保持 SKILL.md 与文档同步：
+
+```yaml
+- run: npx contextlint compile --dry-run
 ```
 
 ## 包结构

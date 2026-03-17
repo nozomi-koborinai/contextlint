@@ -85,7 +85,7 @@ export type { Grp003Options } from "./rules/grp-003.js";
 
 export { resolveRule, ruleNames } from "./registry.js";
 
-export { lintFiles } from "./lint-files.js";
+export { lintFiles, loadDocuments } from "./lint-files.js";
 export type {
   RuleEntry,
   LintFilesConfig,
@@ -93,9 +93,19 @@ export type {
 } from "./lint-files.js";
 
 export { findConfig, loadConfig } from "./config.js";
-export type { ContextlintConfig } from "./config.js";
+export type { ContextlintConfig, CompilerConfig } from "./config.js";
 
-export { formatFileResults, formatFileResultsJson, formatContentResults } from "./format.js";
+export {
+  formatFileResults,
+  formatFileResultsJson,
+  formatContentResults,
+  formatImpactResult,
+  formatImpactResultJson,
+  formatSliceResult,
+  formatSliceResultJson,
+  formatGraphResult,
+  formatGraphResultJson,
+} from "./format.js";
 export type { JsonLintEntry } from "./format.js";
 
 export {
@@ -110,3 +120,24 @@ export {
   relativizeImpact,
 } from "./context-graph.js";
 export type { ContextGraph, GraphNode, GraphEdge } from "./context-graph.js";
+
+export { extractSectionBody } from "./utils/extract-section-body.js";
+
+export {
+  classifyNodes,
+  analyzeGraph,
+  extractDocProfile,
+  describeRules,
+  synthesize,
+  compileContext,
+} from "./context-compiler.js";
+export type {
+  NodeRole,
+  NodeClassification,
+  GraphAnalysis,
+  OutlineEntry,
+  TableSchema,
+  DocProfile,
+  RuleDescription,
+  CompileResult,
+} from "./context-compiler.js";

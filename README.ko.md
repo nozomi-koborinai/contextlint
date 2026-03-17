@@ -246,7 +246,22 @@ docs/design.md
     { "rule": "grp002", "options": { "files": "docs/**/*.md", "exclude": ["CHANGELOG.md"] } },
     // GRP-003: 모든 문서에 최소 하나의 수신 참조가 있어야 함
     { "rule": "grp003", "options": { "files": "docs/**/*.md", "entryPoints": ["README.md", "index.md"] } }
-  ]
+  ],
+
+  // 컨텍스트 컴파일러: Claude Code용 SKILL.md 생성
+  "compile": {
+    "skill": {
+      "name": "my-project",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  }
 }
 ```
 
@@ -264,6 +279,45 @@ docs/design.md
   깨지지 않았는지 확인
 - **모든 구조화된 Markdown 프로젝트** — CI에서 끊어진 링크,
   중복 ID, 누락된 파일을 자동으로 감지
+
+## 명령어
+
+### Lint (기본)
+
+```bash
+contextlint [files...]              # 구조화된 Markdown 문서 검사
+contextlint --format json           # 기계 판독 가능한 출력
+contextlint --watch                 # 파일 변경 시 자동 재실행
+```
+
+### 영향 분석 (Impact Analysis)
+
+```bash
+contextlint impact <file>           # 변경 영향 분석 + 영향 범위 lint
+contextlint impact docs/req.md --format json
+```
+
+### 컨텍스트 슬라이스 (Context Slice)
+
+```bash
+contextlint slice <query>           # 관련 문서 추출
+contextlint slice docs/req.md --depth 3
+```
+
+### 문서 그래프 (Document Graph)
+
+```bash
+contextlint graph                   # 문서 의존 그래프 표시
+contextlint graph --format json
+```
+
+### 컴파일 (Compile)
+
+```bash
+contextlint compile                 # Claude Code용 SKILL.md 생성
+contextlint compile --dry-run       # 파일 쓰기 없이 미리보기
+contextlint compile --outdir .claude/skills/my-skill
+```
 
 ## CLI 옵션
 
@@ -375,6 +429,7 @@ npm install -D @contextlint/mcp-server
 | `context-graph` | 프로젝트의 문서 의존 관계 그래프를 구축하여 반환 |
 | `context-slice` | 주어진 쿼리와 관련된 최소 문서 집합을 추출 |
 | `impact-analysis` | 지정 파일의 변경이 어떤 문서에 영향을 미치는지 분석 |
+| `compile-context` | 문서 구조를 LLM 컨텍스트 텍스트로 컴파일 |
 
 ## 프로그래밍 API
 
@@ -392,6 +447,8 @@ import {
   getContextSlice,
   topologicalSort,
   getComponents,
+  classifyImpact,
+  compileContext,
 } from "@contextlint/core";
 import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 ```
@@ -403,6 +460,8 @@ import type { ContextGraph, GraphNode, GraphEdge } from "@contextlint/core";
 | `getContextSlice(graph, documents, query, maxDepth?)` | 쿼리(파일 경로 또는 ID)에 관련된 최소 파일 집합을 조회 |
 | `topologicalSort(graph)` | 문서 그래프의 위상 정렬 (의존 순서) |
 | `getComponents(graph)` | 연결 컴포넌트 조회 (관련 파일 클러스터) |
+| `classifyImpact(graph, filePath)` | 영향을 직접과 간접으로 분류 |
+| `compileContext(patterns, config, cwd)` | 문서와 설정을 SKILL.md 콘텐츠로 컴파일 |
 
 사용 예시:
 
@@ -422,6 +481,78 @@ const graph = buildContextGraph(documents);
 // requirements.md가 변경되면 어떤 파일이 영향을 받나요?
 const impacted = getImpactSet(graph, "docs/requirements.md");
 // => ["docs/design.md", "docs/overview.md"]
+```
+
+## 컨텍스트 컴파일러
+
+컨텍스트 컴파일러는 문서와 설정을 결정론적으로
+`SKILL.md` 파일로 변환하는 파이프라인입니다.
+[Claude Code 커스텀 스킬](https://docs.anthropic.com/en/docs/claude-code)
+용으로 설계되었습니다.
+동일한 설정 + 동일한 문서 = 항상 동일한 출력. LLM이 필요 없습니다.
+
+### 작동 방식
+
+1. `include` 패턴에 맞는 문서를 로드
+2. 의존 관계 그래프를 구축하고 각 문서의 역할을 분류
+   (entry, hub, leaf, bridge, isolated)
+3. 문서 프로파일을 추출 (아웃라인, 테이블 스키마, 참조)
+4. 활성화된 lint 규칙을 자연어로 기술
+5. 모든 것을 하나의 SKILL.md로 합성
+
+### 설정
+
+`contextlint.config.json`에 `compile` 섹션을 추가합니다:
+
+```json
+{
+  "include": ["docs/**/*.md"],
+  "compile": {
+    "skill": {
+      "name": "my-project-docs",
+      "description": "Validate and maintain project documentation"
+    },
+    "outdir": ".claude/skills/my-project",
+    "sections": {
+      "architecture": true,
+      "rules": true,
+      "dependencies": true,
+      "workflow": true
+    }
+  },
+  "rules": []
+}
+```
+
+| 필드 | 설명 |
+| ---- | --- |
+| `skill.name` | SKILL.md 프론트매터의 스킬 이름 (필수) |
+| `skill.description` | SKILL.md 프론트매터의 스킬 설명 (필수) |
+| `outdir` | 출력 디렉터리 (기본값: `.claude/skills/contextlint`) |
+| `sections.architecture` | 아키텍처 개요 포함 |
+| `sections.rules` | 활성화된 lint 규칙 포함 |
+| `sections.dependencies` | 의존 관계 그래프 포함 |
+| `sections.workflow` | 워크플로우 지침 포함 |
+
+### 사용법
+
+```bash
+# SKILL.md 생성
+contextlint compile
+
+# 파일 쓰기 없이 미리보기
+contextlint compile --dry-run
+
+# 출력 디렉터리 지정
+contextlint compile --outdir .claude/skills/my-skill
+```
+
+### CI 파이프라인 통합
+
+CI 파이프라인에 추가하여 SKILL.md를 문서와 동기화합니다:
+
+```yaml
+- run: npx contextlint compile --dry-run
 ```
 
 ## 패키지 구성

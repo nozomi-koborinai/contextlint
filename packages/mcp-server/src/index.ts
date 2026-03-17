@@ -3,12 +3,12 @@
 import { resolve, relative as relPath } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { readFileSync } from "node:fs";
 import {
   parseDocument,
   runRules,
   resolveRule,
   lintFiles,
+  loadDocuments,
   findConfig,
   loadConfig,
   formatContentResults,
@@ -19,9 +19,8 @@ import {
   classifyImpact,
   formatImpactSummary,
   relativizeImpact,
+  compileContext,
 } from "@contextlint/core";
-import type { ParsedDocument } from "@contextlint/core";
-import { globSync } from "glob";
 import * as z from "zod/v4";
 
 const server = new McpServer({
@@ -176,20 +175,7 @@ server.registerTool(
 
       const config = loadConfig(resolvedConfigPath);
       const patterns = config.include ?? ["**/*.md"];
-
-      const rawFiles = globSync(patterns, {
-        cwd: resolvedCwd,
-        absolute: true,
-        nodir: true,
-      });
-      const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
-      files.sort();
-
-      const documents = new Map<string, ParsedDocument>();
-      for (const filePath of files) {
-        const content = readFileSync(filePath, "utf-8");
-        documents.set(filePath, parseDocument(content));
-      }
+      const documents = loadDocuments(patterns, resolvedCwd);
 
       const graph = buildContextGraph(documents);
 
@@ -259,20 +245,7 @@ server.registerTool(
 
       const config = loadConfig(resolvedConfigPath);
       const patterns = config.include ?? ["**/*.md"];
-
-      const rawFiles = globSync(patterns, {
-        cwd: resolvedCwd,
-        absolute: true,
-        nodir: true,
-      });
-      const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
-      files.sort();
-
-      const documents = new Map<string, ParsedDocument>();
-      for (const filePath of files) {
-        const content = readFileSync(filePath, "utf-8");
-        documents.set(filePath, parseDocument(content));
-      }
+      const documents = loadDocuments(patterns, resolvedCwd);
 
       const graph = buildContextGraph(documents);
       const sliceFiles = getContextSlice(graph, documents, query, depth);
@@ -352,20 +325,7 @@ server.registerTool(
 
       const config = loadConfig(resolvedConfigPath);
       const patterns = config.include ?? ["**/*.md"];
-
-      const rawFiles = globSync(patterns, {
-        cwd: resolvedCwd,
-        absolute: true,
-        nodir: true,
-      });
-      const files = rawFiles.map((f) => f.replace(/\\/g, "/"));
-      files.sort();
-
-      const documents = new Map<string, ParsedDocument>();
-      for (const filePath of files) {
-        const content = readFileSync(filePath, "utf-8");
-        documents.set(filePath, parseDocument(content));
-      }
+      const documents = loadDocuments(patterns, resolvedCwd);
 
       const resolvedFile = resolve(resolvedCwd, file).replace(/\\/g, "/");
 
@@ -403,6 +363,85 @@ server.registerTool(
 
       return {
         content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+      return {
+        content: [{ type: "text", text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "compile-context",
+  {
+    description:
+      "Compile document structure into LLM-readable context text (e.g. SKILL.md). Deterministic: same config + same documents = same output.",
+    inputSchema: {
+      configPath: z
+        .string()
+        .optional()
+        .describe("Path to contextlint.config.json"),
+      cwd: z
+        .string()
+        .optional()
+        .describe("Working directory"),
+    },
+  },
+  ({ configPath, cwd }) => {
+    const resolvedCwd = resolve(cwd ?? ".");
+
+    try {
+      let resolvedConfigPath: string;
+      if (configPath) {
+        resolvedConfigPath = resolve(resolvedCwd, configPath);
+      } else {
+        const found = findConfig(resolvedCwd);
+        if (!found) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Error: No contextlint.config.json found. Provide a configPath or create a config file.",
+              },
+            ],
+            isError: true,
+          };
+        }
+        resolvedConfigPath = found;
+      }
+
+      const config = loadConfig(resolvedConfigPath);
+
+      if (!config.compile) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "Error: No 'compile' section found in config",
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      const patterns = config.include ?? ["**/*.md"];
+      const result = compileContext(patterns, config, resolvedCwd);
+
+      const metadata = [
+        `Documents: ${String(result.metadata.documentCount)}`,
+        `Rules: ${String(result.metadata.ruleCount)}`,
+        `Components: ${String(result.metadata.componentCount)}`,
+      ].join(", ");
+
+      return {
+        content: [
+          { type: "text", text: result.skillContent },
+          { type: "text", text: `\n---\nMetadata: ${metadata}` },
+        ],
       };
     } catch (error) {
       const message =

@@ -9,7 +9,10 @@ import {
   findConfig,
   loadConfig,
   lintFiles,
+  loadDocuments,
   formatFileResults,
+  buildContextGraph,
+  compileContext,
 } from "@contextlint/core";
 
 function lintContent(
@@ -84,6 +87,95 @@ describe("lint-files tool logic", () => {
       const output = formatFileResults(results, tmpDir);
       expect(output).toContain("TBL-001");
       expect(output).toContain("ID");
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("loadDocuments (graph tools refactor)", () => {
+  const tmpDir = join(import.meta.dirname, "__tmp_mcp_load_docs__");
+
+  it("loads and parses documents via core loadDocuments", () => {
+    mkdirSync(tmpDir, { recursive: true });
+    try {
+      writeFileSync(
+        join(tmpDir, "a.md"),
+        "# A\n\nSee [B](./b.md)\n",
+      );
+      writeFileSync(
+        join(tmpDir, "b.md"),
+        "# B\n\nContent of B\n",
+      );
+
+      const documents = loadDocuments(["**/*.md"], tmpDir);
+      expect(documents.size).toBe(2);
+
+      const graph = buildContextGraph(documents);
+      expect(graph.nodes.length).toBe(2);
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("compile-context tool logic", () => {
+  const tmpDir = join(import.meta.dirname, "__tmp_mcp_compile__");
+
+  it("returns error when config has no compile section", () => {
+    mkdirSync(tmpDir, { recursive: true });
+    try {
+      writeFileSync(
+        join(tmpDir, "contextlint.config.json"),
+        JSON.stringify({
+          rules: [{ rule: "tbl001", options: { requiredColumns: ["ID"] } }],
+        }),
+      );
+      writeFileSync(join(tmpDir, "doc.md"), "# Doc\n");
+
+      const configPath = findConfig(tmpDir);
+      expect(configPath).toBeDefined();
+      if (!configPath) throw new Error("unreachable");
+
+      const config = loadConfig(configPath);
+      expect(config.compile).toBeUndefined();
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("compiles context when compile section is present", () => {
+    mkdirSync(tmpDir, { recursive: true });
+    try {
+      writeFileSync(
+        join(tmpDir, "contextlint.config.json"),
+        JSON.stringify({
+          include: ["**/*.md"],
+          rules: [{ rule: "tbl001", options: { requiredColumns: ["ID"] } }],
+          compile: {
+            skill: {
+              name: "test-skill",
+              description: "A test skill",
+            },
+          },
+        }),
+      );
+      writeFileSync(
+        join(tmpDir, "overview.md"),
+        "# Overview\n\nProject overview content.\n\n| ID | Title |\n|----|-------|\n| REQ-001 | First |\n",
+      );
+
+      const configPath = findConfig(tmpDir);
+      expect(configPath).toBeDefined();
+      if (!configPath) throw new Error("unreachable");
+
+      const config = loadConfig(configPath);
+      const result = compileContext(["**/*.md"], config, tmpDir);
+
+      expect(result.skillContent).toContain("test-skill");
+      expect(result.metadata.documentCount).toBe(1);
+      expect(result.metadata.ruleCount).toBeGreaterThanOrEqual(1);
+      expect(typeof result.metadata.componentCount).toBe("number");
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
     }

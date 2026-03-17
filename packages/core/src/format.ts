@@ -411,9 +411,11 @@ function findCommonPrefix(paths: string[]): string {
   let prefix = first;
   for (const p of paths) {
     while (prefix.length > 0 && !p.startsWith(prefix)) {
-      const lastSlash = prefix.lastIndexOf("/");
+      // Strip trailing slash before searching for the previous separator
+      const trimmed = prefix.endsWith("/") ? prefix.slice(0, -1) : prefix;
+      const lastSlash = trimmed.lastIndexOf("/");
       if (lastSlash <= 0) return "";
-      prefix = prefix.substring(0, lastSlash + 1);
+      prefix = trimmed.substring(0, lastSlash + 1);
     }
   }
 

@@ -127,7 +127,7 @@ docs/design.md
 | ID | 说明 | 配置项 |
 | --- | --- | --- |
 | CTX-001 | 章节必须包含有意义的内容，而非占位符 | `section`?, `placeholders`?, `files`? |
-| CTX-002 | 术语必须与词汇表定义一致 | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
+| CTX-002 | 术语必须与词汇表定义一致 | `glossary`, `termColumn`, `aliasColumn`?, `section`?, `files`? |
 
 ### 图规则
 

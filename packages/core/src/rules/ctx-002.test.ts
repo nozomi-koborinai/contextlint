@@ -303,6 +303,36 @@ describe("CTX-002", () => {
     expect(msgs.some((m) => m.includes('"本人確認"'))).toBe(true);
   });
 
+  it("runs without error when aliasColumn is omitted", () => {
+    const messages = lint(
+      {
+        "docs/glossary.md":
+          "| 用語 | DB テーブル | 定義 |\n|---|---|---|\n| 発注計画 | pre_order_plans | … |",
+        "docs/design.md": "# Design\n\n発注計画 is used here.",
+      },
+      { glossary: "docs/glossary.md", termColumn: "用語" },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("still detects aliases when aliasColumn is provided", () => {
+    const messages = lint(
+      {
+        "docs/glossary.md":
+          "| 用語 | 別名 |\n|---|---|\n| 発注計画 | PO計画 |",
+        "docs/design.md": "# Design\n\nPO計画を確認する。",
+      },
+      {
+        glossary: "docs/glossary.md",
+        termColumn: "用語",
+        aliasColumn: "別名",
+      },
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain('"PO計画"');
+    expect(messages[0].message).toContain('"発注計画"');
+  });
+
   it("handles multiple occurrences of the same alias", () => {
     const messages = lint({
       "docs/glossary.md":

@@ -8,7 +8,7 @@ export const ctx002Schema = z
     glossary: z.string(),
     section: z.string().optional(),
     termColumn: z.string(),
-    aliasColumn: z.string(),
+    aliasColumn: z.string().optional(),
     files: z.string().optional(),
   })
   .strict();
@@ -56,6 +56,13 @@ function extractGlossary(
 ): GlossaryEntry[] {
   const entries: GlossaryEntry[] = [];
 
+  // No alias column specified — nothing to extract
+  if (!options.aliasColumn) {
+    return entries;
+  }
+
+  const aliasColumn = options.aliasColumn;
+
   for (const table of doc.tables) {
     // If section is specified, only use tables under that section
     if (options.section && table.section !== options.section) {
@@ -64,14 +71,14 @@ function extractGlossary(
 
     if (
       !table.headers.includes(options.termColumn) ||
-      !table.headers.includes(options.aliasColumn)
+      !table.headers.includes(aliasColumn)
     ) {
       continue;
     }
 
     for (const row of table.rows) {
       const canonical = row[options.termColumn];
-      const aliasCell = row[options.aliasColumn];
+      const aliasCell = row[aliasColumn];
       if (!canonical || !aliasCell) {
         continue;
       }

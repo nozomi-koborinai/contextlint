@@ -135,7 +135,7 @@ docs/design.md
 | ID | 説明 | 設定項目 |
 | --- | --- | --- |
 | CTX-001 | セクションにプレースホルダーではない実質的な内容があること | `section`?, `placeholders`?, `files`? |
-| CTX-002 | 用語が用語集の定義と一致していること | `glossary`, `termColumn`, `aliasColumn`, `section`?, `files`? |
+| CTX-002 | 用語が用語集の定義と一致していること | `glossary`, `termColumn`, `aliasColumn`?, `section`?, `files`? |
 
 ### グラフに関するルール
 

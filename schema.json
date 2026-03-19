@@ -614,14 +614,14 @@
                   },
                   "aliasColumn": {
                     "type": "string",
-                    "description": "Column name for comma-separated aliases."
+                    "description": "Column name for comma-separated aliases. If omitted, alias expansion is skipped."
                   },
                   "files": {
                     "type": "string",
                     "description": "Glob pattern to limit which files are scanned for alias usage."
                   }
                 },
-                "required": ["glossary", "termColumn", "aliasColumn"],
+                "required": ["glossary", "termColumn"],
                 "additionalProperties": false
               }
             },

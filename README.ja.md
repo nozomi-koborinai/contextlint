@@ -52,7 +52,13 @@ AI 不要、コストゼロ、CI との相性も抜群です。
 npm install -D @contextlint/cli
 ```
 
-`contextlint.config.json` を作成：
+対話形式で設定ファイルを生成：
+
+```bash
+npx contextlint init
+```
+
+または `contextlint.config.json` を手動で作成：
 
 ```json
 {
@@ -282,6 +288,16 @@ docs/design.md
   ファイルの不足などを自動的に検出する
 
 ## コマンド
+
+### Init
+
+```bash
+contextlint init                    # 対話形式で設定ファイルを生成
+```
+
+言語・ファイルパターン・ルールカテゴリを対話形式で選択し、
+`contextlint.config.json` を生成します。
+英語・日本語・中国語・韓国語に対応しています。
 
 ### Lint（デフォルト）
 

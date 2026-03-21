@@ -46,7 +46,13 @@ contextlint 为结构化 Markdown 提供**确定性的静态验证**。
 npm install -D @contextlint/cli
 ```
 
-创建 `contextlint.config.json`：
+交互式生成配置文件：
+
+```bash
+npx contextlint init
+```
+
+或手动创建 `contextlint.config.json`：
 
 ```json
 {
@@ -269,6 +275,16 @@ docs/design.md
   重复 ID 和缺失文件
 
 ## 命令
+
+### Init
+
+```bash
+contextlint init                    # 交互式生成配置文件
+```
+
+通过交互式选择语言、文件模式和规则类别，
+生成 `contextlint.config.json`。
+支持英语、日语、中文和韩语。
 
 ### Lint（默认）
 

@@ -9,6 +9,7 @@ import { registerImpactCommand } from "./commands/impact.js";
 import { registerSliceCommand } from "./commands/slice.js";
 import { registerGraphCommand } from "./commands/graph.js";
 import { registerCompileCommand } from "./commands/compile.js";
+import { registerInitCommand } from "./commands/init.js";
 
 function lintAction(
   files: string[],
@@ -71,5 +72,6 @@ registerImpactCommand(program);
 registerSliceCommand(program);
 registerGraphCommand(program);
 registerCompileCommand(program);
+registerInitCommand(program);
 
 program.parse();

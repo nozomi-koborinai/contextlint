@@ -47,7 +47,13 @@ Install:
 npm install -D @contextlint/cli
 ```
 
-Create `contextlint.config.json`:
+Generate a config interactively:
+
+```bash
+npx contextlint init
+```
+
+Or create `contextlint.config.json` manually:
 
 ```json
 {
@@ -275,6 +281,16 @@ These rules are designed to be general-purpose. Some examples:
   duplicate IDs, and missing files in CI
 
 ## Commands
+
+### Init
+
+```bash
+contextlint init                    # Interactive config generation
+```
+
+Generates `contextlint.config.json` by selecting language, file patterns,
+and rule categories interactively. Supports English, Japanese, Chinese,
+and Korean.
 
 ### Lint (default)
 

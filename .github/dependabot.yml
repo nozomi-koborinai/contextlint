@@ -9,6 +9,9 @@ updates:
         dependency-type: development
       production-dependencies:
         dependency-type: production
+    ignore:
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /

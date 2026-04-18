@@ -1,0 +1,29 @@
+{
+  "name": "@contextlint/lsp-server",
+  "version": "0.0.0",
+  "description": "Language Server Protocol implementation for contextlint",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "contextlint-lsp": "dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextlint/core": "workspace:*",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

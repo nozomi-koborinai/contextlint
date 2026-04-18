@@ -32,5 +32,13 @@ export default defineConfig(
   {
     files: ["**/*.mjs"],
     extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: {
+      globals: {
+        Buffer: "readonly",
+        console: "readonly",
+        process: "readonly",
+        setTimeout: "readonly",
+      },
+    },
   },
 );

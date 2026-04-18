@@ -19,7 +19,11 @@ import { uriToPath } from "./uri.js";
 const DEBOUNCE_MS = 300;
 
 export function start(): void {
-  const connection = createConnection(ProposedFeatures.all);
+  const connection = createConnection(
+    ProposedFeatures.all,
+    process.stdin,
+    process.stdout,
+  );
   const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
   let loaded: LoadedConfig | null = null;

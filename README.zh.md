@@ -435,6 +435,71 @@ npm install -D @contextlint/mcp-server
 | `impact-analysis` | 分析指定文件的更改会影响哪些文档 |
 | `compile-context` | 将文档结构编译为 LLM 上下文文本 |
 
+## LSP 服务器
+
+contextlint 自带 Language Server (`@contextlint/lsp-server`)，任何支持 LSP 的编辑器
+都可以集成以获得编辑器内的诊断、悬停信息和 Quick Fix。服务器会从工作区根目录向上
+查找 `contextlint.config.json`（与 CLI / MCP 行为一致）。
+
+> 专门的 VS Code / Cursor 扩展正在独立开发中，将在未来发布到 Marketplace。
+> 目前，下面的代码片段可在所有支持 LSP 的编辑器中使用。
+
+安装:
+
+```bash
+npm install -D @contextlint/lsp-server
+```
+
+### Neovim (搭配 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig))
+
+```lua
+-- 在 init.lua 或 after/plugin/contextlint.lua 中
+local configs = require('lspconfig.configs')
+local util = require('lspconfig.util')
+
+if not configs.contextlint then
+  configs.contextlint = {
+    default_config = {
+      cmd = { 'npx', 'contextlint-lsp' },
+      filetypes = { 'markdown' },
+      root_dir = util.root_pattern('contextlint.config.json', '.git'),
+      single_file_support = false,
+    },
+  }
+end
+
+require('lspconfig').contextlint.setup({})
+```
+
+### Helix (`~/.config/helix/languages.toml`)
+
+```toml
+[language-server.contextlint]
+command = "npx"
+args = ["contextlint-lsp"]
+
+[[language]]
+name = "markdown"
+language-servers = ["contextlint"]
+```
+
+### JetBrains IDE (通过 [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij))
+
+1. 从 Marketplace 安装 **LSP4IJ** 插件。
+2. 打开 **Settings → Languages & Frameworks → Language Servers → Add** 并配置:
+   - **Name**: `contextlint`
+   - **Command**: `npx contextlint-lsp`
+   - **Mapping → File name patterns**: `*.md`
+
+### 说明
+
+- 诊断覆盖文档作用域规则（TBL-002、CHK-001 等）和项目作用域规则
+  （REF-001、REF-002、TBL-006、GRP-001/002/003、CTX-002 等），作用于整个工作区，
+  在编辑过程中实时更新。
+- Quick Fix 目前支持 **CHK-001**（勾选清单项）和
+  **TBL-002**（向空单元格插入 `TODO`）。
+- 在外部文件变更（例如 `git pull`）之后，重新加载编辑器窗口即可刷新工作区缓存。
+
 ## 编程式 API
 
 ### 上下文图

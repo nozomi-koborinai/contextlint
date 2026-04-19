@@ -450,6 +450,73 @@ npm install -D @contextlint/mcp-server
 | `impact-analysis` | 指定ファイルの変更がどのドキュメントに影響するかを分析する |
 | `compile-context` | ドキュメント構造を LLM 向けコンテキストテキストにコンパイルする |
 
+## LSP サーバー
+
+contextlint には Language Server (`@contextlint/lsp-server`) が含まれており、
+LSP 対応のエディタであればエディタ内での診断、ホバー情報、Quick Fix を利用できます。
+サーバーは workspace ルートから親ディレクトリへと遡って `contextlint.config.json`
+を探します（CLI / MCP と同じ挙動）。
+
+> VS Code / Cursor 向けの専用拡張機能は別途開発中で、将来 Marketplace に公開予定です。
+> 現時点では、以下のスニペットで LSP を話すすべてのエディタに組み込めます。
+
+インストール:
+
+```bash
+npm install -D @contextlint/lsp-server
+```
+
+### Neovim ([nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 使用時)
+
+```lua
+-- init.lua または after/plugin/contextlint.lua 内
+local configs = require('lspconfig.configs')
+local util = require('lspconfig.util')
+
+if not configs.contextlint then
+  configs.contextlint = {
+    default_config = {
+      cmd = { 'npx', 'contextlint-lsp' },
+      filetypes = { 'markdown' },
+      root_dir = util.root_pattern('contextlint.config.json', '.git'),
+      single_file_support = false,
+    },
+  }
+end
+
+require('lspconfig').contextlint.setup({})
+```
+
+### Helix (`~/.config/helix/languages.toml`)
+
+```toml
+[language-server.contextlint]
+command = "npx"
+args = ["contextlint-lsp"]
+
+[[language]]
+name = "markdown"
+language-servers = ["contextlint"]
+```
+
+### JetBrains IDE ([LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) 経由)
+
+1. Marketplace から **LSP4IJ** プラグインをインストールします。
+2. **Settings → Languages & Frameworks → Language Servers → Add** を開いて設定:
+   - **Name**: `contextlint`
+   - **Command**: `npx contextlint-lsp`
+   - **Mapping → File name patterns**: `*.md`
+
+### 補足
+
+- 診断はドキュメントスコープのルール（TBL-002, CHK-001 など）と
+  プロジェクトスコープのルール（REF-001, REF-002, TBL-006, GRP-001/002/003,
+  CTX-002 など）の両方を、ワークスペース全体に対して編集中にリアルタイムで適用します。
+- Quick Fix は現在 **CHK-001**（チェックリスト項目をチェック）と
+  **TBL-002**（空セルに `TODO` を挿入）に対応しています。
+- `git pull` など外部でのファイル変更の後は、エディタウィンドウをリロードすると
+  ワークスペースキャッシュが更新されます。
+
 ## プログラマティック API
 
 ### コンテキストグラフ

@@ -101,7 +101,8 @@ export function grp003(options?: Grp003Options): Rule {
         context.report({
           severity: "warning",
           message: `${originalPath} has no incoming references from any other document`,
-          line: 0,
+          line: 1,
+          filePath: originalPath,
         });
       }
     },

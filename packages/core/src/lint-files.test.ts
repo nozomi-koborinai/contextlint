@@ -128,13 +128,17 @@ describe("lintFiles", () => {
         ],
       }, tmpDir);
 
-      const projectResult = results.find((r) => r.filePath === "<project>");
-      expect(projectResult).toBeDefined();
-      if (!projectResult) throw new Error("unreachable");
-      // REQ-02 is defined but never referenced
-      expect(projectResult.messages).toHaveLength(1);
-      expect(projectResult.messages[0].ruleId).toBe("REF-002");
-      expect(projectResult.messages[0].message).toContain("REQ-02");
+      // REQ-02 is defined but never referenced. After Phase 4a the
+      // violation is attached to the defining file (requirements.md),
+      // not the virtual `<project>` bucket.
+      const requirementsResult = results.find((r) =>
+        r.filePath.endsWith("requirements.md"),
+      );
+      expect(requirementsResult).toBeDefined();
+      if (!requirementsResult) throw new Error("unreachable");
+      expect(requirementsResult.messages).toHaveLength(1);
+      expect(requirementsResult.messages[0].ruleId).toBe("REF-002");
+      expect(requirementsResult.messages[0].message).toContain("REQ-02");
     } finally {
       cleanup();
     }

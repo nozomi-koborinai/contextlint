@@ -247,6 +247,7 @@ export function grp002(options?: Grp002Options): Rule {
           severity: "error",
           message,
           line,
+          filePath: firstFile,
         });
       }
     },

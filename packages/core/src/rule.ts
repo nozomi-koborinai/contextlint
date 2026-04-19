@@ -7,6 +7,13 @@ export interface LintMessage {
   severity: Severity;
   message: string;
   line: number;
+  /**
+   * Optional file attribution. When set, `lintFiles` groups the message
+   * under this file instead of the rule's `context.filePath`. Use this in
+   * project-scope rules to attach violations to the actual offending
+   * file rather than the virtual `<project>` bucket.
+   */
+  filePath?: string;
 }
 
 export interface RuleContext {

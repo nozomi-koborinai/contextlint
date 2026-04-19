@@ -53,6 +53,7 @@ export function tbl006(options: Tbl006Options): Rule {
                 severity: "error",
                 message: `ID "${value}" is already defined in ${existing.filePath}:${String(existing.line)}`,
                 line: row.line,
+                filePath,
               });
             } else {
               seen.set(value, { filePath, line: row.line });

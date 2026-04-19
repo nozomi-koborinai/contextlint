@@ -106,8 +106,9 @@ export function ref003(options: Ref003Options): Rule {
               if (refRank > defRank) {
                 context.report({
                   severity: "warning",
-                  message: `Item "${value}" has stability "${def.stability}" in ${def.filePath}, but is referenced from a row with stability "${refStability}" in ${filePath}`,
+                  message: `Item "${value}" has stability "${def.stability}" in ${def.filePath}, but is referenced from a row with stability "${refStability}"`,
                   line: row.line,
+                  filePath,
                 });
               }
             }

@@ -58,7 +58,21 @@ export function lintFiles(
 
   const projectFiles = files.map((f) => relative(cwd, f).replace(/\\/g, "/"));
 
-  const results: FileLintResult[] = [];
+  // Buckets: one per scanned file + optional `<project>` for project-scope
+  // messages that don't carry a concrete filePath. Initialize all scanned
+  // files with empty arrays so we return an entry per file (matches the
+  // prior lintFiles contract; callers like formatImpactResult rely on
+  // per-file entries existing even when no issues were found).
+  const perFile = new Map<string, LintMessage[]>();
+  for (const filePath of files) {
+    perFile.set(filePath, []);
+  }
+
+  const addToBucket = (key: string, msg: LintMessage): void => {
+    const arr = perFile.get(key) ?? [];
+    arr.push(msg);
+    perFile.set(key, arr);
+  };
 
   if (projectRules.length > 0) {
     const emptyDoc = parseDocument("");
@@ -66,8 +80,8 @@ export function lintFiles(
       projectFiles,
       documents,
     });
-    if (messages.length > 0) {
-      results.push({ filePath: "<project>", messages });
+    for (const msg of messages) {
+      addToBucket(msg.filePath ?? "<project>", msg);
     }
   }
 
@@ -75,8 +89,25 @@ export function lintFiles(
     const document = documents.get(filePath);
     if (!document) continue;
     const messages = runRules(docRules, document, filePath, { documents });
-    results.push({ filePath, messages });
+    for (const msg of messages) {
+      addToBucket(filePath, msg);
+    }
   }
 
+  const results: FileLintResult[] = [];
+  const projectMessages = perFile.get("<project>");
+  if (projectMessages && projectMessages.length > 0) {
+    results.push({ filePath: "<project>", messages: projectMessages });
+  }
+  for (const filePath of files) {
+    const msgs = perFile.get(filePath) ?? [];
+    results.push({ filePath, messages: msgs });
+  }
+  for (const [filePath, msgs] of perFile) {
+    if (filePath === "<project>" || files.includes(filePath)) continue;
+    if (msgs.length > 0) {
+      results.push({ filePath, messages: msgs });
+    }
+  }
   return results;
 }

@@ -43,9 +43,9 @@ export function ref002(options: Ref002Options): Rule {
             continue;
           }
           for (const row of table.rows) {
-            const value = row[options.idColumn];
+            const value = row.cells[options.idColumn];
             if (value && idRegex.test(value)) {
-              defined.set(value, { filePath, line: table.line });
+              defined.set(value, { filePath, line: row.line });
             }
           }
         }
@@ -61,7 +61,7 @@ export function ref002(options: Ref002Options): Rule {
         // From table columns
         for (const table of doc.tables) {
           for (const row of table.rows) {
-            for (const value of Object.values(row)) {
+            for (const value of Object.values(row.cells)) {
               if (value && idRegex.test(value)) {
                 referenced.add(value);
               }

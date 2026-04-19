@@ -83,7 +83,7 @@ export function ref004(options: Ref004Options): Rule {
               continue;
             }
             for (const row of table.rows) {
-              for (const value of Object.values(row)) {
+              for (const value of Object.values(row.cells)) {
                 if (value) {
                   declaredDeps.add(value.trim());
                 }

@@ -185,7 +185,7 @@ export function extractDocProfile(
       let idPattern: string | null = null;
       for (const col of table.headers) {
         const colValues = table.rows
-          .map((row) => row[col] ?? "")
+          .map((row) => row.cells[col] ?? "")
           .filter((v) => v.length > 0);
         const pattern = detectIdPattern(colValues);
         if (pattern) {

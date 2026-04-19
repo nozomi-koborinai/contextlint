@@ -28,11 +28,12 @@ export function tbl002(options?: Tbl002Options): Rule {
 
         for (const row of table.rows) {
           for (const col of targetColumns) {
-            if (!row[col] || row[col].trim() === "") {
+            const value = row.cells[col];
+            if (!value || value.trim() === "") {
               context.report({
                 severity: "warning",
                 message: `Empty cell in column "${col}"`,
-                line: table.line,
+                line: row.line,
               });
             }
           }

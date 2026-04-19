@@ -13,8 +13,8 @@ describe("parseDocument", () => {
     expect(doc.tables).toHaveLength(1);
     expect(doc.tables[0].headers).toEqual(["Name", "Age"]);
     expect(doc.tables[0].rows).toEqual([
-      { Name: "Alice", Age: "30" },
-      { Name: "Bob", Age: "25" },
+      { line: 4, cells: { Name: "Alice", Age: "30" } },
+      { line: 5, cells: { Name: "Bob", Age: "25" } },
     ]);
     expect(doc.tables[0].section).toBeNull();
   });
@@ -82,9 +82,12 @@ Some paragraph text.
 | H1 | H2 |
 |----|----|
 | v1 | v2 |
+| v3 | v4 |
 `;
     const doc = parseDocument(md);
     expect(doc.tables[0].line).toBe(3);
+    expect(doc.tables[0].rows[0].line).toBe(5);
+    expect(doc.tables[0].rows[1].line).toBe(6);
   });
 
   it("parses table with Japanese headers and cell values", () => {
@@ -99,8 +102,8 @@ Some paragraph text.
     const doc = parseDocument(md);
     expect(doc.tables).toHaveLength(1);
     expect(doc.tables[0].headers).toEqual(["ID", "要件", "安定度", "備考"]);
-    expect(doc.tables[0].rows[0]["要件"]).toBe("ユーザー認証");
-    expect(doc.tables[0].rows[1]["安定度"]).toBe("review");
+    expect(doc.tables[0].rows[0].cells["要件"]).toBe("ユーザー認証");
+    expect(doc.tables[0].rows[1].cells["安定度"]).toBe("review");
     expect(doc.tables[0].section).toBe("要件定義");
   });
 
@@ -115,7 +118,7 @@ Some paragraph text.
     const doc = parseDocument(md);
     expect(doc.tables).toHaveLength(1);
     expect(doc.tables[0].headers).toEqual(["ID", "요구사항", "안정도"]);
-    expect(doc.tables[0].rows[0]["요구사항"]).toBe("사용자 인증");
+    expect(doc.tables[0].rows[0].cells["요구사항"]).toBe("사용자 인증");
     expect(doc.tables[0].section).toBe("요구사항");
   });
 
@@ -130,7 +133,7 @@ Some paragraph text.
     const doc = parseDocument(md);
     expect(doc.tables).toHaveLength(1);
     expect(doc.tables[0].headers).toEqual(["ID", "需求", "稳定性"]);
-    expect(doc.tables[0].rows[0]["需求"]).toBe("用户认证");
+    expect(doc.tables[0].rows[0].cells["需求"]).toBe("用户认证");
     expect(doc.tables[0].section).toBe("需求定义");
   });
 

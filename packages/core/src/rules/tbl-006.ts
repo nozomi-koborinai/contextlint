@@ -39,7 +39,7 @@ export function tbl006(options: Tbl006Options): Rule {
           }
 
           for (const row of table.rows) {
-            const value = row[options.column];
+            const value = row.cells[options.column];
             if (!value) {
               continue;
             }
@@ -52,10 +52,10 @@ export function tbl006(options: Tbl006Options): Rule {
               context.report({
                 severity: "error",
                 message: `ID "${value}" is already defined in ${existing.filePath}:${String(existing.line)}`,
-                line: table.line,
+                line: row.line,
               });
             } else {
-              seen.set(value, { filePath, line: table.line });
+              seen.set(value, { filePath, line: row.line });
             }
           }
         }

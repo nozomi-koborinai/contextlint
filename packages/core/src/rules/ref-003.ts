@@ -61,8 +61,8 @@ export function ref003(options: Ref003Options): Rule {
             continue;
           }
           for (const row of table.rows) {
-            const id = row[idColumn];
-            const stability = row[options.stabilityColumn];
+            const id = row.cells[idColumn];
+            const stability = row.cells[options.stabilityColumn];
             if (!id || !stability) {
               continue;
             }
@@ -84,7 +84,7 @@ export function ref003(options: Ref003Options): Rule {
             continue;
           }
           for (const row of table.rows) {
-            const refStability = row[options.stabilityColumn];
+            const refStability = row.cells[options.stabilityColumn];
             if (!refStability || !stabilityRank.has(refStability)) {
               continue;
             }
@@ -92,7 +92,7 @@ export function ref003(options: Ref003Options): Rule {
             if (refRank === undefined) continue;
 
             // Find referenced IDs in other cells of this row
-            for (const [col, value] of Object.entries(row)) {
+            for (const [col, value] of Object.entries(row.cells)) {
               if (col === options.stabilityColumn || !value) {
                 continue;
               }
@@ -107,7 +107,7 @@ export function ref003(options: Ref003Options): Rule {
                 context.report({
                   severity: "warning",
                   message: `Item "${value}" has stability "${def.stability}" in ${def.filePath}, but is referenced from a row with stability "${refStability}" in ${filePath}`,
-                  line: table.line,
+                  line: row.line,
                 });
               }
             }

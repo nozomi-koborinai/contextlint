@@ -68,14 +68,14 @@ export function grp001(options: Grp001Options): Rule {
               continue;
             }
             for (const row of table.rows) {
-              const value = row[currentColumn];
+              const value = row.cells[currentColumn];
               if (!value) {
                 continue;
               }
               if (idRegex && !idRegex.test(value)) {
                 continue;
               }
-              currentIds.set(value, { filePath, line: table.line });
+              currentIds.set(value, { filePath, line: row.line });
             }
           }
         }
@@ -91,7 +91,7 @@ export function grp001(options: Grp001Options): Rule {
               continue;
             }
             for (const row of table.rows) {
-              const value = row[nextColumn];
+              const value = row.cells[nextColumn];
               if (!value) {
                 continue;
               }

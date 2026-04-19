@@ -201,7 +201,7 @@ export function getContextSlice(
       let found = false;
       for (const table of doc.tables) {
         for (const row of table.rows) {
-          for (const value of Object.values(row)) {
+          for (const value of Object.values(row.cells)) {
             if (value === query) {
               found = true;
               break;

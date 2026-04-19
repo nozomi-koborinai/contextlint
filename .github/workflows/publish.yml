@@ -33,6 +33,10 @@ jobs:
       - name: Publish to npm
         run: |
           for pkg in packages/*/; do
+            if [ "$(jq -r '.private // false' "$pkg/package.json")" = "true" ]; then
+              echo "Skipping private package: $pkg"
+              continue
+            fi
             (cd "$pkg" && bun publish --no-git-checks --access public)
           done
         env:

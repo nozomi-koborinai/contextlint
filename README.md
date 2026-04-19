@@ -440,6 +440,75 @@ Available tools:
 | `impact-analysis` | Analyze which documents are affected by changes to a given file |
 | `compile-context` | Compile document structure into LLM context text |
 
+## LSP Server
+
+contextlint ships a Language Server (`@contextlint/lsp-server`) that
+any LSP-capable editor can integrate for in-editor diagnostics, hover
+info, and Quick Fixes. The server walks up from the workspace root to
+discover `contextlint.config.json`, matching the CLI / MCP behaviour.
+
+> A dedicated VS Code / Cursor extension is tracked separately and
+> will be published to the Marketplace in a future release. For now,
+> the snippets below work in every editor that speaks LSP.
+
+Install:
+
+```bash
+npm install -D @contextlint/lsp-server
+```
+
+### Neovim (with [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig))
+
+```lua
+-- In your init.lua or after/plugin/contextlint.lua
+local configs = require('lspconfig.configs')
+local util = require('lspconfig.util')
+
+if not configs.contextlint then
+  configs.contextlint = {
+    default_config = {
+      cmd = { 'npx', 'contextlint-lsp' },
+      filetypes = { 'markdown' },
+      root_dir = util.root_pattern('contextlint.config.json', '.git'),
+      single_file_support = false,
+    },
+  }
+end
+
+require('lspconfig').contextlint.setup({})
+```
+
+### Helix (`~/.config/helix/languages.toml`)
+
+```toml
+[language-server.contextlint]
+command = "npx"
+args = ["contextlint-lsp"]
+
+[[language]]
+name = "markdown"
+language-servers = ["contextlint"]
+```
+
+### JetBrains IDEs (via [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij))
+
+1. Install the **LSP4IJ** plugin from the Marketplace.
+2. Open **Settings → Languages & Frameworks → Language Servers → Add**:
+   - **Name**: `contextlint`
+   - **Command**: `npx contextlint-lsp`
+   - **Mapping → File name patterns**: `*.md`
+
+### Notes
+
+- Diagnostics cover both document-scope rules (TBL-002, CHK-001, …)
+  and project-scope rules (REF-001, REF-002, TBL-006,
+  GRP-001/002/003, CTX-002, …) across the entire workspace, in real
+  time as you edit.
+- Quick Fixes are available for **CHK-001** (check the list item) and
+  **TBL-002** (insert a `TODO` placeholder).
+- After external file changes (e.g. `git pull`), reload the editor
+  window to refresh the workspace cache.
+
 ## Programmatic API
 
 ### Context Graph

@@ -1,0 +1,45 @@
+{
+  "name": "@contextlint/vscode",
+  "version": "0.0.0",
+  "displayName": "contextlint",
+  "description": "In-editor diagnostics for structured Markdown documents",
+  "private": true,
+  "publisher": "contextlint",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "contextlint",
+      "properties": {
+        "contextlint.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable contextlint diagnostics."
+        },
+        "contextlint.trace.server": {
+          "type": "string",
+          "enum": ["off", "messages", "verbose"],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the contextlint language server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextlint/lsp-server": "workspace:*",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.82.0"
+  },
+  "license": "MIT"
+}

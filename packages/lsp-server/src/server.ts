@@ -11,6 +11,7 @@ import type {
 import { TextDocument } from "vscode-languageserver-textdocument";
 import type { LoadedConfig } from "./config-loader.js";
 import { tryLoadConfig } from "./config-loader.js";
+import { provideCodeActions } from "./code-actions.js";
 import { toDiagnostics } from "./diagnostics.js";
 import { hoverForDiagnostics } from "./hover.js";
 import { lintBuffer } from "./linter.js";
@@ -41,6 +42,7 @@ export function start(): void {
       capabilities: {
         textDocumentSync: TextDocumentSyncKind.Incremental,
         hoverProvider: true,
+        codeActionProvider: true,
       },
       serverInfo: { name: "contextlint-lsp" },
     };
@@ -66,6 +68,12 @@ export function start(): void {
   connection.onHover((params) => {
     const diagnostics = latestDiagnostics.get(params.textDocument.uri) ?? [];
     return hoverForDiagnostics(params, diagnostics);
+  });
+
+  connection.onCodeAction((params) => {
+    const document = documents.get(params.textDocument.uri);
+    if (!document) return [];
+    return provideCodeActions(params, document);
   });
 
   documents.listen(connection);

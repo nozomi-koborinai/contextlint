@@ -1,4 +1,5 @@
 import { globMatch } from "../utils/glob-match.js";
+import { findLineNumber } from "../utils/find-line-number.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 import type { ParsedDocument } from "../parser.js";
@@ -97,16 +98,6 @@ function extractGlossary(
   return entries;
 }
 
-function findLineNumber(content: string, index: number): number {
-  let line = 1;
-  for (let i = 0; i < index && i < content.length; i++) {
-    if (content[i] === "\n") {
-      line++;
-    }
-  }
-  return line;
-}
-
 export function ctx002(options: Ctx002Options): Rule {
   const isGlossaryMatch = globMatch(`**/${options.glossary}`);
   const isMatch = options.files ? globMatch(`**/${options.files}`) : null;
@@ -182,6 +173,7 @@ export function ctx002(options: Ctx002Options): Rule {
               severity: "warning",
               message: `"${entry.originalAlias}" should be "${entry.canonical}" (defined in glossary)`,
               line,
+              filePath,
             });
             match = entry.regex.exec(content);
           }

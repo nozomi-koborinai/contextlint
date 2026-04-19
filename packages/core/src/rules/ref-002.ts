@@ -51,52 +51,62 @@ export function ref002(options: Ref002Options): Rule {
         }
       }
 
-      // Collect referenced IDs from table columns and prose text
-      const referenced = new Set<string>();
+      // Collect referenced IDs with location info: id -> [{ filePath, line }]
+      const referenced = new Map<
+        string,
+        Array<{ filePath: string; line: number }>
+      >();
+      const addReference = (id: string, filePath: string, line: number) => {
+        const arr = referenced.get(id) ?? [];
+        arr.push({ filePath, line });
+        referenced.set(id, arr);
+      };
+
       for (const [filePath, doc] of context.documents) {
         if (!matchesReference(filePath)) {
           continue;
         }
 
-        // From table columns
-        for (const table of doc.tables) {
-          for (const row of table.rows) {
-            for (const value of Object.values(row.cells)) {
-              if (value && idRegex.test(value)) {
-                referenced.add(value);
-              }
+        // Line-by-line scan of the full content covers both prose tokens
+        // and table cells (table cells are part of the content string).
+        // Scanning once avoids double-counting a single reference.
+        const lines = doc.content.split(/\r?\n/);
+        const seenOnLine = new Set<string>();
+        for (let i = 0; i < lines.length; i++) {
+          seenOnLine.clear();
+          const lineText = lines[i] ?? "";
+          const tokens = lineText.match(/\S+/g) ?? [];
+          for (const token of tokens) {
+            const cleaned = token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, "");
+            if (cleaned && idRegex.test(cleaned) && !seenOnLine.has(cleaned)) {
+              seenOnLine.add(cleaned);
+              addReference(cleaned, filePath, i + 1);
             }
-          }
-        }
-
-        // From prose text (split into tokens, strip punctuation, check pattern)
-        const tokens = doc.content.match(/\S+/g) ?? [];
-        for (const token of tokens) {
-          const cleaned = token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, "");
-          if (cleaned && idRegex.test(cleaned)) {
-            referenced.add(cleaned);
           }
         }
       }
 
-      // Report dangling references (referenced but not defined)
-      for (const id of referenced) {
-        if (!defined.has(id)) {
+      // Report dangling references at each referencing location
+      for (const [id, locations] of referenced) {
+        if (defined.has(id)) continue;
+        for (const location of locations) {
           context.report({
             severity: "error",
             message: `ID "${id}" is referenced but not defined in any definition file`,
-            line: 0,
+            line: location.line,
+            filePath: location.filePath,
           });
         }
       }
 
-      // Report orphan definitions (defined but not referenced)
+      // Report orphan definitions at the definition row
       for (const [id, location] of defined) {
         if (!referenced.has(id)) {
           context.report({
             severity: "warning",
-            message: `ID "${id}" is defined in ${location.filePath}:${String(location.line)} but never referenced`,
-            line: 0,
+            message: `ID "${id}" is defined but never referenced`,
+            line: location.line,
+            filePath: location.filePath,
           });
         }
       }

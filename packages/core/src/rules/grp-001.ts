@@ -113,7 +113,8 @@ export function grp001(options: Grp001Options): Rule {
             context.report({
               severity: "warning",
               message: `${id} ${stageSource} but not referenced in stage "${nextStage.stage}"`,
-              line: 0,
+              line: location.line,
+              filePath: location.filePath,
             });
           }
         }

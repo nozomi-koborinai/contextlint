@@ -28,12 +28,12 @@ export function tbl003(options: Tbl003Options): Rule {
         }
 
         for (const row of table.rows) {
-          const value = row[options.column];
+          const value = row.cells[options.column];
           if (value && !options.values.includes(value)) {
             context.report({
               severity: "error",
               message: `Invalid value "${value}" in column "${options.column}". Allowed: ${options.values.join(", ")}`,
-              line: table.line,
+              line: row.line,
             });
           }
         }

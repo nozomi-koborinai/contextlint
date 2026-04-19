@@ -14,11 +14,16 @@ import type {
 } from "mdast";
 import type { Node } from "unist";
 
+export interface ParsedTableRow {
+  line: number;
+  cells: Record<string, string>;
+}
+
 export interface ParsedTable {
   line: number;
   section: string | null;
   headers: string[];
-  rows: Record<string, string>[];
+  rows: ParsedTableRow[];
 }
 
 export interface ParsedLink {
@@ -91,13 +96,16 @@ export function parseDocument(content: string): ParsedDocument {
     if (!headerRow) return;
     const headers = extractCellText(headerRow);
 
-    const rows = dataRows.map((row) => {
+    const rows: ParsedTableRow[] = dataRows.map((row) => {
       const cells = extractCellText(row);
       const record: Record<string, string> = {};
       headers.forEach((header, i) => {
         record[header] = cells[i] ?? "";
       });
-      return record;
+      return {
+        line: row.position?.start.line ?? 0,
+        cells: record,
+      };
     });
 
     // Find the nearest heading above this table

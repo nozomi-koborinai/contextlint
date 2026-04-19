@@ -5,6 +5,7 @@ export type {
   ParsedImage,
   ParsedLink,
   ParsedTable,
+  ParsedTableRow,
   ParsedDocument,
 } from "./parser.js";
 

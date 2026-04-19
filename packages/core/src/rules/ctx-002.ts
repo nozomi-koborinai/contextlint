@@ -77,8 +77,8 @@ function extractGlossary(
     }
 
     for (const row of table.rows) {
-      const canonical = row[options.termColumn];
-      const aliasCell = row[aliasColumn];
+      const canonical = row.cells[options.termColumn];
+      const aliasCell = row.cells[aliasColumn];
       if (!canonical || !aliasCell) {
         continue;
       }

@@ -30,12 +30,12 @@ export function tbl004(options: Tbl004Options): Rule {
         }
 
         for (const row of table.rows) {
-          const value = row[options.column];
+          const value = row.cells[options.column];
           if (value && !regex.test(value)) {
             context.report({
               severity: "error",
               message: `Value "${value}" in column "${options.column}" does not match pattern "${options.pattern}"`,
-              line: table.line,
+              line: row.line,
             });
           }
         }

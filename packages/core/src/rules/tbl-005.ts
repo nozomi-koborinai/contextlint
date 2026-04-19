@@ -85,7 +85,7 @@ export function tbl005(options: Tbl005Options): Rule {
         }
 
         for (const row of table.rows) {
-          const conditionValue = row[options.when.column];
+          const conditionValue = row.cells[options.when.column];
           if (!conditionValue) {
             continue;
           }
@@ -94,14 +94,14 @@ export function tbl005(options: Tbl005Options): Rule {
             continue;
           }
 
-          const constraintValue = row[options.then.column];
+          const constraintValue = row.cells[options.then.column];
           if (violatesConstraint(constraintValue, options.then)) {
             const conditionDesc = describeCondition(options.when);
             const constraintDesc = describeConstraint(options.then);
             context.report({
               severity: "error",
               message: `Row where ${conditionDesc}: column "${options.then.column}" ${constraintDesc}`,
-              line: table.line,
+              line: row.line,
             });
           }
         }

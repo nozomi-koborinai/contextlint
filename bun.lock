@@ -69,7 +69,7 @@
       },
     },
     "packages/vscode": {
-      "name": "@contextlint/vscode",
+      "name": "contextlint-vscode",
       "version": "0.0.0",
       "dependencies": {
         "@contextlint/lsp-server": "workspace:*",
@@ -88,8 +88,6 @@
     "@contextlint/lsp-server": ["@contextlint/lsp-server@workspace:packages/lsp-server"],
 
     "@contextlint/mcp-server": ["@contextlint/mcp-server@workspace:packages/mcp-server"],
-
-    "@contextlint/vscode": ["@contextlint/vscode@workspace:packages/vscode"],
 
     "@eslint-community/eslint-utils": ["@eslint-community/eslint-utils@4.9.1", "", { "dependencies": { "eslint-visitor-keys": "^3.4.3" }, "peerDependencies": { "eslint": "^6.0.0 || ^7.0.0 || >=8.0.0" } }, "sha512-phrYmNiYppR7znFEdqgfWHXR6NCkZEK7hwWDHZUjit/2/U0r6XvkDl0SYnoM51Hq7FhCGdLDT6zxCCOY1hexsQ=="],
 
@@ -252,6 +250,8 @@
     "content-disposition": ["content-disposition@1.0.1", "", {}, "sha512-oIXISMynqSqm241k6kcQ5UwttDILMK4BiurCfGEREw6+X9jkkpEe5T9FZaApyLGGOnFuyMWZpdolTXMtvEJ08Q=="],
 
     "content-type": ["content-type@1.0.5", "", {}, "sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA=="],
+
+    "contextlint-vscode": ["contextlint-vscode@workspace:packages/vscode"],
 
     "cookie": ["cookie@0.7.2", "", {}, "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w=="],
 

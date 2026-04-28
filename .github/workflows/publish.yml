@@ -9,7 +9,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v6
@@ -25,6 +25,7 @@ jobs:
       - name: Set version and resolve workspace dependencies
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           for pkg in packages/*/; do
             (cd "$pkg" && npm pkg set "version=${VERSION}")
           done
@@ -41,3 +42,24 @@ jobs:
           done
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Package VS Code extension
+        working-directory: packages/vscode
+        run: |
+          for attempt in 1 2 3; do
+            if npm install --omit=dev --ignore-scripts --package-lock=false; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              exit 1
+            fi
+            sleep 10
+          done
+          npx --yes @vscode/vsce package \
+            --out "../../contextlint-vscode-${VERSION}.vsix"
+
+      - name: Attach VSIX to GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: contextlint-vscode-*.vsix
+          generate_release_notes: true

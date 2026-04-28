@@ -452,6 +452,26 @@ discover `contextlint.config.json`, matching the CLI / MCP behaviour.
 > will be published to the Marketplace in a future release. For now,
 > the snippets below work in every editor that speaks LSP.
 
+### VS Code / Cursor without Marketplace
+
+For releases that provide a VSIX asset, download
+`contextlint-vscode-*.vsix` from the GitHub Release and install it
+manually:
+
+1. Open the Extensions view.
+2. Select **Views and More Actions...**.
+3. Select **Install from VSIX...**.
+4. Choose the downloaded `.vsix` file.
+
+Or install it from the command line:
+
+```bash
+code --install-extension contextlint-vscode-VERSION.vsix
+```
+
+The extension starts `@contextlint/lsp-server` automatically for
+Markdown files and uses the nearest `contextlint.config.json`.
+
 Install:
 
 ```bash
@@ -642,6 +662,8 @@ Add to your CI pipeline to keep SKILL.md in sync with documentation:
 | `@contextlint/core` | Rule engine and Markdown parser |
 | `@contextlint/cli` | CLI entry point (`contextlint` command) |
 | `@contextlint/mcp-server` | MCP server for AI tool integration |
+| `@contextlint/lsp-server` | Language Server Protocol implementation |
+| `contextlint-vscode` | VS Code / Cursor extension distributed as VSIX |
 
 ## Resources
 

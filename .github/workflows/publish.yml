@@ -44,8 +44,12 @@ jobs:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Package VS Code extension
-        working-directory: packages/vscode
         run: |
+          package_dir="$(mktemp -d)"
+          cp -R packages/vscode/. "$package_dir/"
+          cd "$package_dir"
+          npm pkg set "version=${VERSION}"
+          npm pkg set "dependencies.@contextlint/lsp-server=${VERSION}"
           for attempt in 1 2 3; do
             if npm install --omit=dev --ignore-scripts --package-lock=false; then
               break
@@ -56,7 +60,7 @@ jobs:
             sleep 10
           done
           npx --yes @vscode/vsce package \
-            --out "../../contextlint-vscode-${VERSION}.vsix"
+            --out "${GITHUB_WORKSPACE}/contextlint-vscode-${VERSION}.vsix"
 
       - name: Attach VSIX to GitHub Release
         uses: softprops/action-gh-release@v3

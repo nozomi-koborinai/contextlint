@@ -47,18 +47,13 @@ jobs:
         run: |
           package_dir="$(mktemp -d)"
           cp -R packages/vscode/. "$package_dir/"
+          npm pack --pack-destination "$package_dir" ./packages/core
+          npm pack --pack-destination "$package_dir" ./packages/lsp-server
           cd "$package_dir"
           npm pkg set "version=${VERSION}"
-          npm pkg set "dependencies.@contextlint/lsp-server=${VERSION}"
-          for attempt in 1 2 3; do
-            if npm install --omit=dev --ignore-scripts --package-lock=false; then
-              break
-            fi
-            if [ "$attempt" = "3" ]; then
-              exit 1
-            fi
-            sleep 10
-          done
+          npm pkg set "dependencies.@contextlint/lsp-server=./contextlint-lsp-server-${VERSION}.tgz"
+          npm pkg set "overrides.@contextlint/core=./contextlint-core-${VERSION}.tgz"
+          npm install --omit=dev --ignore-scripts --package-lock=false
           npx --yes @vscode/vsce package \
             --out "${GITHUB_WORKSPACE}/contextlint-vscode-${VERSION}.vsix"
 

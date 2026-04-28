@@ -461,6 +461,25 @@ LSP 対応のエディタであればエディタ内での診断、ホバー情�
 > VS Code / Cursor 向けの専用拡張機能は別途開発中で、将来 Marketplace に公開予定です。
 > 現時点では、以下のスニペットで LSP を話すすべてのエディタに組み込めます。
 
+### Marketplace を使わずに VS Code / Cursor へ導入する
+
+VSIX が添付されているリリースでは、GitHub Release から
+`contextlint-vscode-*.vsix` をダウンロードし、手動でインストールできます。
+
+1. Extensions ビューを開きます。
+2. **Views and More Actions...** を選択します。
+3. **Install from VSIX...** を選択します。
+4. ダウンロードした `.vsix` ファイルを選択します。
+
+コマンドラインからインストールすることもできます:
+
+```bash
+code --install-extension contextlint-vscode-VERSION.vsix
+```
+
+拡張機能は Markdown ファイルに対して `@contextlint/lsp-server` を自動起動し、
+最寄りの `contextlint.config.json` を使用します。
+
 インストール:
 
 ```bash
@@ -649,6 +668,8 @@ CI パイプラインに追加して、SKILL.md をドキュメントと同期�
 | `@contextlint/core` | ルールエンジンと Markdown パーサー |
 | `@contextlint/cli` | CLI エントリーポイント（`contextlint`コマンド） |
 | `@contextlint/mcp-server` | AI ツール連携用の MCP サーバー |
+| `@contextlint/lsp-server` | Language Server Protocol 実装 |
+| `contextlint-vscode` | VSIX として配布する VS Code / Cursor 拡張 |
 
 ## 関連記事
 

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#e8e8e8"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="#fcfcfc"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <text x="80" y="80" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="16" fill="#6b6b6b" letter-spacing="2">§ HERO / 000  ———  SEMANTIC LINTER</text>
+  <text x="1120" y="80" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="16" fill="#6b6b6b" text-anchor="end">[REF: README.md]</text>
+
+  <g font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="700">
+    <text x="80" y="200" font-size="92" fill="#0a0a0a" letter-spacing="-3">markdownlint</text>
+    <text x="80" y="295" font-size="92" fill="#6b6b6b" letter-spacing="-3">for syntax.</text>
+    <text x="80" y="410" font-size="92" fill="#0a0a0a" letter-spacing="-3">contextlint</text>
+    <text x="80" y="505" font-size="92" fill="#0040ff" letter-spacing="-3">for meaning.</text>
+  </g>
+
+  <text x="80" y="595" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="16" fill="#6b6b6b">contextlint.dev</text>
+  <text x="1120" y="595" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="16" fill="#6b6b6b" text-anchor="end">v0.9 · MIT</text>
+</svg>

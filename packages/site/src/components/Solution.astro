@@ -1,0 +1,40 @@
+---
+const principles = [
+  { id: "p.1", text: "Same input, same result — no prompts, no temperature." },
+  { id: "p.2", text: "Cross-file aware — knows your dependency graph." },
+  { id: "p.3", text: "21 rules across 7 categories." },
+  { id: "p.4", text: "Sub-second on a typical repo. Built for CI." },
+];
+---
+
+<section class="rule-top bg-paper">
+  <div class="container-edit py-24 md:py-32">
+    <div class="grid md:grid-cols-12 gap-8 md:gap-12">
+      <div class="md:col-span-3">
+        <div class="sct-numeral">§ 002</div>
+        <div class="sct-numeral mt-1 opacity-60">// THE APPROACH</div>
+      </div>
+      <div class="md:col-span-9">
+        <h2 class="display-l">
+          Generation is creative.<br />
+          <span class="text-accent">Verification should not be.</span>
+        </h2>
+        <p class="body-lead mt-10 max-w-3xl">
+          Use AI to write your docs — that's where it shines. Use contextlint
+          to verify them. Static analysis catches what's checkable; AI focuses
+          on what's actually generative. The separation keeps your CI
+          deterministic and your reviews fast.
+        </p>
+
+        <ul class="mt-12 max-w-3xl border-t border-ink">
+          {principles.map(p => (
+            <li class="grid grid-cols-[3rem_1fr] md:grid-cols-[5rem_1fr] gap-4 py-4 border-b border-rule items-baseline">
+              <span class="font-mono text-[0.7rem] text-mute uppercase tracking-widest">[{p.id}]</span>
+              <span class="text-[0.95rem]">{p.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

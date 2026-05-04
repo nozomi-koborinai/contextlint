@@ -1,0 +1,52 @@
+---
+---
+
+<section class="rule-top bg-paper" id="start">
+  <div class="container-edit py-24 md:py-32">
+    <div class="grid md:grid-cols-12 gap-8 md:gap-12">
+      <div class="md:col-span-3">
+        <div class="sct-numeral">§ 005</div>
+        <div class="sct-numeral mt-1 opacity-60">// QUICK START</div>
+      </div>
+      <div class="md:col-span-9">
+        <h2 class="display-l">
+          From zero to <span class="text-accent">first lint</span><br />
+          in two commands.
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-px mt-12 border border-ink" style="background: var(--color-ink);">
+          <div class="bg-paper p-6 md:p-7">
+            <div class="sct-numeral mb-4">[step.01] // install</div>
+            <pre class="font-mono text-sm p-4 overflow-x-auto" style="background: var(--color-ink); color: var(--color-paper);"><code>npm install -D @contextlint/cli</code></pre>
+            <p class="text-xs text-mute mt-3 font-mono">// or: bunx, pnpm, yarn</p>
+          </div>
+          <div class="bg-paper p-6 md:p-7">
+            <div class="sct-numeral mb-4">[step.02] // lint</div>
+            <pre class="font-mono text-sm p-4 overflow-x-auto" style="background: var(--color-ink); color: var(--color-paper);"><code>npx contextlint "**/*.md"</code></pre>
+            <p class="text-xs text-mute mt-3 font-mono">// add a config file to enable cross-file rules</p>
+          </div>
+        </div>
+
+        <div class="mt-12 max-w-3xl callout">
+          <div class="callout-label">[config] // contextlint.config.json</div>
+          <pre class="font-mono text-[0.78rem] leading-relaxed mt-3 overflow-x-auto"><code>{`{
+  "$schema": "https://raw.githubusercontent.com/nozomi-koborinai/contextlint/main/schema.json",
+  "include": ["docs/**/*.md", "specs/**/*.md"],
+  "rules": [
+    { "rule": "ref001" },
+    { "rule": "sec001", "options": { "sections": ["Context", "Decision", "Consequences"] } },
+    { "rule": "grp002" }
+  ]
+}`}</code></pre>
+        </div>
+
+        <p class="mt-8 text-sm text-mute max-w-2xl">
+          Then plug into your editor for live diagnostics, or run as a CI
+          gate. See the
+          <a href="https://github.com/nozomi-koborinai/contextlint" class="link-mark text-ink">README</a>
+          for the full configuration reference.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

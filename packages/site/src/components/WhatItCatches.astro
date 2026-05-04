@@ -1,0 +1,111 @@
+---
+const cards = [
+  {
+    id: "TBL-002",
+    category: "table",
+    title: "Empty cells",
+    snippet: `| ID     | Description |
+|--------|-------------|
+| FR-101 | User login  |
+| FR-102 |             |`,
+    error: "Required cell at FR-102 / Description is empty.",
+  },
+  {
+    id: "SEC-001",
+    category: "section",
+    title: "Missing required section",
+    snippet: `# ADR-005: Database choice
+
+## Context
+We need persistent storage.
+
+## Decision
+Use PostgreSQL.`,
+    error: "Required section 'Consequences' is missing.",
+  },
+  {
+    id: "REF-001",
+    category: "reference",
+    title: "Broken cross-reference",
+    snippet: `## Login spec
+
+See [FR-102](./req.md#fr-102) for the
+full requirement and test cases.`,
+    error: "ID 'FR-102' is not defined in req.md.",
+  },
+  {
+    id: "CHK-001",
+    category: "checklist",
+    title: "Incomplete checklist",
+    snippet: `## Acceptance criteria
+
+- [x] User can log in
+- [ ] Session persists across reloads
+- [ ] Logout clears all tokens`,
+    error: "2 unchecked items remain in 'Acceptance criteria'.",
+  },
+  {
+    id: "CTX-001",
+    category: "context",
+    title: "Placeholder still present",
+    snippet: `## Non-functional
+
+- Performance target: TBD
+- Owner: TODO
+- Review date: <pending>`,
+    error: "Placeholders 'TBD', 'TODO', '<pending>' detected.",
+  },
+  {
+    id: "GRP-002",
+    category: "graph",
+    title: "Circular reference",
+    snippet: `architecture.md  →  api-design.md
+api-design.md    →  data-model.md
+data-model.md    →  architecture.md`,
+    error: "Circular dependency: architecture → api-design → data-model → architecture.",
+  },
+];
+---
+
+<section class="rule-top bg-paper" id="what-it-catches">
+  <div class="container-edit py-24 md:py-32">
+    <div class="grid md:grid-cols-12 gap-8 md:gap-12 mb-16 md:mb-20">
+      <div class="md:col-span-3">
+        <div class="sct-numeral">§ 004</div>
+        <div class="sct-numeral mt-1 opacity-60">// INSPECTION</div>
+      </div>
+      <div class="md:col-span-9">
+        <h2 class="display-l">
+          Six examples.<br />
+          <span class="text-accent">Twenty-one rules.</span>
+        </h2>
+        <p class="body-lead mt-10 max-w-2xl">
+          A glimpse of what contextlint catches. The full set spans tables,
+          sections, structure, references, checklists, content quality, and
+          dependency graphs.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-px border border-ink" style="background: var(--color-ink);">
+      {cards.map(card => (
+        <article class="bg-paper p-6 md:p-7 flex flex-col">
+          <header class="flex items-baseline justify-between gap-4 pb-3 border-b border-rule">
+            <span class="font-mono text-[0.72rem] text-accent">[{card.id}]</span>
+            <span class="font-mono text-[0.65rem] text-mute uppercase tracking-widest">{card.category}</span>
+          </header>
+          <h3 class="display-m mt-5 mb-5">{card.title}</h3>
+          <pre class="font-mono text-[0.72rem] leading-relaxed p-4 overflow-x-auto whitespace-pre" style="background: var(--color-callout-bg); color: var(--color-ink);"><code>{card.snippet}</code></pre>
+          <div class="mt-5 flex items-start gap-3 pt-4 border-t border-rule flex-1">
+            <span class="font-mono text-[0.7rem] text-error shrink-0 mt-[0.1rem]">[err]</span>
+            <div class="font-mono text-[0.72rem] leading-relaxed">{card.error}</div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <p class="mt-12 text-sm text-mute font-mono">
+      <a href="https://github.com/nozomi-koborinai/contextlint#rules" class="link-mark text-ink">// see the full ruleset →</a>
+    </p>
+  </div>
+</section>

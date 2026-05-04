@@ -1,0 +1,50 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="rule-top mt-28 bg-paper">
+  <div class="container-edit py-12">
+    <div class="grid md:grid-cols-12 gap-8">
+      <div class="md:col-span-5">
+        <div class="font-display text-3xl tracking-tight" style="font-weight: 600;">contextlint</div>
+        <p class="text-mute mt-3 text-sm max-w-md">
+          A semantic linter for structured Markdown. Verify what your AI
+          just wrote — deterministically.
+        </p>
+      </div>
+      <div class="md:col-span-3">
+        <div class="sct-numeral mb-3">// resources</div>
+        <nav class="flex flex-col gap-2 text-sm font-mono">
+          <a href="https://github.com/nozomi-koborinai/contextlint" class="link-mark">github →</a>
+          <a href="https://www.npmjs.com/package/@contextlint/cli" class="link-mark">npm →</a>
+        </nav>
+      </div>
+      <div class="md:col-span-4">
+        <div class="sct-numeral mb-3">// specifications</div>
+        <dl class="font-mono text-xs space-y-1.5">
+          <div class="grid grid-cols-[5rem_1fr] gap-2">
+            <dt class="text-mute">version</dt>
+            <dd>v0.9</dd>
+          </div>
+          <div class="grid grid-cols-[5rem_1fr] gap-2">
+            <dt class="text-mute">license</dt>
+            <dd>MIT</dd>
+          </div>
+          <div class="grid grid-cols-[5rem_1fr] gap-2">
+            <dt class="text-mute">protocols</dt>
+            <dd>LSP · MCP · CLI</dd>
+          </div>
+          <div class="grid grid-cols-[5rem_1fr] gap-2">
+            <dt class="text-mute">runtime</dt>
+            <dd>Node ≥22</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    <hr class="mt-12" />
+    <div class="flex flex-wrap items-center justify-between gap-3 mt-6 text-xs font-mono text-mute">
+      <span>© {year} contextlint &middot; MIT</span>
+      <span>Made by <a href="https://koborin.ai" class="link-mark text-ink">Nozomi Koborinai</a></span>
+    </div>
+  </div>
+</footer>

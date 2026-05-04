@@ -1,0 +1,98 @@
+---
+const layers = [
+  {
+    n: "ckpt.01",
+    when: "while you write",
+    sub: "editor diagnostics",
+    tools: ["VS Code", "Cursor", "Neovim", "Helix", "JetBrains"],
+    desc: "See errors as you type. Hover for context. Quick-fix common violations with one click.",
+  },
+  {
+    n: "ckpt.02",
+    when: "while AI writes",
+    sub: "AI agent integration",
+    tools: ["Claude Code", "Cursor Agent", "Cline", "Windsurf"],
+    desc: "Your AI calls contextlint to verify its own output before handing it back to you.",
+  },
+  {
+    n: "ckpt.03",
+    when: "before merge",
+    sub: "CI enforcement",
+    tools: ["GitHub Actions", "npm scripts", "pre-commit"],
+    desc: "The last gate. Block PRs with broken cross-references or missing sections.",
+  },
+];
+---
+
+<section class="rule-top bg-paper">
+  <div class="container-edit py-24 md:py-32">
+    <div class="grid md:grid-cols-12 gap-8 md:gap-12 mb-16">
+      <div class="md:col-span-3">
+        <div class="sct-numeral">§ 003</div>
+        <div class="sct-numeral mt-1 opacity-60">// CHECKPOINTS</div>
+      </div>
+      <div class="md:col-span-9">
+        <h2 class="display-l">
+          One linter,<br />
+          <span class="text-accent">three checkpoints.</span>
+        </h2>
+        <p class="body-lead mt-10 max-w-2xl">
+          contextlint plugs into the entire document lifecycle — from your
+          editor to your AI assistant to your CI gate.
+        </p>
+      </div>
+    </div>
+
+    <!-- Desktop: horizontal schematic -->
+    <div class="hidden md:grid md:grid-cols-3 border border-ink">
+      {layers.map((l, i) => (
+        <div class={`pt-7 pb-8 px-6 ${i > 0 ? 'border-l border-ink' : ''}`}>
+          <div class="flex items-baseline gap-3">
+            <span class="font-mono text-[0.7rem] text-accent uppercase tracking-widest">[{l.n}]</span>
+            <div class="h-px flex-1" style="background: var(--color-rule);"></div>
+          </div>
+          <div class="sct-numeral mt-5">{l.when}</div>
+          <h3 class="display-m mt-2">{l.sub}</h3>
+          <p class="mt-5 text-[0.95rem] leading-relaxed">{l.desc}</p>
+          <ul class="mt-6 space-y-1.5">
+            {l.tools.map(t => (
+              <li class="font-mono text-[0.78rem] flex items-center gap-2">
+                <span class="text-mute">→</span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- Mobile: vertical schematic -->
+    <div class="md:hidden border border-ink">
+      {layers.map((l, i) => (
+        <div class={`py-7 px-5 ${i > 0 ? 'border-t border-ink' : ''}`}>
+          <div class="flex items-baseline gap-3">
+            <span class="font-mono text-[0.7rem] text-accent uppercase tracking-widest">[{l.n}]</span>
+            <div class="h-px flex-1" style="background: var(--color-rule);"></div>
+          </div>
+          <div class="sct-numeral mt-4">{l.when}</div>
+          <h3 class="display-m mt-2">{l.sub}</h3>
+          <p class="mt-4 text-[0.95rem] leading-relaxed">{l.desc}</p>
+          <ul class="mt-5 space-y-1.5">
+            {l.tools.map(t => (
+              <li class="font-mono text-[0.78rem] flex items-center gap-2">
+                <span class="text-mute">→</span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-12 max-w-2xl text-sm text-mute font-mono">
+      <span class="text-accent">[ref:proto]</span> Built on Model Context
+      Protocol (MCP) and Language Server Protocol (LSP). Works with any
+      compatible client.
+    </p>
+  </div>
+</section>

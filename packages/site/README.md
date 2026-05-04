@@ -1,43 +1,35 @@
-# Astro Starter Kit: Minimal
+# @contextlint/site
+
+Landing page for [contextlint.dev](https://contextlint.dev).
+
+Built with Astro 6 + Tailwind CSS v4. Hosted on Cloudflare Pages with
+auto-deploy from `main`. Private package — not published to npm.
+
+## Development
 
 ```sh
-bun create astro@latest -- --template minimal
+bun --filter '@contextlint/site' dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Opens at `http://localhost:4321/`.
 
-## 🚀 Project Structure
+## Build
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+bun --filter '@contextlint/site' build
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Output goes to `packages/site/dist/`.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Type-check
 
-Any static assets, like images, can be placed in the `public/` directory.
+```sh
+bun --filter '@contextlint/site' typecheck
+```
 
-## 🧞 Commands
+## Tech stack
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [Astro](https://astro.build/) 6 (static SSG)
+- [Tailwind CSS](https://tailwindcss.com/) v4 (via `@tailwindcss/vite`)
+- Funnel Display + Funnel Sans + JetBrains Mono (Google Fonts)
+- TypeScript strict

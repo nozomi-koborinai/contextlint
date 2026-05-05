@@ -3,6 +3,13 @@
   "version": "0.0.0",
   "displayName": "contextlint",
   "description": "In-editor diagnostics for structured Markdown documents",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nozomi-koborinai/contextlint.git",
+    "directory": "packages/vscode"
+  },
+  "bugs": "https://github.com/nozomi-koborinai/contextlint/issues",
+  "homepage": "https://contextlint.dev",
   "private": true,
   "publisher": "contextlint",
   "engines": {

@@ -2,6 +2,13 @@
   "name": "@contextlint/lsp-server",
   "version": "0.0.0",
   "description": "Language Server Protocol implementation for contextlint",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nozomi-koborinai/contextlint.git",
+    "directory": "packages/lsp-server"
+  },
+  "bugs": "https://github.com/nozomi-koborinai/contextlint/issues",
+  "homepage": "https://contextlint.dev",
   "type": "module",
   "exports": {
     ".": {

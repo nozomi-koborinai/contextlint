@@ -20,15 +20,21 @@ From the command line:
 code --install-extension contextlint-vscode-VERSION.vsix
 ```
 
-After installation, open a workspace containing `contextlint.config.json` and edit a Markdown file. Diagnostics for all 21 rules, hover info, and supported Quick Fixes will be provided through the contextlint language server.
+After installation, open a workspace containing `contextlint.config.json` and
+edit a Markdown file. Diagnostics for all 21 rules, hover info, and supported
+Quick Fixes will be provided through the contextlint language server.
 
 ## Other editors
 
-For Neovim, Helix, JetBrains IDEs, and other LSP-compatible clients, install [`@contextlint/lsp-server`](https://www.npmjs.com/package/@contextlint/lsp-server) and follow the [editor setup guide](https://github.com/nozomi-koborinai/contextlint#lsp-server) in the main repository.
+For Neovim, Helix, JetBrains IDEs, and other LSP-compatible clients,
+install [`@contextlint/lsp-server`](https://www.npmjs.com/package/@contextlint/lsp-server)
+and follow the
+[editor setup guide](https://github.com/nozomi-koborinai/contextlint#lsp-server)
+in the main repository.
 
 ## See also
 
-- Project: https://contextlint.dev
+- Project: <https://contextlint.dev>
 - LSP server (other editors): `@contextlint/lsp-server`
 
 ## License

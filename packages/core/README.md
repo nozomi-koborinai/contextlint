@@ -71,7 +71,7 @@ See the [main repository](https://github.com/nozomi-koborinai/contextlint) for t
 
 ## See also
 
-- Project: https://contextlint.dev
+- Project: <https://contextlint.dev>
 - CLI: `@contextlint/cli`
 
 ## License

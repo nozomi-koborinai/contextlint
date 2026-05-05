@@ -39,7 +39,7 @@ For Claude Desktop on macOS, the config lives at `~/Library/Application Support/
 
 ## See also
 
-- Project: https://contextlint.dev
+- Project: <https://contextlint.dev>
 - CLI: `@contextlint/cli`
 - Agent Skills (alternative for AI integration): `gh skill install nozomi-koborinai/contextlint contextlint-fix` (also `contextlint-init`, `contextlint-impact`)
 

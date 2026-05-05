@@ -58,7 +58,7 @@ See the [main repository](https://github.com/nozomi-koborinai/contextlint) for t
 
 ## See also
 
-- Project: https://contextlint.dev
+- Project: <https://contextlint.dev>
 - Agent Skills: `gh skill install nozomi-koborinai/contextlint contextlint-fix` (also `contextlint-init`, `contextlint-impact`)
 - VS Code / Cursor extension: `contextlint-vscode`
 - MCP server: `@contextlint/mcp-server`

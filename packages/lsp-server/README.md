@@ -14,7 +14,11 @@ npm install -D @contextlint/lsp-server
 
 Most users get the LSP through the [`contextlint-vscode`](https://github.com/nozomi-koborinai/contextlint/tree/main/packages/vscode) extension (VS Code / Cursor) without installing this server directly.
 
-For other editors, configure your LSP client to spawn `contextlint-lsp` (the binary this package installs) when editing Markdown files in a project that contains `contextlint.config.json`. See the [main repository](https://github.com/nozomi-koborinai/contextlint#lsp-server) for editor-specific setup snippets (Neovim, Helix, JetBrains).
+For other editors, configure your LSP client to spawn `contextlint-lsp`
+(the binary this package installs) when editing Markdown files in a project
+that contains `contextlint.config.json`. See the
+[main repository](https://github.com/nozomi-koborinai/contextlint#lsp-server)
+for editor-specific setup snippets (Neovim, Helix, JetBrains).
 
 ## Features
 
@@ -25,7 +29,7 @@ For other editors, configure your LSP client to spawn `contextlint-lsp` (the bin
 
 ## See also
 
-- Project: https://contextlint.dev
+- Project: <https://contextlint.dev>
 - VS Code / Cursor extension: `contextlint-vscode`
 
 ## License

@@ -8,6 +8,7 @@
     "build": "bun run --filter '*' build",
     "test": "bun test",
     "lint": "eslint .",
+    "lint:docs": "node packages/cli/dist/index.js",
     "typecheck": "bun run --filter '*' typecheck"
   },
   "engines": {

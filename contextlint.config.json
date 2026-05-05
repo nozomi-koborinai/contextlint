@@ -20,7 +20,30 @@
     { "rule": "ref006" },
     { "rule": "chk001" },
     { "rule": "ctx001" },
-    { "rule": "grp002" },
+    {
+      "rule": "grp002",
+      "options": {
+        "siteRouter": {
+          "preset": "starlight",
+          "contentDir": "packages/site/src/content/docs",
+          "defaultLocale": "root",
+          "locales": ["root", "ja", "ko", "zh"]
+        }
+      }
+    },
+    {
+      "rule": "grp003",
+      "options": {
+        "files": "packages/site/src/content/docs/**/*.md",
+        "entryPoints": ["docs/*/index.md"],
+        "siteRouter": {
+          "preset": "starlight",
+          "contentDir": "packages/site/src/content/docs",
+          "defaultLocale": "root",
+          "locales": ["root", "ja", "ko", "zh"]
+        }
+      }
+    },
     {
       "rule": "sec001",
       "options": {

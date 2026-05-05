@@ -321,3 +321,59 @@ describe("GRP-002", () => {
     expect(messages[0].message).toContain("Circular reference detected");
   });
 });
+
+describe("GRP-002 with siteRouter (starlight)", () => {
+  const starlightOpts: Grp002Options = {
+    siteRouter: {
+      preset: "starlight",
+      contentDir: "/project/site/docs",
+      defaultLocale: "root",
+      locales: ["root", "ja"],
+    },
+  };
+
+  it("detects cycle through Starlight URLs in root locale", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/docs/a/index.md": "[B](/docs/b/)",
+        "/project/site/docs/docs/b/index.md": "[A](/docs/a/)",
+      },
+      starlightOpts,
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("Circular reference detected");
+  });
+
+  it("detects cycle through Starlight URLs in ja locale", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/ja/docs/a/index.md": "[B](/ja/docs/b/)",
+        "/project/site/docs/ja/docs/b/index.md": "[A](/ja/docs/a/)",
+      },
+      starlightOpts,
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("Circular reference detected");
+  });
+
+  it("ignores absolute URLs when siteRouter is NOT set (regression)", () => {
+    const messages = lint({
+      "/project/site/docs/docs/a/index.md": "[B](/docs/b/)",
+      "/project/site/docs/docs/b/index.md": "[A](/docs/a/)",
+    });
+    // Without siteRouter, absolute URLs aren't resolved -> no cycle
+    expect(messages).toEqual([]);
+  });
+
+  it("still detects relative cycles when siteRouter is set", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/concepts/a.md": "[b](./b.md)",
+        "/project/site/docs/concepts/b.md": "[a](./a.md)",
+      },
+      starlightOpts,
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("Circular reference detected");
+  });
+});

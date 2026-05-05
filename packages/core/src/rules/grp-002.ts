@@ -1,5 +1,11 @@
+import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { globMatch } from "../utils/glob-match.js";
+import {
+  siteRouterSchema,
+  resolveRoutedUrl,
+} from "../utils/site-router.js";
+import type { SiteRouterOptions } from "../utils/site-router.js";
 import * as z from "zod/v4";
 import type { Rule, RuleContext } from "../rule.js";
 import type { ParsedDocument } from "../parser.js";
@@ -7,25 +13,45 @@ import type { ParsedDocument } from "../parser.js";
 export const grp002Schema = z.object({
   files: z.string().optional(),
   exclude: z.array(z.string()).optional(),
+  siteRouter: siteRouterSchema.optional(),
 }).strict().optional();
 
 export type Grp002Options = z.infer<typeof grp002Schema>;
 
 /**
- * Resolve a relative link URL to an absolute file path,
- * stripping any anchor fragment.
+ * Resolve a Markdown link to a file path within the documents map.
+ * Returns null if the link cannot be resolved or doesn't end in .md.
+ *
+ * Handles two cases:
+ * - Relative links (e.g. `./other.md`) — resolved against the source file
+ * - Absolute SSG-routed URLs (e.g. `/docs/x/`) — resolved via siteRouter
+ *   when configured, returning the first candidate that exists in the
+ *   documents map or on disk.
  */
-function resolveLink(linkUrl: string, fromFile: string): string | null {
-  // Strip anchor fragment
+function resolveLink(
+  linkUrl: string,
+  fromFile: string,
+  documents: Map<string, ParsedDocument>,
+  siteRouter: SiteRouterOptions | undefined,
+): string | null {
   const hashIndex = linkUrl.indexOf("#");
   const filePart = hashIndex === -1 ? linkUrl : linkUrl.slice(0, hashIndex);
 
-  // Skip empty file parts (anchor-only links like #section)
   if (!filePart) {
     return null;
   }
 
-  // Only consider .md files
+  if (filePart.startsWith("/") && siteRouter) {
+    const candidates = resolveRoutedUrl(filePart, siteRouter);
+    for (const candidate of candidates) {
+      const resolved = resolve(candidate);
+      if (documents.has(resolved) || existsSync(resolved)) {
+        return resolved;
+      }
+    }
+    return null;
+  }
+
   if (!filePart.endsWith(".md")) {
     return null;
   }
@@ -39,14 +65,11 @@ const enum Color {
   Black = 2,
 }
 
-/**
- * Build an adjacency list from the documents map.
- * Keys are absolute file paths; values are arrays of absolute paths that the file links to.
- */
 function buildAdjacencyList(
   documents: Map<string, ParsedDocument>,
   isFileMatch: ((path: string) => boolean) | null,
   isExclude: ((path: string) => boolean) | null,
+  siteRouter: SiteRouterOptions | undefined,
 ): Map<string, string[]> {
   const adj = new Map<string, string[]>();
 
@@ -60,12 +83,10 @@ function buildAdjacencyList(
 
     const neighbors: string[] = [];
     for (const link of doc.links) {
-      const target = resolveLink(link.url, filePath);
+      const target = resolveLink(link.url, filePath, documents, siteRouter);
       if (!target) {
         continue;
       }
-      // Only include edges to files that are in the documents set
-      // and not excluded
       if (!documents.has(target)) {
         continue;
       }
@@ -89,15 +110,10 @@ interface CycleInfo {
   path: string[];
 }
 
-/**
- * Detect all cycles in a directed graph using DFS with 3-color marking.
- * Returns unique cycles (canonicalized to avoid duplicates).
- */
 function detectCycles(adj: Map<string, string[]>): CycleInfo[] {
   const color = new Map<string, Color>();
   const parent = new Map<string, string | null>();
 
-  // Initialize all nodes as white
   for (const node of adj.keys()) {
     color.set(node, Color.White);
   }
@@ -114,11 +130,9 @@ function detectCycles(adj: Map<string, string[]>): CycleInfo[] {
         const neighborColor = color.get(neighbor);
 
         if (neighborColor === Color.Gray) {
-          // Back edge found — extract cycle
           const cycleStart = ancestors.indexOf(neighbor);
           if (cycleStart !== -1) {
             const cyclePath = [...ancestors.slice(cycleStart), neighbor];
-            // Canonicalize: rotate so smallest path is first, to deduplicate
             const canonicalKey = canonicalizeCycle(cyclePath);
             if (!reportedCycleKeys.has(canonicalKey)) {
               reportedCycleKeys.add(canonicalKey);
@@ -129,7 +143,6 @@ function detectCycles(adj: Map<string, string[]>): CycleInfo[] {
           parent.set(neighbor, node);
           dfs(neighbor, [...ancestors, neighbor]);
         }
-        // Black nodes are already fully explored — skip
       }
     }
 
@@ -147,17 +160,10 @@ function detectCycles(adj: Map<string, string[]>): CycleInfo[] {
   return cycles;
 }
 
-/**
- * Canonicalize a cycle path for deduplication.
- * Rotates the cycle (excluding the last element which equals the first)
- * so that the lexicographically smallest element comes first.
- */
 function canonicalizeCycle(cyclePath: string[]): string {
-  // cyclePath: [A, B, C, A] — last element duplicates first
   const ring = cyclePath.slice(0, -1);
   if (ring.length === 0) return "";
 
-  // Find the smallest element's index
   let minIndex = 0;
   for (let i = 1; i < ring.length; i++) {
     const el = ring[i];
@@ -167,28 +173,23 @@ function canonicalizeCycle(cyclePath: string[]): string {
     }
   }
 
-  // Rotate
   const rotated = [...ring.slice(minIndex), ...ring.slice(0, minIndex)];
   return rotated.join(" -> ");
 }
 
-/**
- * Format a cycle path for display, using relative-style short names.
- */
 function formatCyclePath(cyclePath: string[]): string {
   return cyclePath.join(" -> ");
 }
 
-/**
- * Find the first link line in a file that points to a given target.
- */
 function findLinkLine(
   doc: ParsedDocument,
   fromFile: string,
   toFile: string,
+  documents: Map<string, ParsedDocument>,
+  siteRouter: SiteRouterOptions | undefined,
 ): number {
   for (const link of doc.links) {
-    const target = resolveLink(link.url, fromFile);
+    const target = resolveLink(link.url, fromFile, documents, siteRouter);
     if (target === toFile) {
       return link.line;
     }
@@ -204,6 +205,7 @@ export function grp002(options?: Grp002Options): Rule {
   const isExclude = excludeMatchers
     ? (path: string) => excludeMatchers.some((m) => m(path))
     : null;
+  const siteRouter = options?.siteRouter;
 
   return {
     id: "GRP-002",
@@ -216,13 +218,17 @@ export function grp002(options?: Grp002Options): Rule {
         return;
       }
 
-      // Only run cycle detection once — from the first file in the documents map
       const firstKey = context.documents.keys().next();
       if (firstKey.done || firstKey.value !== context.filePath) {
         return;
       }
 
-      const adj = buildAdjacencyList(context.documents, isFileMatch, isExclude);
+      const adj = buildAdjacencyList(
+        context.documents,
+        isFileMatch,
+        isExclude,
+        siteRouter,
+      );
       const cycles = detectCycles(adj);
 
       for (const cycle of cycles) {
@@ -234,13 +240,18 @@ export function grp002(options?: Grp002Options): Rule {
           continue;
         }
 
-        // Report the error on the first file's link that creates the cycle
         const doc = context.documents.get(firstFile);
         if (!doc) {
           continue;
         }
 
-        const line = findLinkLine(doc, firstFile, secondFile);
+        const line = findLinkLine(
+          doc,
+          firstFile,
+          secondFile,
+          context.documents,
+          siteRouter,
+        );
         const message = `Circular reference detected: ${formatCyclePath(cyclePath)}`;
 
         context.report({

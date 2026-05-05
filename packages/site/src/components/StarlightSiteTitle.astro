@@ -1,0 +1,42 @@
+---
+import config from "virtual:starlight/user-config";
+
+interface Props {
+  locale: string | undefined;
+}
+
+const { locale } = Astro.props;
+
+let title: string;
+if (typeof config.title === "string") {
+  title = config.title;
+} else {
+  const titleByLocale = config.title as Record<string, string>;
+  title =
+    (locale && titleByLocale[locale]) ||
+    titleByLocale["en"] ||
+    Object.values(titleByLocale)[0] ||
+    "contextlint";
+}
+---
+
+<a href="/" class="site-title">
+  <span class="site-title-text">{title}</span>
+</a>
+
+<style>
+  .site-title {
+    font-family: "Funnel Display", "Inter Tight", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--sl-color-white);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .site-title:hover {
+    color: var(--sl-color-accent);
+  }
+</style>

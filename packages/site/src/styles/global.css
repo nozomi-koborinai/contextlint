@@ -157,6 +157,13 @@
     color: var(--color-paper);
     border-color: var(--color-accent);
   }
+  .btn-ghost.btn-icon {
+    padding: 0.85rem;
+  }
+  .btn-ghost.btn-icon svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
 
   .callout {
     border: 1px solid var(--color-ink);
@@ -195,6 +202,18 @@
   }
   .link-mark:hover::after { transform: scaleX(1); }
   .link-mark:hover { color: var(--color-accent); }
+
+  .icon-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-ink);
+    transition: color 0.2s ease;
+  }
+  .icon-link:hover { color: var(--color-accent); }
+  .icon-link svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 @layer utilities {

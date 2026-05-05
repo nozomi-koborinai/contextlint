@@ -1,0 +1,43 @@
+/* Starlight overrides — match the LP design tokens (see src/styles/global.css).
+ * Goal: Starlight chrome (header, sidebar, links) blends with the LP's monochrome,
+ * border-driven aesthetic. Accent blue is reserved for hover/CTA emphasis only.
+ */
+
+:root {
+  --sl-font: "Funnel Sans", "Inter Tight", system-ui, sans-serif;
+  --sl-font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+}
+
+:root[data-theme="light"] {
+  /* Accent — kept blue for hover/CTA only, not for default text */
+  --sl-color-accent-low: #d6e1ff;
+  --sl-color-accent: #0040ff;
+  --sl-color-accent-high: #002bb3;
+
+  /* Text accent: LP's ink, not loud blue.
+   * This drives active-nav link, in-content emphasis, etc. */
+  --sl-color-text-accent: #0a0a0a;
+
+  /* Header / sidebar bg = LP paper */
+  --sl-color-bg-nav: #fcfcfc;
+  --sl-color-bg-sidebar: #fcfcfc;
+
+  /* Hairline = LP rule color */
+  --sl-color-hairline: #d4d4d4;
+  --sl-color-hairline-shade: #d4d4d4;
+  --sl-color-hairline-light: #ededed;
+}
+
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #1a2a66;
+  --sl-color-accent: #4d70ff;
+  --sl-color-accent-high: #c2cdff;
+  /* Dark mode: text-accent stays light gray (not loud blue) */
+  --sl-color-text-accent: #f5f5f5;
+}
+
+/* Headings use Funnel Display for the LP-matching display tone. */
+:where(h1, h2, h3, h4, h5, h6) {
+  font-family: "Funnel Display", "Inter Tight", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}

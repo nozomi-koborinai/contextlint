@@ -14,7 +14,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/starlight": "^0.38.4",
     "astro": "^6.2.2",
+    "starlight-llms-txt": "^0.8.1",
     "tailwindcss": "^4.2.4"
   },
   "devDependencies": {

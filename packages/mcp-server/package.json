@@ -2,6 +2,13 @@
   "name": "@contextlint/mcp-server",
   "version": "0.0.0",
   "description": "MCP server for contextlint",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nozomi-koborinai/contextlint.git",
+    "directory": "packages/mcp-server"
+  },
+  "bugs": "https://github.com/nozomi-koborinai/contextlint/issues",
+  "homepage": "https://contextlint.dev",
   "type": "module",
   "exports": {
     ".": {

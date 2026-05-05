@@ -1,0 +1,23 @@
+{
+  // Reuse the rule config from .markdownlint.jsonc
+  "config": {
+    "extends": ".markdownlint.jsonc"
+  },
+  // Files / directories to skip when linting.
+  // SKILL.md files follow the agentskills.io specification (which permits
+  // longer descriptions, bare URLs, and compact table style) — applying
+  // human-viewer Markdown rules to them produces noise without value.
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.astro/**",
+    "**/.next/**",
+    "skills/**/*.md",
+    "tests/**/*.md",
+    "**/fixtures/**/*.md",
+    "CLAUDE.md",
+    ".claude/**/*.md",
+    ".github/**/*.md"
+  ]
+}

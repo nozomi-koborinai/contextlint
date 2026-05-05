@@ -1,0 +1,16 @@
+{
+  "$schema": "./schema.json",
+  "include": ["docs/**/*.md"],
+  "rules": [
+    { "rule": "ref001" },
+    { "rule": "grp002" },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "decisions/*.md",
+        "sections": ["Context", "Decision", "Consequences"]
+      }
+    },
+    { "rule": "ctx001" }
+  ]
+}

@@ -87,9 +87,9 @@ data-model.md    →  architecture.md`,
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-px border border-ink" style="background: var(--color-ink);">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px border border-ink" style="background: var(--color-ink);">
       {cards.map(card => (
-        <article class="bg-paper p-6 md:p-7 flex flex-col">
+        <article class="bg-paper p-6 md:p-7 flex flex-col min-w-0">
           <header class="flex items-baseline justify-between gap-4 pb-3 border-b border-rule">
             <span class="font-mono text-[0.72rem] text-accent">[{card.id}]</span>
             <span class="font-mono text-[0.65rem] text-mute uppercase tracking-widest">{card.category}</span>

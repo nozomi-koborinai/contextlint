@@ -37,9 +37,9 @@ const groups = [
       </div>
     </div>
 
-    <div class="grid md:grid-cols-3 border border-ink">
+    <div class="grid grid-cols-1 md:grid-cols-3 border border-ink">
       {groups.map((g, i) => (
-        <div class={`pt-7 pb-7 px-6 ${i > 0 ? 'md:border-l md:border-ink border-t md:border-t-0 border-ink' : ''}`}>
+        <div class={`pt-7 pb-7 px-6 min-w-0 ${i > 0 ? 'md:border-l md:border-ink border-t md:border-t-0 border-ink' : ''}`}>
           <div class="flex items-baseline gap-3 mb-5 pb-3 border-b border-rule">
             <h3 class="display-m">{g.title}</h3>
             <span class="font-mono text-[0.7rem] text-mute">[{g.proto}]</span>

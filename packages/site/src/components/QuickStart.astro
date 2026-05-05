@@ -14,13 +14,13 @@
           in two commands.
         </h2>
 
-        <div class="grid md:grid-cols-2 gap-px mt-12 border border-ink" style="background: var(--color-ink);">
-          <div class="bg-paper p-6 md:p-7">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-px mt-12 border border-ink" style="background: var(--color-ink);">
+          <div class="bg-paper p-6 md:p-7 min-w-0">
             <div class="sct-numeral mb-4">[step.01] // install</div>
             <pre class="font-mono text-sm p-4 overflow-x-auto" style="background: var(--color-ink); color: var(--color-paper);"><code>npm install -D @contextlint/cli</code></pre>
             <p class="text-xs text-mute mt-3 font-mono">// or: bunx, pnpm, yarn</p>
           </div>
-          <div class="bg-paper p-6 md:p-7">
+          <div class="bg-paper p-6 md:p-7 min-w-0">
             <div class="sct-numeral mb-4">[step.02] // lint</div>
             <pre class="font-mono text-sm p-4 overflow-x-auto" style="background: var(--color-ink); color: var(--color-paper);"><code>npx contextlint "**/*.md"</code></pre>
             <p class="text-xs text-mute mt-3 font-mono">// add a config file to enable cross-file rules</p>

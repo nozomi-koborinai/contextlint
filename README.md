@@ -655,6 +655,22 @@ Add to your CI pipeline to keep SKILL.md in sync with documentation:
 - run: npx contextlint compile --dry-run
 ```
 
+## Agent Skills
+
+contextlint ships [Agent Skills](https://agentskills.io) that any compatible AI agent (Claude Code, Cursor, Codex, Gemini CLI, GitHub Copilot, and more) can use to interact with your structured Markdown.
+
+| Skill | Purpose |
+| --- | --- |
+| `contextlint-fix` | Run contextlint and auto-fix detected violations |
+
+Install with the GitHub CLI (v2.90+):
+
+```sh
+gh skill install nozomi-koborinai/contextlint contextlint-fix
+```
+
+See the [Agent Skills standard](https://agentskills.io) for the full client list.
+
 ## Packages
 
 | Package | Description |

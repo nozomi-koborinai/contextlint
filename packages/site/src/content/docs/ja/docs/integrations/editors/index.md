@@ -20,6 +20,24 @@ contextlint には Language Server Protocol（LSP）実装である `@contextlin
 
 設定ファイルは CLI / MCP と同じ `contextlint.config.json` を使います。エディタ向けに別の設定ファイルを用意する必要はありません。
 
+## 実際の画面
+
+違反が検出されると、該当行にインラインで diagnostic が表示されます:
+
+![VS Code に表示される contextlint のインライン diagnostic](../../../../../../assets/lsp/diagnostics-overview.png)
+
+Hover すると、ルール ID と message の全文を確認できます:
+
+![contextlint の diagnostic にホバーしてルール ID と message を表示している様子](../../../../../../assets/lsp/diagnostic-with-hover.png)
+
+Quick Fix が用意されているルールでは Lightbulb から自動修正できます。以下は `TBL-002`（空セル）に `TODO` を挿入する例です:
+
+![TBL-002 の Quick Fix popup で TODO の挿入を提案している様子](../../../../../../assets/lsp/quickfix-tbl002-popup.png)
+
+Quick Fix を適用すると、その場で diagnostic が消えます:
+
+![TBL-002 の Quick Fix を適用した直後のエディタ](../../../../../../assets/lsp/quickfix-applied.png)
+
 ## インストール
 
 ```bash

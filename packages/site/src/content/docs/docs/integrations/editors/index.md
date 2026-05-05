@@ -20,6 +20,24 @@ contextlint ships with `@contextlint/lsp-server`, a Language Server Protocol (LS
 
 The LSP uses the same `contextlint.config.json` as the CLI and MCP server. There's no editor-specific config to maintain.
 
+## What it looks like
+
+Diagnostics appear inline next to the offending text:
+
+![Inline contextlint diagnostics shown in VS Code](../../../../../assets/lsp/diagnostics-overview.png)
+
+Hovering a diagnostic surfaces the rule ID and full message:
+
+![Hovering a contextlint diagnostic shows the rule ID and message](../../../../../assets/lsp/diagnostic-with-hover.png)
+
+The Quick Fix lightbulb offers an auto-fix where one is available — here, `TBL-002` proposes inserting `TODO` into the empty cell:
+
+![Quick Fix popup for TBL-002 offering to insert TODO](../../../../../assets/lsp/quickfix-tbl002-popup.png)
+
+After applying the fix, the diagnostic clears in the same buffer:
+
+![Editor view after the TBL-002 Quick Fix has been applied](../../../../../assets/lsp/quickfix-applied.png)
+
 ## Installation
 
 ```bash

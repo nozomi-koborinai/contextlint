@@ -101,10 +101,7 @@
       }
     },
     {
-      "rule": "grp002",
-      "options": {
-        "exclude": ["screen_task_detail.md"]
-      }
+      "rule": "grp002"
     },
     {
       "rule": "grp003",

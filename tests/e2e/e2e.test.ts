@@ -160,8 +160,13 @@ for (const fixture of fixtures) {
 
     // --- Graph rules (GRP) ---
 
-    it("GRP-002: no circular references detected", () => {
-      expect(messagesFor(results, "GRP-002")).toHaveLength(0);
+    it("GRP-002: detects screen_task_list <-> screen_task_detail cycle", () => {
+      const violations = messagesFor(results, "GRP-002");
+      // The two screen docs link to each other (forward + back navigation),
+      // forming a real circular reference that GRP-002 should flag.
+      expect(violations).toHaveLength(1);
+      expect(violations[0]?.message).toContain("screen_task_list.md");
+      expect(violations[0]?.message).toContain("screen_task_detail.md");
     });
 
     it("GRP-003: detects orphan document (screen_login.md)", () => {
@@ -172,11 +177,12 @@ for (const fixture of fixtures) {
       expect(violations[0]?.message).toContain("screen_login.md");
     });
 
-    it("total violation count is 6", () => {
+    it("total violation count is 7", () => {
       const total = results.reduce((sum, r) => sum + r.messages.length, 0);
       // 3 TBL-001 (open items table) + 1 REF-001 (broken link)
-      // + 1 CTX-001 (TBD placeholder) + 1 GRP-003 (orphan) = 6
-      expect(total).toBe(6);
+      // + 1 CTX-001 (TBD placeholder) + 1 GRP-002 (back-nav cycle)
+      // + 1 GRP-003 (orphan) = 7
+      expect(total).toBe(7);
     });
   });
 }

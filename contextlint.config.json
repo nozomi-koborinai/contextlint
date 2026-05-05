@@ -1,8 +1,25 @@
 {
   "$schema": "./schema.json",
-  "include": ["docs/**/*.md"],
+  "include": [
+    "docs/**/*.md",
+    "packages/site/src/content/docs/**/*.md"
+  ],
   "rules": [
-    { "rule": "ref001" },
+    {
+      "rule": "ref001",
+      "options": {
+        "siteRouter": {
+          "preset": "starlight",
+          "contentDir": "packages/site/src/content/docs",
+          "defaultLocale": "root",
+          "locales": ["root", "ja", "ko", "zh"]
+        }
+      }
+    },
+    { "rule": "ref005" },
+    { "rule": "ref006" },
+    { "rule": "chk001" },
+    { "rule": "ctx001" },
     { "rule": "grp002" },
     {
       "rule": "sec001",
@@ -11,6 +28,89 @@
         "sections": ["Context", "Decision", "Consequences"]
       }
     },
-    { "rule": "ctx001" }
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "content/docs/docs/rules/*-*.md",
+        "sections": ["Overview", "Why it matters", "Options", "Bad example", "After fix", "Configuration example", "Related rules"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "ja/docs/rules/*-*.md",
+        "sections": ["概要", "なぜ必要か", "オプション", "違反例", "修正後", "設定例", "関連ルール"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "ko/docs/rules/*-*.md",
+        "sections": ["개요", "왜 필요한가", "옵션", "위반 예시", "수정 후", "설정 예시", "관련 규칙"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "zh/docs/rules/*-*.md",
+        "sections": ["概述", "为什么需要", "选项", "违例", "修正后", "配置示例", "相关规则"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "content/docs/docs/graph-api/*-*.md",
+        "sections": ["Overview", "Why it exists", "Signature", "Parameters", "Return value", "Example", "Related functions"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "ja/docs/graph-api/*-*.md",
+        "sections": ["概要", "なぜ必要か", "シグネチャ", "引数", "戻り値", "使用例", "関連関数"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "ko/docs/graph-api/*-*.md",
+        "sections": ["개요", "왜 필요한가", "시그니처", "인수", "반환값", "사용 예시", "관련 함수"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "zh/docs/graph-api/*-*.md",
+        "sections": ["概述", "为什么需要", "签名", "参数", "返回值", "使用示例", "相关函数"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "content/docs/docs/recipes/{adr-style-repo-setup,spec-driven-development-setup,monorepo-setup}.md",
+        "sections": ["Which projects it suits", "Recommended config (contextlint.config.json)", "Why each rule was chosen", "Operational notes"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "ja/docs/recipes/{adr-style-repo-setup,spec-driven-development-setup,monorepo-setup}.md",
+        "sections": ["どんなプロジェクトに向くか", "推奨構成 (contextlint.config.json)", "各ルールを選んだ理由", "運用上の注意点"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "ko/docs/recipes/{adr-style-repo-setup,spec-driven-development-setup,monorepo-setup}.md",
+        "sections": ["어떤 프로젝트에 적합한가", "권장 구성 (contextlint.config.json)", "각 규칙을 선택한 이유", "운영상의 주의점"]
+      }
+    },
+    {
+      "rule": "sec001",
+      "options": {
+        "files": "zh/docs/recipes/{adr-style-repo-setup,spec-driven-development-setup,monorepo-setup}.md",
+        "sections": ["适用于哪类项目", "推荐配置 (contextlint.config.json)", "选择各条规则的理由", "运维上的注意事项"]
+      }
+    }
   ]
 }

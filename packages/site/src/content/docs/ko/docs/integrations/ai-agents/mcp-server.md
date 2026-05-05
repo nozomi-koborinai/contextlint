@@ -78,7 +78,7 @@ glob 패턴에 일치하는 파일을 `contextlint.config.json`의 설정으로 
 
 | 입력 | 타입 | 개요 |
 | --- | --- | --- |
-| `patterns` | string[](선택) | glob 패턴. 생략 시는 config의 `include`, 그것도 없으면 `["**/*.md"]` |
+| `patterns` | string[] (선택) | glob 패턴. 생략 시는 config의 `include`, 그것도 없으면 `["**/*.md"]` |
 | `configPath` | string(선택) | 설정 파일 경로. 생략 시는 부모 디렉터리를 거슬러 올라 자동 감지 |
 | `cwd` | string(선택) | 작업 디렉터리 |
 

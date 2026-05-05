@@ -20,6 +20,24 @@ contextlint 自带 Language Server Protocol（LSP）实现 `@contextlint/lsp-ser
 
 配置文件使用与 CLI / MCP 相同的 `contextlint.config.json`，无需为编辑器单独准备配置文件。
 
+## 实际界面
+
+检测到违例时，会在对应行内联显示 diagnostic：
+
+![VS Code 中显示的 contextlint 内联 diagnostic](../../../../../../assets/lsp/diagnostics-overview.png)
+
+将鼠标悬停在 diagnostic 上，可查看规则 ID 和 message 全文：
+
+![悬停在 contextlint 的 diagnostic 上以显示规则 ID 和 message](../../../../../../assets/lsp/diagnostic-with-hover.png)
+
+具备 Quick Fix 的规则可通过 Lightbulb 自动修复。下面是 `TBL-002`（空单元格）插入 `TODO` 的示例：
+
+![TBL-002 的 Quick Fix 弹窗提议插入 TODO](../../../../../../assets/lsp/quickfix-tbl002-popup.png)
+
+应用 Quick Fix 之后，diagnostic 在原位置即刻消失：
+
+![应用 TBL-002 的 Quick Fix 之后的编辑器视图](../../../../../../assets/lsp/quickfix-applied.png)
+
 ## 安装
 
 ```bash

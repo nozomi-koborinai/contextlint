@@ -20,6 +20,24 @@ contextlint에는 Language Server Protocol(LSP) 구현인 `@contextlint/lsp-serv
 
 설정 파일은 CLI / MCP와 동일한 `contextlint.config.json`을 사용합니다. 에디터용으로 별도의 설정 파일을 준비할 필요는 없습니다.
 
+## 실제 화면
+
+위반이 검출되면 해당 행에 인라인으로 diagnostic이 표시됩니다:
+
+![VS Code에 표시되는 contextlint의 인라인 diagnostic](../../../../../../assets/lsp/diagnostics-overview.png)
+
+Hover 하면 규칙 ID와 message 전문을 확인할 수 있습니다:
+
+![contextlint의 diagnostic에 호버해 규칙 ID와 message를 표시한 모습](../../../../../../assets/lsp/diagnostic-with-hover.png)
+
+Quick Fix가 준비된 규칙은 Lightbulb에서 자동 수정할 수 있습니다. 아래는 `TBL-002`(빈 셀)에 `TODO`를 삽입하는 예입니다:
+
+![TBL-002의 Quick Fix 팝업이 TODO 삽입을 제안하는 모습](../../../../../../assets/lsp/quickfix-tbl002-popup.png)
+
+Quick Fix를 적용하면 같은 자리에서 diagnostic이 사라집니다:
+
+![TBL-002의 Quick Fix를 적용한 직후의 에디터](../../../../../../assets/lsp/quickfix-applied.png)
+
 ## 설치
 
 ```bash

@@ -640,6 +640,22 @@ CI 파이프라인에 추가하여 SKILL.md를 문서와 동기화합니다:
 - run: npx contextlint compile --dry-run
 ```
 
+## Agent Skills
+
+contextlint는 [Agent Skills](https://agentskills.io)를 제공합니다. Claude Code, Cursor, Codex, Gemini CLI, GitHub Copilot 등 호환되는 모든 AI 에이전트에서 구조화된 Markdown 작업에 사용할 수 있습니다.
+
+| Skill | 용도 |
+| --- | --- |
+| `contextlint-fix` | contextlint를 실행하여 감지된 위반 사항을 자동 수정 |
+
+GitHub CLI (v2.90+)로 설치:
+
+```sh
+gh skill install nozomi-koborinai/contextlint contextlint-fix
+```
+
+전체 클라이언트 목록은 [Agent Skills 표준](https://agentskills.io)을 참조하세요.
+
 ## 패키지 구성
 
 | 패키지 | 설명 |

@@ -623,6 +623,22 @@ contextlint compile --outdir .claude/skills/my-skill
 - run: npx contextlint compile --dry-run
 ```
 
+## Agent Skills
+
+contextlint 提供 [Agent Skills](https://agentskills.io)，让任何兼容的 AI 代理（Claude Code、Cursor、Codex、Gemini CLI、GitHub Copilot 等）能够操作您的结构化 Markdown。
+
+| Skill | 用途 |
+| --- | --- |
+| `contextlint-fix` | 运行 contextlint 并自动修复检测到的违规 |
+
+通过 GitHub CLI (v2.90+) 安装：
+
+```sh
+gh skill install nozomi-koborinai/contextlint contextlint-fix
+```
+
+完整的客户端列表请参考 [Agent Skills 标准](https://agentskills.io)。
+
 ## 包结构
 
 | 包名 | 说明 |

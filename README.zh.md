@@ -630,6 +630,8 @@ contextlint 提供 [Agent Skills](https://agentskills.io)，让任何兼容的 A
 | Skill | 用途 |
 | --- | --- |
 | `contextlint-fix` | 运行 contextlint 并自动修复检测到的违规 |
+| `contextlint-init` | 将 contextlint 引导到仓库（扫描布局、推断规则、安装 CLI） |
+| `contextlint-impact` | 使用 Context Graph 分析更改或删除文档的影响 |
 
 通过 GitHub CLI (v2.90+) 安装：
 

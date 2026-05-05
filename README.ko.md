@@ -647,6 +647,8 @@ contextlint는 [Agent Skills](https://agentskills.io)를 제공합니다. Claude
 | Skill | 용도 |
 | --- | --- |
 | `contextlint-fix` | contextlint를 실행하여 감지된 위반 사항을 자동 수정 |
+| `contextlint-init` | repo에 contextlint 부트스트랩 (레이아웃 스캔, 규칙 추론, CLI 설치) |
+| `contextlint-impact` | Context Graph로 문서 변경 / 삭제의 영향 분석 |
 
 GitHub CLI (v2.90+)로 설치:
 

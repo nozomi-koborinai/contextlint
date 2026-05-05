@@ -5,7 +5,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 export default defineConfig(
-  globalIgnores(["**/dist/**", "**/.astro/**"]),
+  globalIgnores(["**/dist/**", "**/.astro/**", "packages/site/**"]),
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
   {

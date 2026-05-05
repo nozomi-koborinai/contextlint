@@ -371,3 +371,142 @@ describe("compile subcommand", () => {
     expect(existsSync(skillPath)).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// siteRouter (Starlight) — end-to-end through the CLI
+// ---------------------------------------------------------------------------
+
+/**
+ * Set up a Starlight-shaped fixture under <dir>/src/content/docs.
+ * Pages link to each other via absolute SSG URLs (e.g. /docs/a/) so the
+ * resolution path can only succeed when siteRouter is configured.
+ */
+function createStarlightFixture(
+  dir: string,
+  rules: unknown[],
+): void {
+  const contentDir = join(dir, "src", "content", "docs", "docs");
+  mkdirSync(join(contentDir, "a"), { recursive: true });
+  mkdirSync(join(contentDir, "b"), { recursive: true });
+  mkdirSync(join(contentDir, "orphan"), { recursive: true });
+
+  writeFileSync(
+    join(contentDir, "a", "index.md"),
+    `# A\n\nSee [b](/docs/b/).\n`,
+  );
+  writeFileSync(
+    join(contentDir, "b", "index.md"),
+    `# B\n\nSee [a](/docs/a/).\n`,
+  );
+  writeFileSync(
+    join(contentDir, "orphan", "index.md"),
+    `# Orphan\n\nNobody links here.\n`,
+  );
+
+  writeFileSync(
+    join(dir, "contextlint.config.json"),
+    JSON.stringify(
+      {
+        include: ["src/content/docs/**/*.md"],
+        rules,
+      },
+      null,
+      2,
+    ),
+  );
+}
+
+describe("siteRouter end-to-end", () => {
+  it("GRP-002 detects cycles through Starlight URLs when siteRouter is set", () => {
+    createStarlightFixture(testDir, [
+      {
+        rule: "grp002",
+        options: {
+          siteRouter: {
+            preset: "starlight",
+            contentDir: "src/content/docs",
+            defaultLocale: "root",
+            locales: ["root"],
+          },
+        },
+      },
+    ]);
+    const result = runCli([], testDir);
+    expect(result.stdout).toContain("Circular reference detected");
+    expect(result.stdout).toMatch(/a[/\\]index\.md/);
+    expect(result.stdout).toMatch(/b[/\\]index\.md/);
+  });
+
+  it("GRP-002 does not flag the same cycle without siteRouter (regression)", () => {
+    createStarlightFixture(testDir, [{ rule: "grp002" }]);
+    const result = runCli([], testDir);
+    // Absolute URLs are unresolvable without a router — no cycle should appear.
+    expect(result.stdout).not.toContain("Circular reference detected");
+  });
+
+  it("GRP-003 reports orphan pages reached only via Starlight URLs", () => {
+    createStarlightFixture(testDir, [
+      {
+        rule: "grp003",
+        options: {
+          files: "src/content/docs/**/*.md",
+          entryPoints: ["docs/a/index.md"],
+          siteRouter: {
+            preset: "starlight",
+            contentDir: "src/content/docs",
+            defaultLocale: "root",
+            locales: ["root"],
+          },
+        },
+      },
+    ]);
+    const result = runCli([], testDir);
+    // a is the entry point, b has an incoming reference from a, orphan has none.
+    expect(result.stdout).toContain("no incoming references");
+    expect(result.stdout).toMatch(/orphan[/\\]index\.md/);
+    expect(result.stdout).not.toMatch(/[^a-z]a[/\\]index\.md\s+has no incoming/);
+    expect(result.stdout).not.toMatch(/b[/\\]index\.md\s+has no incoming/);
+  });
+
+  it("REF-001 resolves Starlight URLs through the shared utility", () => {
+    // a links to /docs/missing/ (does not exist) and /docs/b/ (exists).
+    // The missing one must be reported; the existing one must not.
+    const contentDir = join(testDir, "src", "content", "docs", "docs");
+    mkdirSync(join(contentDir, "a"), { recursive: true });
+    mkdirSync(join(contentDir, "b"), { recursive: true });
+    writeFileSync(
+      join(contentDir, "a", "index.md"),
+      `# A\n\nSee [b](/docs/b/) and [missing](/docs/missing/).\n`,
+    );
+    writeFileSync(join(contentDir, "b", "index.md"), `# B\n`);
+
+    writeFileSync(
+      join(testDir, "contextlint.config.json"),
+      JSON.stringify(
+        {
+          include: ["src/content/docs/**/*.md"],
+          rules: [
+            {
+              rule: "ref001",
+              options: {
+                siteRouter: {
+                  preset: "starlight",
+                  contentDir: "src/content/docs",
+                  defaultLocale: "root",
+                  locales: ["root"],
+                },
+              },
+            },
+          ],
+        },
+        null,
+        2,
+      ),
+    );
+
+    const result = runCli([], testDir);
+    expect(result.stdout).toContain("/docs/missing/");
+    expect(result.stdout).toContain("does not exist");
+    expect(result.stdout).not.toContain("/docs/b/");
+  });
+});

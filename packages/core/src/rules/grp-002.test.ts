@@ -5,8 +5,9 @@ import { grp002 } from "./grp-002.js";
 import type { Grp002Options } from "./grp-002.js";
 
 /**
- * Helper: lint all files in a project and collect all messages.
- * Runs the rule against every file, as the rule engine does in production.
+ * Helper: lint a project and collect all messages.
+ * Project-scope rules are invoked once with filePath = "<project>",
+ * matching the production lintFiles pipeline.
  */
 function lint(
   filesMap: Record<string, string>,
@@ -18,14 +19,8 @@ function lint(
   }
 
   const rule = grp002(options);
-  const allMessages = [];
-
-  for (const [filePath, doc] of documents) {
-    const msgs = runRules([rule], doc, filePath, { documents });
-    allMessages.push(...msgs);
-  }
-
-  return allMessages;
+  const emptyDoc = parseDocument("");
+  return runRules([rule], emptyDoc, "<project>", { documents });
 }
 
 describe("GRP-002", () => {

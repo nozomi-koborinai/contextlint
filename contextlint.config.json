@@ -23,12 +23,7 @@
     {
       "rule": "grp002",
       "options": {
-        "siteRouter": {
-          "preset": "starlight",
-          "contentDir": "packages/site/src/content/docs",
-          "defaultLocale": "root",
-          "locales": ["root", "ja", "ko", "zh"]
-        }
+        "files": "docs/**/*.md"
       }
     },
     {

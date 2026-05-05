@@ -218,11 +218,6 @@ export function grp002(options?: Grp002Options): Rule {
         return;
       }
 
-      const firstKey = context.documents.keys().next();
-      if (firstKey.done || firstKey.value !== context.filePath) {
-        return;
-      }
-
       const adj = buildAdjacencyList(
         context.documents,
         isFileMatch,

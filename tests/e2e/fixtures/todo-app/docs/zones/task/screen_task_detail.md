@@ -22,4 +22,4 @@
 
 | From | Action | To |
 |------|--------|----|
-| This screen | Back | [Task List](./screen_task_list.md) |
+| This screen | Back | Task List |

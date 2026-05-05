@@ -1,11 +1,16 @@
 import { resolve, dirname, basename } from "node:path";
 import { globMatch } from "../utils/glob-match.js";
+import {
+  siteRouterSchema,
+  resolveRoutedUrl,
+} from "../utils/site-router.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
 
 export const grp003Schema = z.object({
   files: z.string().optional(),
   entryPoints: z.array(z.string()).optional(),
+  siteRouter: siteRouterSchema.optional(),
 }).strict().optional();
 
 export type Grp003Options = z.infer<typeof grp003Schema>;
@@ -19,6 +24,8 @@ export function grp003(options?: Grp003Options): Rule {
     ? options.entryPoints.map((pattern) => globMatch(`**/${pattern}`))
     : [];
 
+  const siteRouter = options?.siteRouter;
+
   return {
     id: "GRP-003",
     description:
@@ -31,8 +38,6 @@ export function grp003(options?: Grp003Options): Rule {
       }
 
       // Build a lookup from resolved (absolute) path to original key.
-      // This ensures link resolution matches regardless of whether
-      // the map uses relative or absolute paths.
       const resolvedToOriginal = new Map<string, string>();
       for (const filePath of context.documents.keys()) {
         resolvedToOriginal.set(resolve(filePath), filePath);
@@ -57,20 +62,29 @@ export function grp003(options?: Grp003Options): Rule {
         incomingCount.set(absPath, 0);
       }
 
-      // Scan all documents (not just matched ones) for outgoing links
+      // Scan all documents for outgoing links
       for (const [sourcePath, doc] of context.documents) {
         for (const link of doc.links) {
-          // Strip anchor fragment
           const urlWithoutAnchor = link.url.split("#")[0] ?? "";
           if (urlWithoutAnchor === "") {
             continue;
           }
 
-          // Resolve relative path from source file's directory
-          const resolvedTarget = resolve(
-            dirname(sourcePath),
-            urlWithoutAnchor,
-          );
+          let resolvedTarget: string;
+          if (urlWithoutAnchor.startsWith("/") && siteRouter) {
+            // Try siteRouter candidates; pick the first whose absolute
+            // path is in incomingCount (i.e. a matched file).
+            const candidates = resolveRoutedUrl(urlWithoutAnchor, siteRouter);
+            const found = candidates
+              .map((c) => resolve(c))
+              .find((r) => incomingCount.has(r));
+            if (!found) {
+              continue;
+            }
+            resolvedTarget = found;
+          } else {
+            resolvedTarget = resolve(dirname(sourcePath), urlWithoutAnchor);
+          }
 
           if (incomingCount.has(resolvedTarget)) {
             const current = incomingCount.get(resolvedTarget);
@@ -87,10 +101,8 @@ export function grp003(options?: Grp003Options): Rule {
           continue;
         }
 
-        // Use the original path from the documents map for display and matching
         const originalPath = resolvedToOriginal.get(absPath) ?? absPath;
 
-        // Check if the file matches any entry point pattern
         const isEntryPoint = entryPointMatchers.some(
           (matcher) => matcher(originalPath) || matcher(basename(originalPath)),
         );

@@ -5,8 +5,9 @@ import { grp002 } from "./grp-002.js";
 import type { Grp002Options } from "./grp-002.js";
 
 /**
- * Helper: lint all files in a project and collect all messages.
- * Runs the rule against every file, as the rule engine does in production.
+ * Helper: lint a project and collect all messages.
+ * Project-scope rules are invoked once with filePath = "<project>",
+ * matching the production lintFiles pipeline.
  */
 function lint(
   filesMap: Record<string, string>,
@@ -18,14 +19,8 @@ function lint(
   }
 
   const rule = grp002(options);
-  const allMessages = [];
-
-  for (const [filePath, doc] of documents) {
-    const msgs = runRules([rule], doc, filePath, { documents });
-    allMessages.push(...msgs);
-  }
-
-  return allMessages;
+  const emptyDoc = parseDocument("");
+  return runRules([rule], emptyDoc, "<project>", { documents });
 }
 
 describe("GRP-002", () => {
@@ -317,6 +312,62 @@ describe("GRP-002", () => {
       "/project/docs/overview.md": "# Overview\n\n[設計書](./設計.md)",
       "/project/docs/設計.md": "# 設計書\n\n[Overview](./overview.md)",
     });
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("Circular reference detected");
+  });
+});
+
+describe("GRP-002 with siteRouter (starlight)", () => {
+  const starlightOpts: Grp002Options = {
+    siteRouter: {
+      preset: "starlight",
+      contentDir: "/project/site/docs",
+      defaultLocale: "root",
+      locales: ["root", "ja"],
+    },
+  };
+
+  it("detects cycle through Starlight URLs in root locale", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/docs/a/index.md": "[B](/docs/b/)",
+        "/project/site/docs/docs/b/index.md": "[A](/docs/a/)",
+      },
+      starlightOpts,
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("Circular reference detected");
+  });
+
+  it("detects cycle through Starlight URLs in ja locale", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/ja/docs/a/index.md": "[B](/ja/docs/b/)",
+        "/project/site/docs/ja/docs/b/index.md": "[A](/ja/docs/a/)",
+      },
+      starlightOpts,
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("Circular reference detected");
+  });
+
+  it("ignores absolute URLs when siteRouter is NOT set (regression)", () => {
+    const messages = lint({
+      "/project/site/docs/docs/a/index.md": "[B](/docs/b/)",
+      "/project/site/docs/docs/b/index.md": "[A](/docs/a/)",
+    });
+    // Without siteRouter, absolute URLs aren't resolved -> no cycle
+    expect(messages).toEqual([]);
+  });
+
+  it("still detects relative cycles when siteRouter is set", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/concepts/a.md": "[b](./b.md)",
+        "/project/site/docs/concepts/b.md": "[a](./a.md)",
+      },
+      starlightOpts,
+    );
     expect(messages).toHaveLength(1);
     expect(messages[0].message).toContain("Circular reference detected");
   });

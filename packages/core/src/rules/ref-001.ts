@@ -1,19 +1,9 @@
 import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { globMatch } from "../utils/glob-match.js";
+import { siteRouterSchema, resolveRoutedUrl } from "../utils/site-router.js";
 import * as z from "zod/v4";
 import type { Rule } from "../rule.js";
-
-const siteRouterSchema = z.object({
-  preset: z.enum(["starlight"]).optional(),
-  contentDir: z.string(),
-  defaultLocale: z.string().optional(),
-  locales: z.array(z.string()).optional(),
-  urlPrefix: z.string().optional(),
-  indexFile: z.string().optional(),
-}).strict();
-
-type SiteRouterOptions = z.infer<typeof siteRouterSchema>;
 
 export const ref001Schema = z.object({
   exclude: z.array(z.string()).optional(),
@@ -21,61 +11,6 @@ export const ref001Schema = z.object({
 }).strict().optional();
 
 export type Ref001Options = z.infer<typeof ref001Schema>;
-
-function resolveStarlightUrl(url: string, router: SiteRouterOptions): string[] {
-  const contentDir = router.contentDir;
-  const locales = router.locales ?? [];
-  const defaultLocale = router.defaultLocale ?? "root";
-  const indexFile = router.indexFile ?? "index.md";
-
-  const trimmed = url.replace(/\/$/, "").replace(/^\//, "");
-  const parts = trimmed.split("/").filter(Boolean);
-
-  let localeFolder = "";
-  let restParts = parts;
-
-  const firstPart = parts[0];
-  if (
-    firstPart &&
-    locales.includes(firstPart) &&
-    firstPart !== defaultLocale &&
-    firstPart !== "root"
-  ) {
-    localeFolder = firstPart;
-    restParts = parts.slice(1);
-  }
-
-  const basePath = [contentDir, localeFolder, ...restParts]
-    .filter((s): s is string => Boolean(s))
-    .join("/");
-
-  return [`${basePath}/${indexFile}`, `${basePath}.md`];
-}
-
-function resolveGenericUrl(url: string, router: SiteRouterOptions): string[] {
-  const contentDir = router.contentDir;
-  const indexFile = router.indexFile ?? "index.md";
-  const urlPrefix = router.urlPrefix ?? "";
-
-  let path = url;
-  if (urlPrefix && path.startsWith(urlPrefix)) {
-    path = path.slice(urlPrefix.length);
-  }
-
-  const trimmed = path.replace(/\/$/, "").replace(/^\//, "");
-  const basePath = [contentDir, trimmed]
-    .filter((s): s is string => Boolean(s))
-    .join("/");
-
-  return [`${basePath}/${indexFile}`, `${basePath}.md`];
-}
-
-function resolveRoutedUrl(url: string, router: SiteRouterOptions): string[] {
-  if (router.preset === "starlight") {
-    return resolveStarlightUrl(url, router);
-  }
-  return resolveGenericUrl(url, router);
-}
 
 export function ref001(options?: Ref001Options): Rule {
   const excludeMatchers = options?.exclude?.map((p) => globMatch(`**/${p}`)) ?? [];

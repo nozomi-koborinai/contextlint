@@ -181,4 +181,67 @@ describe("GRP-003", () => {
     // Both files reference each other
     expect(messages).toEqual([]);
   });
+
+  // --- siteRouter (starlight preset) ---
+
+  it("counts incoming references via Starlight URL routing", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/docs/index/index.md": "[design](/docs/design/)",
+        "/project/site/docs/docs/design/index.md": "Content",
+      },
+      {
+        siteRouter: {
+          preset: "starlight",
+          contentDir: "/project/site/docs",
+          defaultLocale: "root",
+          locales: ["root"],
+        },
+        entryPoints: ["index/index.md"],
+      },
+    );
+    // design/index.md gets a reference via /docs/design/
+    // index/index.md is an entry point
+    expect(messages).toEqual([]);
+  });
+
+  it("reports orphan even when other files have Starlight URLs", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/docs/index/index.md": "[design](/docs/design/)",
+        "/project/site/docs/docs/design/index.md": "Content",
+        "/project/site/docs/docs/orphan/index.md": "Nobody links here",
+      },
+      {
+        siteRouter: {
+          preset: "starlight",
+          contentDir: "/project/site/docs",
+          defaultLocale: "root",
+          locales: ["root"],
+        },
+        entryPoints: ["index/index.md"],
+      },
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0]?.message).toContain("orphan/index.md");
+  });
+
+  it("counts ja-locale incoming references via Starlight URLs", () => {
+    const messages = lint(
+      {
+        "/project/site/docs/ja/docs/index/index.md": "[設計](/ja/docs/design/)",
+        "/project/site/docs/ja/docs/design/index.md": "コンテンツ",
+      },
+      {
+        siteRouter: {
+          preset: "starlight",
+          contentDir: "/project/site/docs",
+          defaultLocale: "root",
+          locales: ["root", "ja"],
+        },
+        entryPoints: ["ja/docs/index/index.md"],
+      },
+    );
+    expect(messages).toEqual([]);
+  });
 });

@@ -1,0 +1,76 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout
+  title="Privacy — contextlint"
+  description="contextlint.dev uses no cookies and does not track visitors. Cloudflare Web Analytics is cookieless."
+>
+  <Header />
+  <main>
+    <section class="rule-top relative">
+      <div class="container-edit pt-12 pb-20 md:pt-16 md:pb-32">
+
+        <div class="flex items-center justify-between text-[0.7rem] font-mono text-mute">
+          <div class="flex items-center gap-3">
+            <span>§ PRIVACY / 999</span>
+            <span class="opacity-50 hidden sm:inline">———</span>
+            <span class="hidden sm:inline">NO COOKIES · NO TRACKING</span>
+          </div>
+          <span class="hidden md:inline opacity-60">[Updated: 2026-05-05]</span>
+        </div>
+
+        <h1 class="display-xl mt-10">Privacy</h1>
+
+        <p class="body-lead mt-12 max-w-3xl">
+          contextlint.dev does not use cookies and does not track visitors.
+        </p>
+
+        <div class="mt-16 max-w-3xl space-y-12">
+          <div>
+            <div class="sct-numeral mb-3">// analytics</div>
+            <p class="text-[0.95rem] leading-relaxed">
+              We use <a href="https://www.cloudflare.com/web-analytics/" class="link-mark text-ink">Cloudflare Web Analytics</a>,
+              a cookieless analytics service that collects only aggregated,
+              anonymous traffic data (page views, browser types, country-level
+              location). No personal information is collected, and no cookies
+              are set.
+            </p>
+          </div>
+
+          <div>
+            <div class="sct-numeral mb-3">// infrastructure</div>
+            <p class="text-[0.95rem] leading-relaxed">
+              The site is hosted on Cloudflare Pages. Cloudflare may set
+              strictly necessary cookies (e.g., <code class="font-mono text-[0.85rem]">__cf_bm</code> for
+              bot management) at the infrastructure level — these are required
+              for security and content delivery, and are exempt from cookie
+              consent under ePrivacy / GDPR.
+            </p>
+          </div>
+
+          <div>
+            <div class="sct-numeral mb-3">// third parties</div>
+            <p class="text-[0.95rem] leading-relaxed">
+              We do not share, sell, or transfer any visitor data to third
+              parties. The site loads fonts from Google Fonts; no other
+              third-party services are used.
+            </p>
+          </div>
+
+          <div>
+            <div class="sct-numeral mb-3">// contact</div>
+            <p class="text-[0.95rem] leading-relaxed">
+              For questions, open an issue on
+              <a href="https://github.com/nozomi-koborinai/contextlint" class="link-mark text-ink">GitHub</a>.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

@@ -18,6 +18,7 @@
     "**/fixtures/**/*.md",
     "CLAUDE.md",
     ".claude/**/*.md",
-    ".github/**/*.md"
+    ".github/**/*.md",
+    "docs/**/*.md"
   ]
 }

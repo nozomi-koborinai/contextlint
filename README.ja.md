@@ -668,6 +668,8 @@ contextlint は [Agent Skills](https://agentskills.io) を提供しています�
 | Skill | 用途 |
 | --- | --- |
 | `contextlint-fix` | contextlint を実行し、検出された違反を自動修正 |
+| `contextlint-init` | repo に contextlint をセットアップ（doc 構造を scan、ルール推論、CLI install） |
+| `contextlint-impact` | Context Graph で doc の変更 / 削除の影響範囲を分析 |
 
 GitHub CLI (v2.90+) でインストール:
 

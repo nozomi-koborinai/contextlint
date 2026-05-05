@@ -662,6 +662,8 @@ contextlint ships [Agent Skills](https://agentskills.io) that any compatible AI 
 | Skill | Purpose |
 | --- | --- |
 | `contextlint-fix` | Run contextlint and auto-fix detected violations |
+| `contextlint-init` | Bootstrap contextlint into a repo (detects layout, infers rules, installs CLI) |
+| `contextlint-impact` | Analyze the impact of changing or deleting a doc using the Context Graph |
 
 Install with the GitHub CLI (v2.90+):
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from "bun:test";
+import { describe, it, expect, afterAll, beforeAll } from "bun:test";
 import { join, resolve } from "node:path";
 import {
   existsSync,
@@ -764,6 +764,90 @@ describe("E2E edge cases", () => {
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("Document Graph: 1 file");
     expect(result.stdout).toContain("0 edges");
+  });
+});
+
+// ===========================================================================
+// REF-001 siteRouter (Starlight preset) E2E
+// ===========================================================================
+
+describe("E2E REF-001 siteRouter (starlight preset)", () => {
+  const fixtureDir = join(fixturesDir, "starlight-site");
+  const configPath = join(fixtureDir, "contextlint.config.json");
+
+  // Build the config with an absolute contentDir at runtime, since the fixture
+  // path is environment-dependent.
+  beforeAll(() => {
+    writeFileSync(
+      configPath,
+      JSON.stringify(
+        {
+          include: ["content/docs/**/*.md"],
+          rules: [
+            {
+              rule: "ref001",
+              options: {
+                siteRouter: {
+                  preset: "starlight",
+                  contentDir: join(fixtureDir, "content", "docs"),
+                  defaultLocale: "root",
+                  locales: ["root", "ja"],
+                },
+              },
+            },
+          ],
+        },
+        null,
+        2,
+      ),
+    );
+  });
+
+  afterAll(() => {
+    try {
+      rmSync(configPath, { force: true });
+    } catch {
+      // ignore
+    }
+  });
+
+  it("detects only the intentional broken Starlight URL", () => {
+    const results = runFixtureLint(fixtureDir);
+    const violations = messagesFor(results, "REF-001");
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.message).toContain("/docs/missing-page/");
+  });
+
+  it("resolves root locale Starlight URLs to index.md files", () => {
+    // /docs/get-started/ → content/docs/docs/get-started/index.md
+    const results = runFixtureLint(fixtureDir);
+    const violations = messagesFor(results, "REF-001");
+    expect(
+      violations.filter((v) => v.message.includes("/docs/get-started/")),
+    ).toHaveLength(0);
+  });
+
+  it("resolves root locale URLs with .md fallback (no index.md)", () => {
+    // /docs/configuration/ → content/docs/docs/configuration.md (no index.md)
+    const results = runFixtureLint(fixtureDir);
+    const violations = messagesFor(results, "REF-001");
+    expect(
+      violations.filter((v) => v.message.includes("/docs/configuration/")),
+    ).toHaveLength(0);
+  });
+
+  it("resolves ja locale Starlight URLs", () => {
+    const results = runFixtureLint(fixtureDir);
+    const violations = messagesFor(results, "REF-001");
+    expect(
+      violations.filter((v) => v.message.includes("/ja/")),
+    ).toHaveLength(0);
+  });
+
+  it("loads all 4 fixture files via include pattern", () => {
+    const results = runFixtureLint(fixtureDir);
+    const fileCount = results.filter((r) => r.filePath !== "<project>").length;
+    expect(fileCount).toBe(4);
   });
 });
 

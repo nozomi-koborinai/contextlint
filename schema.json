@@ -337,6 +337,40 @@
                     "type": "array",
                     "items": { "type": "string" },
                     "description": "Glob patterns for link targets to exclude from checking (e.g. [\"*.pdf\", \"external/**\"])."
+                  },
+                  "siteRouter": {
+                    "type": "object",
+                    "description": "Site router config for resolving routed URLs (e.g. Starlight URL convention).",
+                    "properties": {
+                      "preset": {
+                        "type": "string",
+                        "enum": ["starlight"],
+                        "description": "Preset for known SSGs. Currently supports: starlight. Omit for generic urlPrefix-based resolution."
+                      },
+                      "contentDir": {
+                        "type": "string",
+                        "description": "Directory containing the source Markdown files (e.g. \"packages/site/src/content/docs\")."
+                      },
+                      "defaultLocale": {
+                        "type": "string",
+                        "description": "Default locale identifier. Use \"root\" for Starlight's prefix-less root locale."
+                      },
+                      "locales": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "List of supported locale identifiers (e.g. [\"root\", \"ja\", \"ko\", \"zh\"])."
+                      },
+                      "urlPrefix": {
+                        "type": "string",
+                        "description": "(Generic, no preset) URL prefix to strip before resolving."
+                      },
+                      "indexFile": {
+                        "type": "string",
+                        "description": "Index file name to try first (default: \"index.md\")."
+                      }
+                    },
+                    "required": ["contentDir"],
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false

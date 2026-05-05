@@ -173,3 +173,155 @@ describe("REF-001", () => {
     expect(messages[0].message).toContain("需求文档.md");
   });
 });
+
+describe("REF-001 with siteRouter (starlight preset)", () => {
+  const starlightOptions: Ref001Options = {
+    siteRouter: {
+      preset: "starlight",
+      contentDir: "/project/site/docs",
+      defaultLocale: "root",
+      locales: ["root", "ja", "ko", "zh"],
+    },
+  };
+
+  it("resolves root locale URL to <contentDir>/<rest>/index.md", () => {
+    const messages = lint(
+      "/project/site/docs/index.md",
+      {
+        "/project/site/docs/index.md": "[get started](/docs/get-started/)",
+        "/project/site/docs/docs/get-started/index.md": "# Get Started",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("resolves ja locale URL to <contentDir>/ja/<rest>/index.md", () => {
+    const messages = lint(
+      "/project/site/docs/ja/index.md",
+      {
+        "/project/site/docs/ja/index.md": "[はじめに](/ja/docs/get-started/)",
+        "/project/site/docs/ja/docs/get-started/index.md": "# はじめに",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("resolves ko locale URL to <contentDir>/ko/<rest>/index.md", () => {
+    const messages = lint(
+      "/project/site/docs/ko/index.md",
+      {
+        "/project/site/docs/ko/index.md": "[시작하기](/ko/docs/get-started/)",
+        "/project/site/docs/ko/docs/get-started/index.md": "# 시작하기",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("resolves zh locale URL to <contentDir>/zh/<rest>/index.md", () => {
+    const messages = lint(
+      "/project/site/docs/zh/index.md",
+      {
+        "/project/site/docs/zh/index.md": "[入门](/zh/docs/get-started/)",
+        "/project/site/docs/zh/docs/get-started/index.md": "# 入门",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("reports broken Starlight URL when target file does not exist", () => {
+    const messages = lint(
+      "/project/site/docs/index.md",
+      {
+        "/project/site/docs/index.md": "[missing](/docs/missing-page/)",
+      },
+      starlightOptions,
+    );
+    expect(messages).toHaveLength(1);
+    expect(messages[0].message).toContain("/docs/missing-page/");
+  });
+
+  it("resolves Starlight URL with .md fallback when no index.md", () => {
+    const messages = lint(
+      "/project/site/docs/index.md",
+      {
+        "/project/site/docs/index.md": "[direct](/docs/single-page/)",
+        "/project/site/docs/docs/single-page.md": "# Single Page",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("strips anchor from Starlight URL when checking", () => {
+    const messages = lint(
+      "/project/site/docs/index.md",
+      {
+        "/project/site/docs/index.md": "[heading](/docs/get-started/#section)",
+        "/project/site/docs/docs/get-started/index.md": "# Get Started",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("still resolves relative paths when siteRouter is set", () => {
+    const messages = lint(
+      "/project/site/docs/concepts/overview.md",
+      {
+        "/project/site/docs/concepts/overview.md": "[next](./details.md)",
+        "/project/site/docs/concepts/details.md": "# Details",
+      },
+      starlightOptions,
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("treats absolute URL as filesystem path when siteRouter is NOT set", () => {
+    // Regression: without siteRouter, /docs/get-started/ is filesystem-resolved
+    // (existing behavior preserved)
+    const messages = lint("/project/site/docs/index.md", {
+      "/project/site/docs/index.md": "[get started](/docs/get-started/)",
+      "/project/site/docs/docs/get-started/index.md": "# Get Started",
+    });
+    expect(messages).toHaveLength(1);
+  });
+});
+
+describe("REF-001 with siteRouter (generic, no preset)", () => {
+  it("resolves URL via urlPrefix + contentDir mapping", () => {
+    const messages = lint(
+      "/project/wiki/index.md",
+      {
+        "/project/wiki/index.md": "[page](/wiki/some-page/)",
+        "/project/wiki/some-page/index.md": "# Some Page",
+      },
+      {
+        siteRouter: {
+          contentDir: "/project/wiki",
+          urlPrefix: "/wiki",
+        },
+      },
+    );
+    expect(messages).toEqual([]);
+  });
+
+  it("reports broken URL with generic router", () => {
+    const messages = lint(
+      "/project/wiki/index.md",
+      {
+        "/project/wiki/index.md": "[missing](/wiki/missing/)",
+      },
+      {
+        siteRouter: {
+          contentDir: "/project/wiki",
+          urlPrefix: "/wiki",
+        },
+      },
+    );
+    expect(messages).toHaveLength(1);
+  });
+});

@@ -6,6 +6,7 @@ import type {
   Definition,
   Heading,
   Image,
+  InlineCode,
   Link,
   ListItem,
   Table,
@@ -62,6 +63,9 @@ export interface ParsedDocument {
 function extractText(node: Node): string {
   if (node.type === "text") {
     return (node as Text).value;
+  }
+  if (node.type === "inlineCode") {
+    return (node as InlineCode).value;
   }
   if ("children" in node) {
     return (node as { children: Node[] }).children.map(extractText).join("");

@@ -56,6 +56,11 @@
     font-feature-settings: "calt", "ss01";
   }
 
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
   hr {
     border: 0;
     border-top: 1px solid var(--color-rule);

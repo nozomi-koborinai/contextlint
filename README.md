@@ -37,21 +37,23 @@ Markdown. No AI, no cost, CI-friendly.
 
 ## Quick Start
 
-Install the CLI:
+**AI-assisted (recommended)** — for Claude Code, Cursor, Codex, Gemini CLI,
+GitHub Copilot, and any [Agent Skills](https://agentskills.io)-compatible
+client. Requires GitHub CLI **v2.90+**:
+
+```sh
+gh skill install nozomi-koborinai/contextlint contextlint-init
+```
+
+Then ask your agent to "set up contextlint". The skill detects your repo
+layout, infers rules, installs the CLI, and writes `contextlint.config.json`
+for you.
+
+**Manual setup**:
 
 ```bash
 npm install -D @contextlint/cli
-```
-
-Generate a config interactively:
-
-```bash
 npx contextlint init
-```
-
-Run:
-
-```bash
 npx contextlint
 ```
 
@@ -66,9 +68,6 @@ docs/design.md
 
 1 error, 1 warning in 2 files
 ```
-
-For AI-assisted setup with `gh skill install`, see
-[Get Started](https://contextlint.dev/docs/get-started/).
 
 ## Rules
 

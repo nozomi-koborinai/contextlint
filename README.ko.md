@@ -36,21 +36,23 @@ contextlint는 구조화된 Markdown을 위한
 
 ## 빠른 시작
 
-CLI 설치:
+**AI 지원 셋업(권장)** — Claude Code, Cursor, Codex, Gemini CLI,
+GitHub Copilot 등 [Agent Skills](https://agentskills.io) 호환 클라이언트용.
+GitHub CLI **v2.90 이상** 필요:
+
+```sh
+gh skill install nozomi-koborinai/contextlint contextlint-init
+```
+
+이후 에이전트에게 "contextlint 셋업해줘"라고 지시하세요.
+Skill이 저장소 레이아웃을 감지하고, 규칙을 추론하고, CLI를 설치하고,
+`contextlint.config.json`을 작성해 줍니다.
+
+**수동 셋업**:
 
 ```bash
 npm install -D @contextlint/cli
-```
-
-대화식으로 설정 파일 생성:
-
-```bash
 npx contextlint init
-```
-
-실행:
-
-```bash
 npx contextlint
 ```
 
@@ -65,9 +67,6 @@ docs/design.md
 
 1 error, 1 warning in 2 files
 ```
-
-`gh skill install`을 사용한 AI 지원 셋업은
-[Get Started](https://contextlint.dev/ko/docs/get-started/)를 참조하세요.
 
 ## 규칙
 

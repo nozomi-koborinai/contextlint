@@ -34,4 +34,4 @@ for editor-specific setup snippets (Neovim, Helix, JetBrains).
 
 ## License
 
-[MIT](https://github.com/nozomi-koborinai/contextlint/blob/main/LICENSE)
+[Apache 2.0](https://github.com/nozomi-koborinai/contextlint/blob/main/LICENSE)

@@ -1,7 +1,7 @@
 ---
 name: contextlint-impact
 description: Analyze the impact of changing or deleting a Markdown document by leveraging contextlint's Context Graph. Use this skill whenever the user asks "what breaks if I change X?", "what depends on this doc?", "is it safe to delete this file?", or wants to plan a refactor / understand cross-doc dependencies — even if they don't mention contextlint by name. Detects direct vs transitive impact, identifies orphan docs, and surfaces hidden dependencies that grep alone can't find. Built on contextlint's deterministic graph engine — same input, same answer.
-license: MIT
+license: Apache-2.0
 compatibility: Requires the @contextlint/cli npm package available in the project (will be invoked via npx) and a configured contextlint.config.json with cross-file rules (`ref001`, `grp002`) enabled.
 metadata:
   homepage: https://contextlint.dev

@@ -9,7 +9,7 @@
 [![mcp-server downloads](https://img.shields.io/npm/dm/@contextlint/mcp-server.svg?label=mcp-server%20downloads)](https://www.npmjs.com/package/@contextlint/mcp-server)
 [![lsp-server downloads](https://img.shields.io/npm/dm/@contextlint/lsp-server.svg?label=lsp-server%20downloads)](https://www.npmjs.com/package/@contextlint/lsp-server)
 [![CI](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml/badge.svg)](https://github.com/nozomi-koborinai/contextlint/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 🌐 [English](README.md) | [中文](README.zh.md) | [한국어](README.ko.md)
 
@@ -118,4 +118,4 @@ contextlint は **21 のルール**を 7 カテゴリで提供します:
 
 ## ライセンス
 
-[MIT](LICENSE)
+[Apache 2.0](LICENSE)

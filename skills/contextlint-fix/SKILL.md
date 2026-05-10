@@ -1,7 +1,7 @@
 ---
 name: contextlint-fix
 description: Run contextlint over the project's structured Markdown and fix the violations it detects. Use this skill whenever the user asks to fix lint errors, clean up docs, repair broken Markdown links, or after bulk edits to documentation (especially AI-generated specs/ADRs) — even if they don't explicitly mention contextlint by name. Handles broken cross-references, missing required sections, empty table cells, leftover placeholders (TODO/TBD), and circular dependency references across the documentation graph. Reach for this any time the user mentions doc integrity, broken refs, or wants their Markdown checked.
-license: MIT
+license: Apache-2.0
 compatibility: Requires the @contextlint/cli npm package available in the project (will be invoked via npx). Network access only needed if installing the CLI.
 metadata:
   homepage: https://contextlint.dev

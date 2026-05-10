@@ -1,7 +1,7 @@
 ---
 name: contextlint-init
 description: Bootstrap contextlint into a repository. Use this skill whenever the user wants to set up, install, initialize, or configure contextlint — even if they only say "lint setup", "doc integrity check", or "set up Markdown linting" without naming contextlint by name. Detects the package manager (bun/npm/pnpm/yarn), scans the repo's actual doc layout (no hardcoded `docs/` assumption), infers a rule set tailored to the project's structure (ADR style, spec style, table-heavy, etc.), installs `@contextlint/cli`, and writes `contextlint.config.json`. Also handles existing contextlint setups and offers optional GitHub Actions workflow + README scaffolding.
-license: MIT
+license: Apache-2.0
 compatibility: Requires bun, npm, pnpm, or yarn for installing @contextlint/cli. Network access needed to fetch the package from npm.
 metadata:
   homepage: https://contextlint.dev

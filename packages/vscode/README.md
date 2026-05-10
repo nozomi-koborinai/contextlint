@@ -39,4 +39,4 @@ in the main repository.
 
 ## License
 
-[MIT](https://github.com/nozomi-koborinai/contextlint/blob/main/LICENSE)
+[Apache 2.0](https://github.com/nozomi-koborinai/contextlint/blob/main/LICENSE)

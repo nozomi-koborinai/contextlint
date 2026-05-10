@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import starlight from '@astrojs/starlight';
@@ -30,9 +29,9 @@ export default defineConfig({
         },
       ],
       sidebar: [
-        { label: 'Get Started', autogenerate: { directory: 'docs/get-started' } },
-        { label: 'Concepts', autogenerate: { directory: 'docs/concepts' } },
-        { label: 'Configuration', autogenerate: { directory: 'docs/configuration' } },
+        { label: 'Get Started', items: [{ autogenerate: { directory: 'docs/get-started' } }] },
+        { label: 'Concepts', items: [{ autogenerate: { directory: 'docs/concepts' } }] },
+        { label: 'Configuration', items: [{ autogenerate: { directory: 'docs/configuration' } }] },
         {
           label: 'Rules',
           items: [
@@ -91,10 +90,10 @@ export default defineConfig({
             },
           ],
         },
-        { label: 'Integrations', autogenerate: { directory: 'docs/integrations' } },
-        { label: 'Graph API', autogenerate: { directory: 'docs/graph-api' } },
-        { label: 'Recipes', autogenerate: { directory: 'docs/recipes' } },
-        { label: 'Contributing', autogenerate: { directory: 'docs/contributing' } },
+        { label: 'Integrations', items: [{ autogenerate: { directory: 'docs/integrations' } }] },
+        { label: 'Graph API', items: [{ autogenerate: { directory: 'docs/graph-api' } }] },
+        { label: 'Recipes', items: [{ autogenerate: { directory: 'docs/recipes' } }] },
+        { label: 'Contributing', items: [{ autogenerate: { directory: 'docs/contributing' } }] },
       ],
       plugins: [starlightLlmsTxt()],
       components: {

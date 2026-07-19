@@ -1,5 +1,5 @@
-import { DiagnosticSeverity } from "vscode-languageserver/node.js";
-import type { Diagnostic } from "vscode-languageserver/node.js";
+import { DiagnosticSeverity } from "vscode-languageserver/node";
+import type { Diagnostic } from "vscode-languageserver/node";
 import type { LintMessage, Severity } from "@contextlint/core";
 
 export function toDiagnostic(message: LintMessage): Diagnostic {

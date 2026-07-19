@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { DiagnosticSeverity } from "vscode-languageserver/node.js";
+import { DiagnosticSeverity } from "vscode-languageserver/node";
 import type { LintMessage } from "@contextlint/core";
 import { toDiagnostic, toDiagnostics } from "./diagnostics.js";
 

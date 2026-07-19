@@ -3,11 +3,11 @@ import {
   ProposedFeatures,
   TextDocuments,
   TextDocumentSyncKind,
-} from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
 import type {
   Diagnostic,
   InitializeResult,
-} from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import type { LoadedConfig } from "./config-loader.js";
 import { tryLoadConfig } from "./config-loader.js";

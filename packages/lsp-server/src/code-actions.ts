@@ -1,10 +1,10 @@
-import { CodeActionKind } from "vscode-languageserver/node.js";
+import { CodeActionKind } from "vscode-languageserver/node";
 import type {
   CodeAction,
   CodeActionParams,
   Diagnostic,
   TextEdit,
-} from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
 import type { TextDocument } from "vscode-languageserver-textdocument";
 
 const TBL_002_PLACEHOLDER = "TODO";

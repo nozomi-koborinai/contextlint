@@ -24,7 +24,8 @@ export function registerCompileCommand(program: Command): void {
         const cwd = resolve(opts.cwd);
         const { config } = resolveConfig(cwd, opts.config);
 
-        if (!config.compile) {
+        const compile = config.compile;
+        if (!compile) {
           console.error(
             "Error: No 'compile' section found in config. Add a 'compile' section to contextlint.config.json.",
           );
@@ -38,7 +39,7 @@ export function registerCompileCommand(program: Command): void {
 
           const outdir = resolve(
             cwd,
-            opts.outdir ?? config.compile.outdir ?? ".claude/skills/contextlint",
+            opts.outdir ?? compile.outdir ?? ".claude/skills/contextlint",
           );
           const skillPath = resolve(outdir, "SKILL.md");
           const { documentCount, ruleCount, componentCount } = result.metadata;

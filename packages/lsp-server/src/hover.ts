@@ -1,11 +1,11 @@
-import { MarkupKind } from "vscode-languageserver/node.js";
+import { MarkupKind } from "vscode-languageserver/node";
 import type {
   Diagnostic,
   Hover,
   HoverParams,
   Position,
   Range,
-} from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
 
 /**
  * Return hover content for the diagnostic under the cursor.
@@ -23,7 +23,7 @@ export function hoverForDiagnostics(
   return {
     contents: {
       kind: MarkupKind.Markdown,
-      value: `${title}\n\n${hit.message}`,
+      value: `${title}\n\n${diagnosticMessage(hit)}`,
     },
     range: hit.range,
   };
@@ -33,6 +33,10 @@ function diagnosticCode(d: Diagnostic): string {
   if (typeof d.code === "string") return d.code;
   if (typeof d.code === "number") return String(d.code);
   return "";
+}
+
+function diagnosticMessage(d: Diagnostic): string {
+  return typeof d.message === "string" ? d.message : d.message.value;
 }
 
 function isInRange(pos: Position, range: Range): boolean {

@@ -2,8 +2,8 @@ import { describe, it, expect } from "bun:test";
 import {
   DiagnosticSeverity,
   MarkupKind,
-} from "vscode-languageserver/node.js";
-import type { Diagnostic, HoverParams } from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
+import type { Diagnostic, HoverParams } from "vscode-languageserver/node";
 import { hoverForDiagnostics } from "./hover.js";
 
 function diag(

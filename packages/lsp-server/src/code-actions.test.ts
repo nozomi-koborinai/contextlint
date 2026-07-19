@@ -2,12 +2,12 @@ import { describe, it, expect } from "bun:test";
 import {
   CodeActionKind,
   DiagnosticSeverity,
-} from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
 import type {
   CodeActionParams,
   Diagnostic,
   TextEdit,
-} from "vscode-languageserver/node.js";
+} from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { provideCodeActions } from "./code-actions.js";
 

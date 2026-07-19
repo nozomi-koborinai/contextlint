@@ -13,7 +13,7 @@
   "private": true,
   "publisher": "contextlint",
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.91.0"
   },
   "main": "./dist/extension.js",
   "activationEvents": [
@@ -43,10 +43,10 @@
   },
   "dependencies": {
     "@contextlint/lsp-server": "workspace:*",
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^10.1.0"
   },
   "devDependencies": {
-    "@types/vscode": "^1.82.0"
+    "@types/vscode": "^1.91.0"
   },
   "license": "Apache-2.0"
 }

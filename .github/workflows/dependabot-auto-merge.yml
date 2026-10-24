@@ -26,8 +26,28 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
         run: |
           set -euo pipefail
+
+          # fetch-metadata joins dependency-names with ", ".
+          # Comma boundaries make this an exact name match.
+          # Same names as dependabot.yml exclude-patterns. This job must not read that file.
+          requires_manual_review() {
+            local normalized=",$(printf '%s' "$1" | tr -d '[:space:]'),"
+            case "$normalized" in
+              *',@astrojs/starlight,'*|*',starlight-llms-txt,'*)
+                return 0
+                ;;
+            esac
+            return 1
+          }
+
+          if requires_manual_review "$DEPENDENCY_NAMES"; then
+            echo "Manual review required for ${DEPENDENCY_NAMES}."
+            exit 0
+          fi
+
           state="$(gh pr view "$PR_URL" --json state --jq .state)"
           if [ "$state" != "OPEN" ]; then
             echo "Pull request is ${state}."

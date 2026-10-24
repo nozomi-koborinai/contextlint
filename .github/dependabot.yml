@@ -8,6 +8,10 @@ updates:
       minor-and-patch:
         patterns:
           - "*"
+        # Also listed in requires_manual_review in dependabot-auto-merge.yml. Those PRs are never auto-merged.
+        exclude-patterns:
+          - "@astrojs/starlight"
+          - "starlight-llms-txt"
         update-types:
           - "minor"
           - "patch"

@@ -26,8 +26,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
         run: |
           set -euo pipefail
+          normalized=",$(printf '%s' "$DEPENDENCY_NAMES" | tr -d ' '),"
+          case "$normalized" in
+            *,@astrojs/starlight,*|*,starlight-llms-txt,*)
+              echo "Skipping auto-merge. Starlight updates are reviewed manually."
+              exit 0
+              ;;
+          esac
           state="$(gh pr view "$PR_URL" --json state --jq .state)"
           if [ "$state" != "OPEN" ]; then
             echo "Pull request is ${state}."

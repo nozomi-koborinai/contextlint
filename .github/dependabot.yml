@@ -8,6 +8,9 @@ updates:
       minor-and-patch:
         patterns:
           - "*"
+        exclude-patterns:
+          - "@astrojs/starlight"
+          - "starlight-llms-txt"
         update-types:
           - "minor"
           - "patch"

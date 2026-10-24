@@ -26,8 +26,26 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
         run: |
           set -euo pipefail
+
+          # fetch-metadata joins dependency-names with ", ".
+          requires_manual_review() {
+            local comma_bounded_names=",$(printf '%s' "$1" | tr -d '[:space:]'),"
+            case "$comma_bounded_names" in
+              *',@astrojs/starlight,'*|*',starlight-llms-txt,'*)
+                return 0
+                ;;
+            esac
+            return 1
+          }
+
+          if requires_manual_review "$DEPENDENCY_NAMES"; then
+            echo "Manual review required for ${DEPENDENCY_NAMES}."
+            exit 0
+          fi
+
           state="$(gh pr view "$PR_URL" --json state --jq .state)"
           if [ "$state" != "OPEN" ]; then
             echo "Pull request is ${state}."

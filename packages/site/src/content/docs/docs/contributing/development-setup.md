@@ -9,7 +9,7 @@ contextlint is a monorepo built on [bun workspace](https://bun.sh/docs/install/w
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| [Bun](https://bun.sh/) | `1.3.x` or later | Package manager and test runner |
+| [Bun](https://bun.sh/) | `1.4.4` or later | Package manager and test runner |
 | Node.js | `22` or later | Runtime (CLI / MCP / LSP all run on Node) |
 | Git | — | Repository operations |
 

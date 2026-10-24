@@ -12,7 +12,7 @@
     "typecheck": "bun run --filter '*' typecheck"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.23.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

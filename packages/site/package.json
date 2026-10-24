@@ -15,13 +15,13 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.7",
-    "astro": "^7.2.10",
+    "astro": "^7.4.2",
     "starlight-llms-txt": "^0.12.0",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
-    "@tailwindcss/vite": "^4.2.4",
+    "@astrojs/check": "^0.9.12",
+    "@tailwindcss/vite": "^4.3.3",
     "sharp": "^0.35.3"
   }
 }

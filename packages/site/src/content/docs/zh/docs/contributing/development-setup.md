@@ -9,7 +9,7 @@ contextlint 是基于 [bun workspace](https://bun.sh/docs/install/workspaces) �
 
 | 工具 | 版本 | 用途 |
 |--------|-----------|------|
-| [Bun](https://bun.sh/) | `1.3.x` 及以上 | 包管理器与测试运行器 |
+| [Bun](https://bun.sh/) | `1.4.4` 及以上 | 包管理器与测试运行器 |
 | Node.js | `22` 及以上 | 运行时(CLI / MCP / LSP 在 Node 上运行) |
 | Git | — | 仓库操作 |
 

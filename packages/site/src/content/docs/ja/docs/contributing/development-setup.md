@@ -9,7 +9,7 @@ contextlint は [bun workspace](https://bun.sh/docs/install/workspaces) を使�
 
 | ツール | バージョン | 用途 |
 |--------|-----------|------|
-| [Bun](https://bun.sh/) | `1.3.x` 以上 | パッケージマネージャ・テストランナー |
+| [Bun](https://bun.sh/) | `1.4.4` 以上 | パッケージマネージャ・テストランナー |
 | Node.js | `22` 以上 | ランタイム（CLI / MCP / LSP は Node 上で動作） |
 | Git | — | リポジトリ操作 |
 

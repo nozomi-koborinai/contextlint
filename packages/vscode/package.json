@@ -43,10 +43,10 @@
   },
   "dependencies": {
     "@contextlint/lsp-server": "workspace:*",
-    "vscode-languageclient": "^10.1.0"
+    "vscode-languageclient": "^10.1.2"
   },
   "devDependencies": {
-    "@types/vscode": "^1.91.0"
+    "@types/vscode": "^1.140.0"
   },
   "license": "Apache-2.0"
 }

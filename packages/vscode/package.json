@@ -46,7 +46,7 @@
     "vscode-languageclient": "^10.1.2"
   },
   "devDependencies": {
-    "@types/vscode": "^1.140.0"
+    "@types/vscode": "^1.144.0"
   },
   "license": "Apache-2.0"
 }

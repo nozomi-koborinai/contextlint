@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@contextlint/core": "workspace:*",
-    "@inquirer/prompts": "^8.7.5",
-    "commander": "^15.0.0"
+    "@inquirer/prompts": "^8.8.0",
+    "commander": "^15.1.0"
   },
   "publishConfig": {
     "access": "public"

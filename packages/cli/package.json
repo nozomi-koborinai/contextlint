@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@contextlint/core": "workspace:*",
-    "@inquirer/prompts": "^8.8.0",
+    "@inquirer/prompts": "^8.8.1",
     "commander": "^15.1.0"
   },
   "publishConfig": {
